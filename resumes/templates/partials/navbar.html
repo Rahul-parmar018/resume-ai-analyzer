@@ -1,0 +1,46 @@
+<nav id="siteNav" class="navbar navbar-expand-lg navbar-dark fixed-top nav-floating py-3" role="navigation" aria-label="Main">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold fs-4" href="{% url 'home' %}">
+      <i class="bi bi-file-earmark-person me-2"></i>AI Resume Screener
+    </a>
+
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navigation -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+          <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.resolver_match.url_name == 'score_checker' %} active{% endif %}" href="{% url 'score_checker' %}">Score Checker</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.resolver_match.url_name == 'finder_list' %} active{% endif %}" href="{% url 'finder_list' %}">Candidate Finder</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.resolver_match.url_name == 'review_resume' %} active{% endif %}" href="{% url 'review_resume' %}">Resume Review</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if request.resolver_match.url_name == 'improve_resume' %} active{% endif %}" href="{% url 'improve_resume' %}">Improve Resume</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if 'pricing' in request.path %} active{% endif %}" href="#pricing">Pricing</a>
+        </li>
+      </ul>
+
+      <!-- Auth buttons -->
+      <div class="d-flex gap-2">
+        <button id="themeToggleBtn" class="btn btn-outline-light ms-3" aria-label="Toggle light/dark theme" title="Toggle light/dark theme" type="button">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+        <a href="#" class="btn btn-outline-light btn-sm">Sign in</a>
+        <a href="{% url 'requirements' %}" class="btn btn-brand btn-sm">Get Started</a>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="section-dark py-5">
+  <div class="container-fluid">
+    <div class="row gx-5">
+      <!-- Left: Sticky tall video -->
+      <div class="col-lg-6 d-flex flex-column align-items-center">
+        <div class="sticky-video">
+          <div class="d-flex justify-content-center align-items-center" style="width:100%;">
+            <video id="reviewVideo"
+                   class="review-video-img"
+                   autoplay loop muted playsinline
+                   poster="{% static 'img/templates/Banner.png' %}">
+              <source src="{% static 'img/templates/AI_Resume_Screener_Video_Generation.mp4' %}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="video-caption text-center text-muted mb-4">
+            <i class="bi bi-stars me-1"></i> See how AI reviews your resume in real time.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right: Sticky form -->
+      <div class="col-lg-6 d-flex flex-column align-items-center">
+        <div class="sticky-form">
+          <h2 class="display-5 fw-bold text-white mb-2">AI Resume Review</h2>
+          <p class="lead text-muted mb-4">Upload your resume for a deep, actionable review. No scores—just real feedback and fixes.</p>
+          <div class="card card-glass p-4 mb-4">
+            <form id="reviewForm" enctype="multipart/form-data">
+              <label class="form-label text-light">Upload your resume (PDF or DOCX)</label>
+              <input id="reviewFile" type="file" class="form-control mb-3" accept=".pdf,.docx" required>
+              <button id="reviewBtn" type="submit" class="btn btn-brand">Review</button>
+              <span id="reviewSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+            </form>
+            <div id="reviewAlert" class="alert alert-danger d-none mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Long, animated info cards (scrollable) -->
+    <div class="row g-5 mt-2">
+      <div class="col-12">
+        <div class="info-card-lg sa fade-up">
+          <div class="info-icon-lg"><i class="bi bi-search"></i></div>
+          <h3 class="fw-bold text-white mb-3">What we check</h3>
+          <ul class="info-list-lg">
+            <li>Presence and clarity of all key sections: <b>Contact, Experience, Skills, Education, Summary</b></li>
+            <li>ATS blockers: images, tables, non-standard fonts, headers/footers, graphics</li>
+            <li>Passive voice, weak verbs, missing metrics, first-person pronouns</li>
+            <li>Formatting: bullet consistency, section order, length, whitespace</li>
+            <li>File type, text extraction quality, and parse errors</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="info-card-lg sa fade-up" data-sa-delay="120">
+          <div class="info-icon-lg"><i class="bi bi-lightbulb"></i></div>
+          <h3 class="fw-bold text-white mb-3">How it works</h3>
+          <ol class="info-list-lg">
+            <li><b>AI parses your file</b> and extracts all text, even from PDFs and DOCX.</li>
+            <li><b>Detects missing or weak sections</b> and bullets, and flags ATS blockers.</li>
+            <li><b>Analyzes readability</b> (Flesch score, sentence length, jargon, filler).</li>
+            <li><b>Suggests prioritized fixes</b> and section-by-section improvements.</li>
+            <li><b>Shows a "fix this first" list</b> for the fastest impact.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="info-card-lg sa fade-up" data-sa-delay="240">
+          <div class="info-icon-lg"><i class="bi bi-shield-check"></i></div>
+          <h3 class="fw-bold text-white mb-3">Why use it?</h3>
+          <ul class="info-list-lg">
+            <li>Spot ATS blockers <b>before</b> you apply—avoid silent rejections.</li>
+            <li>Get <b>actionable, section-by-section feedback</b> (not just a score).</li>
+            <li>Improve clarity and impact in minutes with AI-powered suggestions.</li>
+            <li>See a prioritized "fix first" list for quick wins.</li>
+            <li>Re-upload to see improvements and track progress.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="info-card-lg sa fade-up" data-sa-delay="360">
+          <div class="info-icon-lg"><i class="bi bi-stars"></i></div>
+          <h3 class="fw-bold text-white mb-3">What you get</h3>
+          <ul class="info-list-lg">
+            <li>Health checklist and mistake list (with explanations)</li>
+            <li>Readability meter and section-by-section review</li>
+            <li>Prioritized "fix this first" list for fastest improvement</li>
+            <li>AI-powered suggestions, not just scores</li>
+            <li>All feedback is private—no data is stored after review</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review result -->
+    <div id="reviewResult" class="d-none mt-4">
+      <!-- 3D Level/XP bar and health emoji -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span id="reviewHealthEmoji" class="health-emoji-3d"></span>
+          <div>
+            <div class="fw-bold text-white" id="reviewHealthLabel"></div>
+            <div id="reviewSummary" class="text-muted fs-5"></div>
+            <div class="progress mt-2 progress-3d">
+              <div id="healthBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D flip cards for mistakes/fixes -->
+      <div class="row g-4 mb-4" id="mistakeCards"></div>
+
+      <!-- 3D Health checklist -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-clipboard-check me-1"></i> Resume Health</h5>
+        <ul id="reviewChecklist" class="mb-0"></ul>
+      </div>
+
+      <!-- 3D Section-by-section stepper -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-list-check me-1"></i> Section-by-section</h5>
+        <ul id="reviewSections" class="section-stepper"></ul>
+      </div>
+
+      <!-- 3D Readability meter -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-bar-chart me-1"></i> Readability</h5>
+        <div class="d-flex align-items-center gap-3">
+          <div id="reviewReadability" class="fs-4"></div>
+          <div id="readMeterLabel" class="badge"></div>
+          <span class="ms-2" data-bs-toggle="tooltip" title="Short sentences and simple words improve recruiter response."><i class="bi bi-info-circle"></i></span>
+        </div>
+        <div class="progress mt-2 progress-3d">
+          <div id="readMeterBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+        </div>
+        <div class="small text-muted mt-2">Flesch Reading Ease: 90+ (easy), 60–89 (good), 30–59 (hard), &lt;30 (very hard)</div>
+      </div>
+
+      <!-- 3D Fix this first: quest/mission list -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-lightbulb me-1"></i> Fix this first</h5>
+        <ul id="reviewFixFirst" class="quest-list"></ul>
+      </div>
+
+      <!-- 3D Suggestions card -->
+      <div class="card card-3d p-4 mb-4 sa fade-up" id="suggestionsCard" style="display:none;">
+        <h5 class="fw-bold text-white mb-3"><i class="bi bi-lightbulb me-2"></i> Suggestions to Improve Your Resume</h5>
+        <ul id="suggestionsList" class="text-muted"></ul>
+      </div>
+
+      <!-- 3D What recruiters see (ATS parse) -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-eye me-1"></i> What recruiters see</h5>
+        <pre id="atsParse" class="ats-parse"></pre>
+      </div>
+
+      <!-- 3D What to do next -->
+      <div class="card card-3d p-4 mb-4 sa fade-up">
+        <h5 class="fw-bold text-white mb-2"><i class="bi bi-arrow-right-circle me-1"></i> What to do next</h5>
+        <ul id="reviewNextSteps" class="mb-0"></ul>
+        <button id="improveResumeBtn" class="btn btn-brand btn-lg mt-3 btn-3d">Improve your resume</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script defer src="{% static 'js/review_resume.js' %}"></script>
+{% endblock %}

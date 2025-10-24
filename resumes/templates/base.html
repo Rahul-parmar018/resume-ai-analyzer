@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Resume Screener{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/marketing.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    {% include 'partials/navbar.html' %}
+    
+    <!-- Global page background (stars + soft orbs) -->
+    <div id="pageBg" class="page-bg" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+        <span class="orb orb-c"></span>
+        <span class="orb orb-d"></span>
+    </div>
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Get Started -->
+                <div class="col-md-3">
+                    <h5>Get started</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'requirements' %}">Create Resume</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#cookies">Cookie Preferences</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Resume -->
+                <div class="col-md-3">
+                    <h5>Resume</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#examples">Resume Examples</a></li>
+                        <li><a href="#templates">Resume Templates</a></li>
+                        <li><a href="{% url 'requirements' %}">Resume Builder</a></li>
+                        <li><a href="#summary">Resume Summary Generator</a></li>
+                        <li><a href="#linkedin">LinkedIn Resume Builder</a></li>
+                        <li><a href="#formats">Resume Formats</a></li>
+                        <li><a href="#checker">Resume Checker</a></li>
+                        <li><a href="#review">AI Resume Review</a></li>
+                        <li><a href="#skills">Resume Skills</a></li>
+                        <li><a href="#how-to">How to Write a Resume</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Cover Letter -->
+                <div class="col-md-3">
+                    <h5>Cover Letter</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#cover-builder">Cover Letter Builder</a></li>
+                        <li><a href="#cover-examples">Cover Letter Examples</a></li>
+                        <li><a href="#cover-generator">Cover Letter Generator</a></li>
+                        <li><a href="#cover-templates">Cover Letter Templates</a></li>
+                        <li><a href="#cover-formats">Cover Letter Formats</a></li>
+                        <li><a href="#cover-how">How to Write a Cover Letter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Resources -->
+                <div class="col-md-3">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#guides">Resume Guides</a></li>
+                        <li><a href="#cover-guides">Cover Letter Guides</a></li>
+                        <li><a href="#interview">Job Interview Guides</a></li>
+                        <li><a href="#questions">Job Interview Questions</a></li>
+                        <li><a href="#career">Career Resources</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="border-color: var(--border);">
+            
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="row g-4">
+                        <!-- About -->
+                        <div class="col-md-4">
+                            <h6>About us</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="#company">Company</a></li>
+                                <li><a href="#careers">Careers</a></li>
+                                <li><a href="#reviews">Reviews</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Contact -->
+                        <div class="col-md-4">
+                            <h6>Contact us</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="mailto:support@airesumescreener.com">support@airesumescreener.com</a></li>
+                                <li><a href="#help">Help</a></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Languages -->
+                        <div class="col-md-4">
+                            <h6>Languages</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="#en">English (US)</a></li>
+                                <li><a href="#fr">French (FR)</a></li>
+                                <li><a href="#de">German (DE)</a></li>
+                                <li><a href="#es">Spanish (ES)</a></li>
+                                <li><a href="#pt">Portuguese (BR)</a></li>
+                                <li><a href="#it">Italian (IT)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reviews -->
+                <div class="col-md-4 text-md-end">
+                    <div class="d-flex align-items-center justify-content-md-end gap-2 mb-2">
+                        <div class="stars">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                        </div>
+                        <span class="text-muted">1,200 Reviews</span>
+                    </div>
+                    <a href="#reviews" class="text-muted small">Read More Reviews</a>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="border-color: var(--border);">
+            
+            <div class="text-center text-muted">
+                <p class="mb-0">&copy; 2025 AI Resume Screener. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Back to top button -->
+    <button id="toTop" class="to-top-btn" aria-label="Back to top" title="Back to top">
+        <i class="bi bi-arrow-up-short"></i>
+    </button>
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script defer src="{% static 'js/ux.js' %}"></script>
+    <script defer src="{% static 'js/theme_toggle.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resume Examples - AI Resume Screener{% endblock %}
+
+{% block content %}
+<section class="section-examples py-5 py-lg-6">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+      <!-- Left copy -->
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold mb-3">Resume examples tailored for your job and experience</h1>
+        <p class="lead text-muted mb-4" style="max-width: 640px;">Explore industry‑specific examples and see how a strong resume is structured. Each preview focuses on clarity, measurable impact, and the right keywords.</p>
+        <a href="#" class="fw-semibold link-primary">Browse Examples <i class="bi bi-arrow-right"></i></a>
+        <div class="examples-doodle" aria-hidden="true"></div>
+      </div>
+
+      <!-- Right: roles + preview -->
+      <div class="col-lg-6">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="role-stack" id="examplesRoles"
+                 data-base="{% static 'img/templates/' %}"
+                 data-default="long_resume"
+                 data-ext="png">
+              <!-- Change data-img per role when you add role-specific images.
+                   Fallback tries .png then .jpg automatically. -->
+              <button type="button" class="role-pill active" data-img="long_resume">
+                <i class="bi bi-bounding-box-circles me-2"></i>Business Analyst
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-cpu me-2"></i>Data Scientist
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-kanban me-2"></i>Product Manager
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-code-slash me-2"></i>Software Engineer
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-briefcase me-2"></i>Sales
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-mortarboard me-2"></i>Teacher
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-gear-wide-connected me-2"></i>Engineer
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-calculator me-2"></i>Accounting
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-brush me-2"></i>Designer
+              </button>
+              <button type="button" class="role-pill" data-img="long_resume">
+                <i class="bi bi-bullseye me-2"></i>Marketing
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-7">
+            <div class="preview-shell">
+              <div class="preview-frame">
+                <img id="examplesPreview"
+                     class="fade-img"
+                     src="{% static 'img/templates/long_resume.png' %}"
+                     alt="Resume preview"
+                     onerror="this.onerror=null; this.src='{% static 'img/templates/long_resume.jpg' %}'">
+              </div>
+            </div>
+            <small class="text-muted d-block mt-2">Tip: add role‑specific images later by setting data-img on each role.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

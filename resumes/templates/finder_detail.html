@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="section-dark py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="text-white fw-bold mb-0">{{ req.title }}</h2>
+      <div class="d-flex gap-2">
+        <button id="restartBtn" class="btn btn-outline-danger">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Restart
+        </button>
+        <button id="rescoreBtn" class="btn btn-outline-light">Re-score</button>
+        <a id="exportCsvBtn" class="btn btn-ghost-light" href="{% url 'api_export_csv' req.id %}">
+          <i class="bi bi-download me-1"></i> Export CSV
+        </a>
+      </div>
+    </div>
+
+    <!-- Inline alert for rescore messages -->
+    <div id="resAlert" class="fx-alert d-none mb-2" role="alert"></div>
+
+    <!-- Summary chips -->
+    <div class="card card-glass p-2 mb-3">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="chip"><i class="bi bi-briefcase me-1"></i>{{ req.title }}</span>
+        <span class="chip"><i class="bi bi-geo-alt me-1"></i>{{ req.location|default:"Any" }}</span>
+        <span class="chip"><i class="bi bi-hourglass-split me-1"></i>Min exp: {{ req.min_exp|default:"0" }}y</span>
+        {% if req.must_have %}
+          <span class="chip chip-muted">Must:</span>
+          {% for k in req.must_have %}<span class="chip chip-key">{{ k }}</span>{% endfor %}
+        {% endif %}
+        {% if req.nice_to_have %}
+          <span class="chip chip-muted">Nice:</span>
+          {% for k in req.nice_to_have %}<span class="chip chip-key-alt">{{ k }}</span>{% endfor %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Requisition form + JSON tab -->
+    <div class="card card-glass p-3 mb-3">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabForm" type="button">Form</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabJson" type="button">Paste JSON</button></li>
+      </ul>
+      <div class="tab-content p-2">
+        <div id="tabForm" class="tab-pane fade show active">
+          <div class="row g-2">
+            <div class="col-md-6"><label class="form-label text-light">Title</label><input id="fTitle" class="form-control fx-field" value="{{ req.title }}"></div>
+            <div class="col-md-3"><label class="form-label text-light">Min exp</label><input id="fMinExp" type="number" class="form-control fx-field" value="{{ req.min_exp }}"></div>
+            <div class="col-md-3"><label class="form-label text-light">Location</label><input id="fLoc" class="form-control fx-field" value="{{ req.location }}"></div>
+            <div class="col-md-6"><label class="form-label text-light">Must-have (comma)</label><input id="fMust" class="form-control fx-field" value="{{ req.must_have|join:', ' }}"></div>
+            <div class="col-md-6"><label class="form-label text-light">Nice-to-have (comma)</label><input id="fNice" class="form-control fx-field" value="{{ req.nice_to_have|join:', ' }}"></div>
+            <div class="col-md-12"><label class="form-label text-light">Notes</label><textarea id="fNotes" rows="2" class="form-control fx-field">{{ req.notes }}</textarea></div>
+          </div>
+          <div class="mt-2 d-flex justify-content-end gap-2">
+            <button id="saveReqBtn" class="btn btn-brand">
+              <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+              Save
+            </button>
+          </div>
+        </div>
+        <div id="tabJson" class="tab-pane fade">
+          <textarea id="fJson" rows="6" class="form-control fx-field" placeholder='{"title":"Data Analyst","must_have":["SQL","Python"]...}'></textarea>
+          <div class="mt-2 d-flex justify-content-end gap-2">
+            <button id="applyJsonBtn" class="btn btn-outline-light">Apply JSON</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analyze resumes -->
+    <div class="card card-glass p-3 mb-3" id="analyzeCard" data-req="{{ req.id }}">
+      <div class="d-flex align-items-center justify-content-between">
+        <h6 class="mb-0 text-white"><i class="bi bi-upload me-1"></i> Analyze resumes</h6>
+        <small class="text-muted">PDF/DOCX</small>
+      </div>
+      <!-- inline error for analyze -->
+      <div id="upAlert" class="fx-alert d-none mt-2" role="alert"></div>
+      <div class="mt-2">
+        <input id="filesInput" type="file" class="form-control fx-field" multiple accept=".pdf,.docx,.doc">
+      </div>
+      <div class="mt-2 d-flex justify-content-end gap-2">
+        <button id="analyzeBtn" type="button" class="btn btn-brand">
+          <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+          Analyze
+        </button>
+      </div>
+      <div class="text-muted small mt-1">Synchronous analyze; uploads are stored under media/resumes/{{ req.id }}/.</div>
+    </div>
+
+    <!-- Visualize card (must be below form/analyze) -->
+    <div class="card card-glass p-3 mb-3" id="vizCard" data-auto="1">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-graph-up-arrow text-success"></i>
+          <h6 class="mb-0 text-white">Visualize</h6>
+          <small class="text-muted">KPI • Distribution • Coverage • Scatter</small>
+        </div>
+      </div>
+
+      <!-- KPI -->
+      <div class="row g-3 mb-2" id="kpiRow" hidden>
+        <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Resumes</div><div id="kpiTotal" class="kpi-value">0</div></div></div>
+        <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Shortlisted</div><div id="kpiShortlisted" class="kpi-value">0</div></div></div>
+        <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Avg match</div><div id="kpiAvg" class="kpi-value">0%</div></div></div>
+        <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">90th pct</div><div id="kpiP90" class="kpi-value">0%</div></div></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="row g-3" id="vizRow" hidden>
+        <div class="col-lg-6">
+          <div class="card card-glass p-2 h-100">
+            <div class="text-white fw-semibold mb-1"><i class="bi bi-bar-chart-steps me-1 text-info"></i> Match distribution</div>
+            <canvas id="chartHist" height="140"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card card-glass p-2 h-100">
+            <div class="text-white fw-semibold mb-1"><i class="bi bi-clipboard-check me-1 text-success"></i> Must‑have coverage</div>
+            <canvas id="chartCoverage" height="140"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card card-glass p-2 h-100">
+            <div class="text-white fw-semibold mb-1"><i class="bi bi-list-stars me-1 text-warning"></i> Missing keywords (Top 15)</div>
+            <canvas id="chartMissing" height="140"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card card-glass p-2 h-100">
+            <div class="text-white fw-semibold mb-1"><i class="bi bi-scatter-chart me-1 text-primary"></i> Experience vs Match</div>
+            <canvas id="chartScatter" height="140"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters + Compare -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex gap-2">
+        <input id="fMinMatch" type="number" class="form-control form-control-sm fx-field" placeholder="Min match %" style="max-width:140px">
+        <select id="fStatus" class="form-select form-select-sm fx-field" style="max-width:180px">
+          <option value="">Status: All</option>
+          {% for v,l in status_choices %}<option value="{{ v }}">{{ l }}</option>{% endfor %}
+        </select>
+        <button id="applyFilters" class="btn btn-outline-light btn-sm">Apply</button>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="compareBtn" class="btn btn-outline-light btn-sm" disabled>Compare (0)</button>
+      </div>
+    </div>
+
+    <!-- Results table -->
+    <div class="card card-glass p-2">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="resultsTable">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="checkAll"></th>
+              <th>Candidate</th>
+              <th>Contact</th>
+              <th>Years</th>
+              <th>Location</th>
+              <th>Match %</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th style="width: 220px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"><tr><td colspan="9" class="text-muted">No results yet.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <div id="pagerInfo" class="text-muted small"></div>
+        <div class="d-flex gap-1" id="pagerBtns"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Restart confirmation modal -->
+<div class="modal fade" id="restartModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content card-glass">
+      <div class="modal-header">
+        <h6 class="modal-title text-white">
+          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Restart requisition
+        </h6>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-muted">
+          This will permanently delete all analyzed candidates and their uploaded files for this requisition. Your requirements (title/skills/min exp/location) will be kept.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-light btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button id="restartConfirm" type="button" class="btn btn-danger">
+          <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+          Restart now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Resume preview</h6>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <object id="previewObj" data="" type="application/pdf" width="100%" height="720">
+          <div class="p-3">Preview unavailable. <a id="previewDownload" href="#" download>Download</a></div>
+        </object>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Insights Modal -->
+<div class="modal fade" id="insightsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content card-glass">
+      <div class="modal-header">
+        <h6 class="modal-title text-white"><i class="bi bi-lightbulb me-1"></i> Candidate Insights</h6>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="insightsBody">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Note Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content card-glass">
+      <div class="modal-header">
+        <h6 class="modal-title text-white"><i class="bi bi-journal-text me-1"></i> Add/Update Note</h6>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="noteInput" class="form-control fx-field" rows="4" placeholder="Write a note..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-light btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button id="noteSave" type="button" class="btn btn-brand">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Compare Modal (fix width) -->
+<div class="modal fade" id="compareModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content card-glass">
+      <div class="modal-header">
+        <h6 class="modal-title text-white"><i class="bi bi-graph-up me-1"></i> Compare candidates</h6>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex flex-column align-items-center">
+        <div class="cmp-chart-wrap mb-3">
+          <div class="text-white fw-semibold mb-1"><i class="bi bi-bezier2 me-1 text-info"></i> Subscores (radar)</div>
+          <canvas id="cmpRadar"></canvas>
+        </div>
+        <div class="cmp-chart-wrap mb-3">
+          <div class="text-white fw-semibold mb-1"><i class="bi bi-sliders2-vertical me-1 text-warning"></i> Match vs ATS (dumbbell)</div>
+          <canvas id="cmpDumbbell"></canvas>
+        </div>
+        <div class="row w-100 g-3" id="cmpCards"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>window.FINDER_REQ_ID={{ req.id }};</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script defer src="{% static 'js/finder.js' %}"></script>
+{% endblock %}

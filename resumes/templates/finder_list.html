@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="section-dark py-5">
+  <div class="container">
+    
+    <!-- Simple hero with one button -->
+    <div class="finder-hero text-center">
+      <h2 class="text-white fw-bold mb-2">Find Best Candidates</h2>
+      <p class="text-muted mb-4">Upload resumes, analyze, and rank the best matches with AI.</p>
+      <button id="newReqBtn" type="button" class="btn btn-brand btn-lg" data-bs-toggle="modal" data-bs-target="#newReqModal">
+        New requisition
+      </button>
+    </div>
+
+    <!-- Powered by AI -->
+    <div class="text-center mt-5">
+      <div class="text-muted small mb-2">A smart pipeline that reads, understands, and improves your resume screening.</div>
+      <div class="ai-divider"></div>
+    </div>
+
+    <div class="row g-4 mt-3">
+      <div class="col-lg-6">
+        <div class="card card-glass p-3 h-100">
+          <div class="fw-bold text-white mb-2">
+            <i class="bi bi-stars me-2 text-warning"></i> What we do
+          </div>
+          <ul class="mb-0 text-muted">
+            <li>Parse and standardize sections (experience, skills, education, summary).</li>
+            <li>Detect ATS blockers (headings, bullet consistency, parsable text, fonts).</li>
+            <li>Check keyword coverage vs. role expectations and real job posts.</li>
+            <li>Estimate clarity and signal density (action verbs + metrics).</li>
+            <li>Prioritize quick wins with step‑by‑step tips.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card card-glass p-3 h-100">
+          <div class="fw-bold text-white mb-2">
+            <i class="bi bi-cpu me-2 text-info"></i> How it works
+          </div>
+          <ol class="mb-0 text-muted">
+            <li><strong>Parse & extract:</strong> Read your PDF/DOCX and normalize content.</li>
+            <li><strong>Score:</strong> Compute subscores — ATS, Match, Skills, Readability, Structure.</li>
+            <li><strong>Find gaps:</strong> Spot missing must‑haves and weak bullets.</li>
+            <li><strong>Guide:</strong> Tailored suggestions; export a clean report.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card card-glass p-3 h-100">
+          <div class="fw-bold text-white mb-2">
+            <i class="bi bi-rocket-takeoff me-2 text-success"></i> Why it's useful
+          </div>
+          <ul class="mb-0 text-muted">
+            <li>Beat automated screens: avoid silent ATS rejections.</li>
+            <li>Tailor faster: add the right keywords without guesswork.</li>
+            <li>Show impact: rewrite bullets with measurable results.</li>
+            <li>Iterate quickly: measure changes with subscores + total score.</li>
+            <li><span class="text-muted">Pro tip:</span> Keep resumes concise with strong recent impact.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card card-glass p-3 h-100">
+          <div class="fw-bold text-white mb-2">
+            <i class="bi bi-bar-chart-line me-2 text-primary"></i> How we score
+          </div>
+          <div class="text-muted">
+            Your total is a weighted blend of five subscores (0–100 each):
+            <ul class="mb-2">
+              <li><strong>ATS readiness (25%)</strong> — headings, formatting, parsability.</li>
+              <li><strong>Match (25%)</strong> — alignment to role keywords.</li>
+              <li><strong>Skills (20%)</strong> — coverage of must‑have tools & tech.</li>
+              <li><strong>Readability (15%)</strong> — clarity, concision, tone.</li>
+              <li><strong>Structure (15%)</strong> — bullet quality, layout, tense consistency.</li>
+            </ul>
+            <code class="d-inline-block small">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced new req modal with 3D moving border -->
+<div class="modal fade" id="newReqModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content fx-modal-border">
+      <div class="modal-header">
+        <h5 class="modal-title text-white"><i class="bi bi-briefcase me-2"></i> New requisition</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div id="nrAlert" class="fx-alert d-none" role="alert"></div>
+
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="form-label text-light">Title <span class="text-danger">*</span></label>
+          <input id="nrTitle" class="form-control fx-field" placeholder="e.g., Data Analyst">
+          <div class="invalid-feedback" id="nrTitleErr">Title is required.</div>
+        </div>
+
+        <div class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label text-light">Must-have (comma)</label>
+            <input id="nrMust" class="form-control fx-field" placeholder="SQL, Python, Tableau">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label text-light">Nice-to-have (comma)</label>
+            <input id="nrNice" class="form-control fx-field" placeholder="dbt, Looker, A/B Testing">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label text-light">Min experience (years)</label>
+            <input id="nrMinExp" type="number" inputmode="numeric" min="0" step="1" class="form-control fx-field" value="0">
+            <div class="invalid-feedback" id="nrMinErr">Enter a valid non‑negative number.</div>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label text-light">Location</label>
+            <input id="nrLoc" class="form-control fx-field" placeholder="Remote / SF Bay Area">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label text-light">Notes</label>
+            <textarea id="nrNotes" class="form-control fx-field" rows="2" placeholder="Optional"></textarea>
+          </div>
+        </div>
+
+        <details class="mt-3">
+          <summary class="text-white fw-semibold"><i class="bi bi-sliders me-1"></i> Advanced details</summary>
+          <div class="row g-2 mt-2">
+            <div class="col-md-4">
+              <label class="form-label text-light">Role type</label>
+              <select id="advType" class="form-select fx-field">
+                <option value="">—</option><option>Full‑time</option><option>Contract</option><option>Intern</option><option>Part‑time</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-light">Salary min (USD)</label>
+              <input id="advSalaryMin" type="number" min="0" step="1000" class="form-control fx-field" placeholder="e.g., 80000">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-light">Salary max (USD)</label>
+              <input id="advSalaryMax" type="number" min="0" step="1000" class="form-control fx-field" placeholder="e.g., 120000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light">Priority</label>
+              <select id="advPriority" class="form-select fx-field">
+                <option value="">—</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-light">Tags (comma)</label>
+              <input id="advTags" class="form-control fx-field" placeholder="Healthcare, Analytics, PM">
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-light btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button id="nrSave" type="button" class="btn btn-brand">
+          <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script defer src="{% static 'js/finder_create.js' %}?v=3"></script>
+{% endblock %}
