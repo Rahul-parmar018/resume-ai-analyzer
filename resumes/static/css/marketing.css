@@ -3366,6 +3366,36 @@ html:not(.light-theme) .copy-button:hover {
 /* Copyable field cursor */
 .copyable-field {
   cursor: copy;
+  position: relative;
+}
+
+/* Tooltip prompt */
+.copyable-field::after {
+  content: "Click to copy";
+  position: absolute;
+  top: -1.5em;
+  right: 0;
+  background: #333;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+/* Show tooltip on hover */
+.copyable-field:hover::after {
+  opacity: 1;
+}
+
+/* Light theme tooltip styling */
+html.light-theme .copyable-field::after {
+  background: #1e293b;
+  color: #fff;
 }
 
 /* Buttons inside schema head */
@@ -3667,6 +3697,22 @@ display:grid; place-items:center; font-weight:800;
     linear-gradient(#0b0f16,#0b0f16) padding-box,
     linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,.05)) border-box;
 }
+
+/* Light theme overrides for holo-card */
+html.light-theme .holo-card {
+  background:
+    linear-gradient(#ffffff,#ffffff) padding-box,
+    linear-gradient(135deg, rgba(124,58,237,.3), rgba(34,197,94,.3)) border-box !important;
+  color: #1e293b !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,.1) !important;
+}
+
+html.light-theme .holo-card.subtle {
+  background:
+    linear-gradient(#ffffff,#ffffff) padding-box,
+    linear-gradient(135deg, rgba(0,0,0,.1), rgba(0,0,0,.05)) border-box !important;
+  color: #1e293b !important;
+}
 .holo-head{ display:flex; align-items:center; gap:.55rem; margin-bottom:.35rem }
 .holo-head h3{ margin:0; font-size:1.15rem; font-weight:800; color:#fff }
 .holo-emoji{ font-size:1.25rem; filter: drop-shadow(0 2px 6px rgba(124,58,237,.45)) }
@@ -3674,11 +3720,44 @@ display:grid; place-items:center; font-weight:800;
 .holo-list li{ margin:.25rem 0 }
 .holo-list.narrow li{ margin:.2rem 0 }
 .holo-steps{ margin:0; padding-left:1.15rem }
+
+/* Light theme overrides for holo-card text elements */
+html.light-theme .holo-head h3 {
+  color: #111827 !important;
+}
+
+html.light-theme .holo-card .text-muted {
+  color: #475569 !important;
+}
+
+html.light-theme .holo-card ul,
+html.light-theme .holo-card ol,
+html.light-theme .holo-card li {
+  color: #1e293b !important;
+}
+
+html.light-theme .holo-card strong {
+  color: #111827 !important;
+}
 .ai-formula{
   margin-top:.35rem; display:inline-block;
   font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
   background: rgba(0,0,0,.45); color:#e5e7eb;
   border:1px solid rgba(255,255,255,.08); border-radius:8px; padding:4px 8px;
+}
+
+/* Light theme override for ai-formula */
+html.light-theme .ai-formula {
+  background: #f8f9fa !important;
+  color: #1e293b !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Fix inline styled formula elements in light theme */
+html.light-theme code[style*="background:rgba(0,0,0,.45)"] {
+  background: #f8f9fa !important;
+  color: #1e293b !important;
+  border: 1px solid #e5e7eb !important;
 }
 
 /* Confetti / rain container */
@@ -5736,9 +5815,9 @@ html.light-theme html.light-theme #themeToggleBtn:hover {
   border-color: #3b82f6 !important;
 }
 
-/* FORCE ALL TEXT TO BE BLACK IN LIGHT THEME */
+/* Light theme text color - more selective approach */
 html.light-theme html.light-theme * {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 /* Specific overrides for headings and important text */
@@ -5748,7 +5827,7 @@ html.light-theme html.light-theme h3,
 html.light-theme html.light-theme h4,
 html.light-theme html.light-theme h5,
 html.light-theme html.light-theme h6 {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 /* Card titles and headers */
@@ -5758,7 +5837,7 @@ html.light-theme html.light-theme .card h3,
 html.light-theme html.light-theme .card h4,
 html.light-theme html.light-theme .card h5,
 html.light-theme html.light-theme .card h6 {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 html.light-theme html.light-theme .card-header h1,
@@ -5767,20 +5846,20 @@ html.light-theme html.light-theme .card-header h3,
 html.light-theme html.light-theme .card-header h4,
 html.light-theme html.light-theme .card-header h5,
 html.light-theme html.light-theme .card-header h6 {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 /* Schema and table headers */
 html.light-theme html.light-theme .schema-head h4,
 html.light-theme html.light-theme .schema-head h5,
 html.light-theme html.light-theme .schema-head h6 {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 /* Table headers and data */
 html.light-theme html.light-theme th,
 html.light-theme html.light-theme td {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 /* All text elements */
@@ -5790,24 +5869,24 @@ html.light-theme html.light-theme span,
 html.light-theme html.light-theme li,
 html.light-theme html.light-theme ul,
 html.light-theme html.light-theme ol {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
-/* Override any existing color classes with black */
+/* Override any existing color classes with appropriate colors */
 html.light-theme html.light-theme .text-muted {
-  color: #000000 !important;
+  color: #475569 !important;
 }
 
 html.light-theme html.light-theme .text-white {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 html.light-theme html.light-theme .text-light {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 html.light-theme html.light-theme .text-dark {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 /* Specific overrides for CSV export fields and schema */
@@ -5815,24 +5894,24 @@ html.light-theme html.light-theme .schema-card,
 html.light-theme html.light-theme .schema-head,
 html.light-theme html.light-theme .schema-body,
 html.light-theme html.light-theme .schema-foot {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 html.light-theme html.light-theme .schema-head h4,
 html.light-theme html.light-theme .schema-head h5,
 html.light-theme html.light-theme .schema-head h6 {
-  color: #000000 !important;
+  color: #111827 !important;
 }
 
 html.light-theme html.light-theme .schema-table th,
 html.light-theme html.light-theme .schema-table td {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 html.light-theme html.light-theme .schema-code,
 html.light-theme html.light-theme .schema-code pre,
 html.light-theme html.light-theme .schema-code code {
-  color: #000000 !important;
+  color: #1e293b !important;
   background-color: #f8f9fa !important;
   border: 1px solid #e5e7eb !important;
 }
@@ -5863,10 +5942,72 @@ html.light-theme .schema-code::-webkit-scrollbar-track {
   background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Force all code and pre elements to be black */
+/* Fix dark background elements in light theme */
+html.light-theme .donut-inner {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #1e293b !important;
+}
+
+html.light-theme .card-glass {
+  background: rgba(255,255,255,.96) !important;
+  color: #1e293b !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+html.light-theme .card-3d {
+  background: linear-gradient(135deg, rgba(255,255,255,.98) 80%, rgba(124,58,237,.10) 100%) !important;
+  color: #1e293b !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Fix any remaining dark backgrounds */
+html.light-theme [style*="background:#0b0f16"],
+html.light-theme [style*="background: #0b0f16"] {
+  background: #f8f9fa !important;
+  color: #1e293b !important;
+}
+
+/* Additional fixes for common dark elements */
+html.light-theme .metric-card {
+  background: rgba(255,255,255,.96) !important;
+  color: #1e293b !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+html.light-theme .section-dark {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+}
+
+html.light-theme .section-gradient {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0) !important;
+  color: #1e293b !important;
+}
+
+html.light-theme .section-stars {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+html.light-theme .section-light {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
+
+/* Fix any inline styles with dark backgrounds */
+html.light-theme [style*="background-color: #0b0f16"],
+html.light-theme [style*="background-color:#0b0f16"],
+html.light-theme [style*="background: #0b0f16"],
+html.light-theme [style*="background:#0b0f16"] {
+  background: #f8f9fa !important;
+  color: #1e293b !important;
+}
+
+/* Force all code and pre elements to be dark gray */
 html.light-theme html.light-theme code,
 html.light-theme html.light-theme pre {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 
 /* Override any Bootstrap or custom color classes */
@@ -5876,6 +6017,6 @@ html.light-theme html.light-theme .text-success,
 html.light-theme html.light-theme .text-danger,
 html.light-theme html.light-theme .text-warning,
 html.light-theme html.light-theme .text-info {
-  color: #000000 !important;
+  color: #1e293b !important;
 }
 

@@ -30,6 +30,127 @@
             color: #1e293b !important;
         }
 
+        /* Light theme fixes for dark backgrounds */
+        html.light-theme [style*="background: #0b0f16"],
+        html.light-theme [style*="background:#0b0f16"] {
+            background: #f8f9fa !important;
+            color: #1e293b !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        html.light-theme .card {
+            background: rgba(255,255,255,.96) !important;
+            color: #1e293b !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        html.light-theme .card-header {
+            background: #f8fafc !important;
+            color: #1e293b !important;
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+        /* AI Formula styling */
+        .ai-formula {
+            margin-top: .35rem;
+            display: inline-block;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            background: rgba(0,0,0,.45);
+            color: #e5e7eb;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
+        /* Light theme override for ai-formula */
+        html.light-theme .ai-formula {
+            background: #f8f9fa !important;
+            color: #1e293b !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        /* Holo-card styling */
+        .holo-card {
+            position: relative;
+            border-radius: 16px;
+            padding: 16px 18px;
+            color: #e5e7eb;
+            background:
+                linear-gradient(#0b0f16,#0b0f16) padding-box,
+                linear-gradient(135deg, rgba(124,58,237,.6), rgba(34,197,94,.6)) border-box;
+            border: 1px solid transparent;
+            box-shadow: 0 18px 40px rgba(0,0,0,.28);
+            backdrop-filter: blur(8px) saturate(130%);
+        }
+
+        .holo-card.subtle {
+            background:
+                linear-gradient(#0b0f16,#0b0f16) padding-box,
+                linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,.05)) border-box;
+        }
+
+        .holo-head {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            margin-bottom: .35rem;
+        }
+
+        .holo-head h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .holo-emoji {
+            font-size: 1.25rem;
+            filter: drop-shadow(0 2px 6px rgba(124,58,237,.45));
+        }
+
+        .holo-list {
+            margin: 0;
+            padding-left: 1.15rem;
+        }
+
+        .holo-list li {
+            margin: .25rem 0;
+        }
+
+        /* Light theme overrides for holo-card */
+        html.light-theme .holo-card {
+            background:
+                linear-gradient(#ffffff,#ffffff) padding-box,
+                linear-gradient(135deg, rgba(124,58,237,.3), rgba(34,197,94,.3)) border-box !important;
+            color: #1e293b !important;
+            box-shadow: 0 18px 40px rgba(0,0,0,.1) !important;
+        }
+
+        html.light-theme .holo-card.subtle {
+            background:
+                linear-gradient(#ffffff,#ffffff) padding-box,
+                linear-gradient(135deg, rgba(0,0,0,.1), rgba(0,0,0,.05)) border-box !important;
+            color: #1e293b !important;
+        }
+
+        html.light-theme .holo-head h3 {
+            color: #111827 !important;
+        }
+
+        html.light-theme .holo-card .text-muted {
+            color: #475569 !important;
+        }
+
+        html.light-theme .holo-card ul,
+        html.light-theme .holo-card ol,
+        html.light-theme .holo-card li {
+            color: #1e293b !important;
+        }
+
+        html.light-theme .holo-card strong {
+            color: #111827 !important;
+        }
+
         /* Theme-aware textarea/container styling */
         .theme-aware-textarea {
             width: 100%;
@@ -81,6 +202,36 @@
         /* Copyable field cursor */
         .copyable-field {
             cursor: copy;
+            position: relative;
+        }
+
+        /* Tooltip prompt */
+        .copyable-field::after {
+            content: "Click to copy";
+            position: absolute;
+            top: -1.5em;
+            right: 0;
+            background: #333;
+            color: #fff;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        /* Show tooltip on hover */
+        .copyable-field:hover::after {
+            opacity: 1;
+        }
+
+        /* Light theme tooltip styling */
+        html.light-theme .copyable-field::after {
+            background: #1e293b;
+            color: #fff;
         }
 
         .test-container {
@@ -146,7 +297,59 @@ The border and background should be clearly visible in both themes.
                 <li>The scrollbar should be visible and properly styled in both themes</li>
                 <li>The border and text should be clearly visible in both themes</li>
                 <li>Hover over the "Copy headers" button to see the hover effect</li>
+                <li><strong>New:</strong> Hover over the CSV text area to see the "Click to copy" tooltip!</li>
+                <li><strong>Fixed:</strong> No more black text on dark backgrounds in light theme!</li>
+                <li><strong>Fixed:</strong> Holo-cards (information cards) now properly adapt to light theme!</li>
             </ul>
+        </div>
+
+        <div class="card mb-4" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);">
+            <div class="card-header">
+                <h4 class="mb-0">Formula Example (Fixed)</h4>
+            </div>
+            <div class="card-body">
+                <div style="background: #0b0f16; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 10px 12px; color: #f472b6; font-family: 'Courier New', monospace;">
+                    Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure
+                </div>
+                <p class="mt-2 mb-0">This formula block now has proper contrast in both themes!</p>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);">
+            <div class="card-header">
+                <h4 class="mb-0">AI Formula Box (Score Checker Style)</h4>
+            </div>
+            <div class="card-body">
+                <div class="ai-formula">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</div>
+                <p class="mt-2 mb-0">This is the exact formula box from the Score Checker page - now properly themed!</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="holo-card">
+                    <div class="holo-head">
+                        <span class="holo-emoji">📊</span>
+                        <h3>How we score</h3>
+                    </div>
+                    <p class="text-muted mb-2">Your total is a weighted blend of five subscores (0–100 each):</p>
+                    <ul class="holo-list">
+                        <li><strong>ATS readiness (25%)</strong> — headings, formatting, parsability.</li>
+                        <li><strong>Match (25%)</strong> — alignment to role keywords.</li>
+                        <li><strong>Skills (20%)</strong> — coverage of must‑have tools & tech.</li>
+                    </ul>
+                    <div class="ai-formula">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="holo-card subtle">
+                    <div class="holo-head">
+                        <span class="holo-emoji">🔒</span>
+                        <h3>Privacy & Security</h3>
+                    </div>
+                    <p class="text-muted mb-0">Uploads are encrypted in transit. You control retention (auto‑delete option). We never sell personal data.</p>
+                </div>
+            </div>
         </div>
     </div>
 
