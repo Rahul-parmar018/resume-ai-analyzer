@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme-Aware Textarea Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* Include the theme-aware CSS from marketing.css */
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+        }
+
+        html.light-theme {
+            --bg-color: #ffffff !important;
+            --text-color: #1e293b !important;
+        }
+
+        body {
+            font-family: "Segoe UI", system-ui, sans-serif;
+            background-color: #0b0c10;
+            color: #e5e7eb;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html.light-theme body {
+            background-color: #f9fafb !important;
+            color: #1e293b !important;
+        }
+
+        /* Theme-aware textarea/container styling */
+        .theme-aware-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(120, 120, 120, 0.5);
+            border-radius: 8px;
+            background-color: var(--bg-color, #fff);
+            color: var(--text-color, #000);
+            resize: horizontal;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.925rem;
+        }
+
+        /* Custom scrollbar styling for theme-aware elements */
+        .theme-aware-textarea::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .theme-aware-textarea::-webkit-scrollbar-thumb {
+            background-color: rgba(100, 100, 100, 0.4);
+            border-radius: 4px;
+        }
+        .theme-aware-textarea::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        /* Dark mode scrollbar */
+        html:not(.light-theme) .theme-aware-textarea::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        html:not(.light-theme) .theme-aware-textarea::-webkit-scrollbar-track {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Copy button styling */
+        .copy-button {
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .copy-button:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-1px);
+        }
+        html:not(.light-theme) .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Copyable field cursor */
+        .copyable-field {
+            cursor: copy;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggleBtn" class="btn btn-outline-light theme-toggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <div class="test-container">
+        <h1 class="mb-4">Theme-Aware Textarea Test</h1>
+        
+        <div class="card mb-4" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">CSV Export Fields</h4>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-light copy-button" onclick="copyToClipboard()">
+                        Copy headers
+                    </button>
+                    <button class="btn btn-sm btn-success">
+                        Download sample
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <textarea class="theme-aware-textarea copyable-field" readonly>
+candidate_id, file_name, name, email, phone, location, years_experience, total_score, match_score, skills_score, ats_score, readability_score, keywords_present, keywords_missing, top_titles, seniority, education_level, parsed_success, notes
+                </textarea>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);">
+            <div class="card-header">
+                <h4 class="mb-0">Editable Textarea</h4>
+            </div>
+            <div class="card-body">
+                <textarea class="theme-aware-textarea" placeholder="Type something here to test the theme-aware styling...">
+This is a test textarea with theme-aware styling.
+It should adapt to both light and dark themes.
+The scrollbar should be visible and properly styled.
+The border and background should be clearly visible in both themes.
+                </textarea>
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            <h5>Instructions:</h5>
+            <ul>
+                <li>Click the moon/sun icon in the top-right to toggle between dark and light themes</li>
+                <li>Notice how the textarea adapts to both themes</li>
+                <li>The scrollbar should be visible and properly styled in both themes</li>
+                <li>The border and text should be clearly visible in both themes</li>
+                <li>Hover over the "Copy headers" button to see the hover effect</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('themeToggleBtn');
+            if (!btn) return;
+
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('theme');
+            const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+
+            function applyTheme(dark) {
+                const html = document.documentElement;
+                if (dark) {
+                    html.classList.remove('light-theme');
+                    btn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    html.classList.add('light-theme');
+                    btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            applyTheme(isDark);
+
+            btn.addEventListener('click', () => {
+                const html = document.documentElement;
+                const currentlyDark = !html.classList.contains('light-theme');
+                const newTheme = currentlyDark ? 'light' : 'dark';
+                applyTheme(newTheme === 'dark');
+            });
+        });
+
+        // Copy to clipboard functionality
+        function copyToClipboard() {
+            const textarea = document.querySelector('.theme-aware-textarea');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('btn-success');
+            button.classList.remove('btn-outline-light');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-light');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
