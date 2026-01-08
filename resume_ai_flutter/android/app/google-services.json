@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "699854133780",
+    "project_id": "resume-ai-analyzer-df8fc",
+    "storage_bucket": "resume-ai-analyzer-df8fc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699854133780:android:378fb751aaa825e0e0a501",
+        "android_client_info": {
+          "package_name": "com.resumeai.resume_ai_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLFM2EcjiyBR1qYjaKaD_UTKcXNH9iWfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

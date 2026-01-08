@@ -22,3 +22,21 @@ db.sqlite3
 # IDE files
 .vscode/
 .idea/
+*.iml
+
+# Flutter/Dart
+resume_ai_flutter/build/
+resume_ai_flutter/.dart_tool/
+resume_ai_flutter/.flutter-plugins-dependencies
+resume_ai_flutter/.metadata
+resume_ai_flutter/android/local.properties
+resume_ai_flutter/ios/Flutter/ephemeral/
+
+# Temporary analysis files
+analysis_*.txt
+*_analysis.txt
+
+# Old logo files (moved to assets)
+image_logo.png
+main_logo.png
+text_logo.png
