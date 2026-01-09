@@ -674,20 +674,20 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Buttons */
 .btn-brand {
-  background: var(--brand);
-  border-color: var(--brand);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 6px 24px rgba(22,163,74,.35);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-brand:hover {
-  background: var(--brand-2);
-  border-color: var(--brand-2);
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border: none;
   color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(22,163,74,.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-brand:focus {
@@ -2661,15 +2661,102 @@ box-shadow:0 16px 36px rgba(2,6,23,.14);
 
 /* Fixed navbar appearance */
 .nav-floating{
-background: rgba(10, 12, 20, .35);
-backdrop-filter: blur(8px) saturate(140%);
-border-bottom: 1px solid rgba(255,255,255,.06);
+background: linear-gradient(180deg, rgba(11,12,16,0.85), rgba(11,12,16,0.65));
+backdrop-filter: blur(10px);
+border-bottom: 1px solid rgba(255,255,255,0.06);
 transition: background .25s ease, box-shadow .25s ease, transform .2s ease;
 z-index: 1050; /* above hero and bubbles */
+min-height: 72px;
+display: flex;
+align-items: center;
 }
 .nav-floating.nav-scrolled{
-background: rgba(10, 12, 20, .85);
+background: linear-gradient(180deg, rgba(11,12,16,0.95), rgba(11,12,16,0.85));
 box-shadow: 0 6px 22px rgba(0,0,0,.25);
+}
+
+.nav-floating .container {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+}
+
+/* Navbar Toggler (Hamburger Button) - Force Visibility and Clickability */
+.navbar-toggler {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px;
+  height: 44px;
+  padding: 0.5rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 1001 !important;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.navbar-toggler:focus {
+  outline: 2px solid rgba(34, 197, 94, 0.5);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25);
+}
+
+.navbar-toggler-icon {
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Light Theme Navbar Toggler */
+html.light-theme .navbar-toggler {
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light-theme .navbar-toggler:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+html.light-theme .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(15, 23, 42, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Ensure navbar toggler is visible on mobile/tablet */
+@media (max-width: 991.98px) {
+  .navbar-toggler {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 1001 !important;
+  }
+  
+  .navbar-collapse {
+    z-index: 1000;
+  }
+}
+
+/* Hide navbar toggler on desktop */
+@media (min-width: 992px) {
+  .navbar-toggler {
+    display: none !important;
+  }
 }
 
 /* Navbar Logo Styling */
@@ -2684,8 +2771,8 @@ box-shadow: 0 6px 22px rgba(0,0,0,.25);
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 53px;
-  height: 53px;
+  width: 44px;
+  height: 44px;
   padding: 0;
 }
 
@@ -2701,27 +2788,45 @@ box-shadow: 0 6px 22px rgba(0,0,0,.25);
 
 .logo-text-brand {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff !important;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   white-space: nowrap;
 }
 
 .logo-text-accent {
   color: #22c55e !important;
-  font-weight: 700;
+  font-weight: 800;
   display: inline;
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.5));
+}
+
+/* Light Theme Logo Styling */
+html.light-theme .logo-text-brand {
+  color: #0f172a !important;
+  font-weight: 900;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15)) !important;
+}
+
+html.light-theme .logo-text-accent {
+  color: #16a34a !important;
+  font-weight: 900;
+  filter: drop-shadow(0 1px 2px rgba(22, 163, 74, 0.2)) !important;
+}
+
+html.light-theme .logo-icon-img {
+  filter: brightness(0.95) contrast(1.1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
 }
 
 /* Mobile logo sizing */
 @media (max-width: 991.98px) {
   .logo-icon-wrapper {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     padding: 0;
   }
   
@@ -2732,8 +2837,8 @@ box-shadow: 0 6px 22px rgba(0,0,0,.25);
 
 @media (max-width: 575.98px) {
   .logo-icon-wrapper {
-    width: 43px;
-    height: 43px;
+    width: 36px;
+    height: 36px;
     padding: 0;
   }
   
@@ -5193,21 +5298,21 @@ text-align: center;
 /* Active Navigation Highlighting */
 .navbar-nav .nav-link.active {
   color: #22c55e !important;
-  font-weight: 600;
+  font-weight: 500;
   position: relative;
+  letter-spacing: 0.3px;
 }
 
 .navbar-nav .nav-link.active::after {
   content: '';
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: #22c55e;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #22c55e;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #22c55e, #7c3aed);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 
 .navbar-nav .nav-link:hover {
@@ -5218,6 +5323,10 @@ text-align: center;
 .navbar-nav .nav-link {
   transition: color 0.3s ease;
   position: relative;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
 }
 
 /* Mobile navigation active state */
@@ -5230,6 +5339,18 @@ text-align: center;
     background: rgba(34, 197, 94, 0.1);
     border-radius: 8px;
     margin: 2px 0;
+  }
+  
+  .nav-floating {
+    min-height: auto;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  /* Light theme mobile active state */
+  html.light-theme .navbar-nav .nav-link.active {
+    background: rgba(22, 163, 74, 0.1) !important;
+    color: #16a34a !important;
   }
 }
 
@@ -5306,46 +5427,80 @@ html.light-theme {
   --text-color: #1e293b !important;
 }
 
-/* Navbar: slightly darker background for contrast */
-html.light-theme .navbar {
-  background-color: #e2e8f0 !important; /* light gray-blue */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  color: #1e293b !important;
+/* Light Theme Navbar - Premium Glassmorphism */
+html.light-theme .nav-floating {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Navbar links */
+html.light-theme .nav-floating.nav-scrolled {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Light Theme Navbar Links */
 html.light-theme .navbar .nav-link {
-  color: #1e293b !important;
-}
-html.light-theme .navbar .nav-link:hover,
-html.light-theme .navbar .nav-link.active {
-  color: #3b82f6 !important; /* blue accent */
+  color: #0f172a !important;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
-/* Buttons */
-html.light-theme .btn-brand {
-  background-color: #22c55e !important; /* green */
-  border-color: #22c55e !important;
-  color: #fff !important;
+html.light-theme .navbar .nav-link:hover {
+  color: #16a34a !important;
+  transition: color 0.3s ease;
 }
+
+html.light-theme .navbar .nav-link.active {
+  color: #16a34a !important;
+  font-weight: 500;
+  position: relative;
+}
+
+html.light-theme .navbar .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #22c55e, #7c3aed);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+/* Light Theme Get Started Button - Primary CTA */
+html.light-theme .btn-brand {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
 html.light-theme .btn-brand:hover,
 html.light-theme .btn-brand:focus {
-  background-color: #16a34a !important;
-  border-color: #16a34a !important;
+  background: linear-gradient(135deg, #16a34a, #15803d) !important;
+  border: none !important;
   color: #fff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 32px rgba(34, 197, 94, 0.35) !important;
 }
 
-/* Outline buttons */
+/* Light Theme Sign In Button */
 html.light-theme .btn-outline-light {
-  color: #1e293b !important;
-  border-color: #cbd5e1 !important;
+  color: #111827 !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
   background-color: transparent !important;
+  transition: all 0.3s ease;
 }
+
 html.light-theme .btn-outline-light:hover,
 html.light-theme .btn-outline-light:focus {
-  background-color: #e2e8f0 !important;
-  color: #1e293b !important;
-  border-color: #3b82f6 !important;
+  background-color: #f1f5f9 !important;
+  color: #111827 !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Text - Force override all text elements */
@@ -5545,9 +5700,16 @@ html.light-theme html.light-theme h6 {
 
 /* Force all buttons to have proper colors */
 html.light-theme html.light-theme .btn-brand {
-  background-color: #22c55e !important;
-  border-color: #22c55e !important;
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  border: none !important;
   color: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.25) !important;
+}
+
+html.light-theme html.light-theme .btn-brand:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 32px rgba(34, 197, 94, 0.35) !important;
 }
 
 html.light-theme html.light-theme .btn-outline-light {
@@ -5564,19 +5726,40 @@ html.light-theme html.light-theme .btn-outline-light:hover {
 
 /* Navbar brand and theme toggle */
 html.light-theme html.light-theme .navbar-brand {
-  color: #1e293b !important;
+  color: #0f172a !important;
 }
 
 html.light-theme html.light-theme #themeToggleBtn {
-  color: #1e293b !important;
-  border-color: #cbd5e1 !important;
-  background-color: transparent !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
 }
 
 html.light-theme html.light-theme #themeToggleBtn:hover {
-  background-color: #e2e8f0 !important;
-  color: #1e293b !important;
-  border-color: #3b82f6 !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-1px);
+}
+
+/* Theme Toggle Button Styling */
+#themeToggleBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+#themeToggleBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 /* Light theme text color - more selective approach */
