@@ -3,7 +3,7 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero section-dark snap-section py-5 py-lg-6 position-relative overflow-hidden">
+<section class="hero section-dark snap-section position-relative overflow-hidden" style="min-height: 90vh; display: flex; align-items: center;">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
   <div class="floating-cube"></div>
@@ -12,43 +12,49 @@
   <div class="floating-pyramid"></div>
   
   <div class="container position-relative" style="z-index: 3;">
-    <nav class="small text-muted mb-3">
-      <i class="bi bi-house-door me-1"></i>
-      <span class="eyebrow">AI Resume Builder</span>
-    </nav>
-
     <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <h1 class="display-4 fw-bold text-white lh-1 mb-3 sa fade-up" data-sa-delay="0">AI that scores resumes, finds the best candidates, and improves your resume</h1>
-        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="120">
-          Upload resumes for instant scoring, rank candidates against your requirements, detect mistakes, and get AI‑powered improvements.
+      <!-- Left Column: Text Content -->
+      <div class="col-lg-6 order-2 order-lg-1">
+        <h1 class="fw-bold text-white lh-1 mb-4 sa fade-up" data-sa-delay="0">
+          Your AI explains why your resume gets rejected.
+        </h1>
+        <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="120">
+          Upload your resume and let CandidexAI analyze it using AI. It finds mistakes, checks ATS compatibility, and guides you step-by-step to improve your chances of getting interviews.
         </p>
-        <div class="d-flex flex-wrap gap-3 align-items-center sa fade-up" data-sa-delay="180">
-          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg px-4">Check my resume</a>
-          <a id="ctaFindCandidates" href="{% url 'finder_list' %}" class="btn btn-outline-light btn-lg px-4">Find best candidate</a>
+        <div class="d-flex flex-wrap gap-3 align-items-center mb-4 sa fade-up" data-sa-delay="180">
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">
+            Check My Resume (Free)
+          </a>
+          <a href="#how-it-works" class="btn btn-outline-light btn-lg">
+            See how it works
+          </a>
         </div>
-        <div class="d-flex align-items-center gap-2 mt-4 text-muted">
-          <span class="text-warning stars">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-          </span>
-          <small>4.8 from 1,200+ reviews</small>
-        </div>
+        <p class="text-muted small mb-0 sa fade-up" data-sa-delay="240" style="font-size: 0.95rem; opacity: 0.9;">
+          <i class="bi bi-shield-check me-1"></i>
+          No signup required • Takes less than 60 seconds
+        </p>
       </div>
 
-      <div class="col-lg-6">
+      <!-- Right Column: Visual -->
+      <div class="col-lg-6 order-1 order-lg-2">
         <div class="position-relative">
           <div class="bg-orb orb-1"></div>
           <div class="bg-orb orb-2"></div>
-          <div class="img-skin-dark cursor-anim tilt-on-cursor mx-auto preview-hero sa fade-left flip-wrap flip-wrap-sm" data-sa-delay="200">
-            <div class="img-skin-inner">
-              <div class="flip-3d flip-md flip-bordered" id="heroFlip" aria-label="Template preview flipper" aria-live="polite">
-                <div class="flip-3d-inner">
-                  <div class="flip-face front">
-                    <img src="{% static 'img/templates/first.png' %}" alt="Resume template first" onerror="this.onerror=null; this.src='{% static 'img/templates/first.jpg' %}'">
+          <div class="hero-visual-wrapper">
+            <div class="hero-visual">
+              <img src="{% static 'images/hero_mock.png' %}" alt="AI Resume Analysis" class="hero-mockup" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.classList.add('show-placeholder');">
+              <div class="float-card score-card">78 Score</div>
+              <div class="float-card ats-card">✓ ATS Check</div>
+              <div class="float-card issue-card">⚠ 5 Issues Found</div>
+              <div class="hero-placeholder">
+                <div class="text-center position-relative" style="z-index: 1;">
+                  <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(34,197,94,0.3)); border: 2px solid rgba(255,255,255,0.2);">
+                      <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; color: rgba(255,255,255,0.8);"></i>
+                    </div>
                   </div>
-                  <div class="flip-face back">
-                    <img src="{% static 'img/templates/second.png' %}" alt="Resume template second" onerror="this.onerror=null; this.src='{% static 'img/templates/second.jpg' %}'">
-                  </div>
+                  <h3 style="font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;">AI Resume Analysis</h3>
+                  <p style="font-size: 1rem; color: rgba(255,255,255,0.6); margin: 0;">Mock UI Frame</p>
                 </div>
               </div>
             </div>
@@ -68,8 +74,8 @@
   </button>
 </section>
 
-<!-- TEMPLATES AUTO-SCROLL SECTION -->
-<section id="templates-auto" class="section-stars snap-section py-5 py-lg-6 position-relative overflow-hidden">
+<!-- FEATURES SECTION -->
+<section id="features" class="section-stars snap-section py-5 py-lg-6 position-relative overflow-hidden">
   <div class="container position-relative">
     <h2 class="fw-bold display-5 text-center text-white mb-4">Pick a template and build your resume in minutes!</h2>
     
@@ -126,8 +132,8 @@
 </section>
 
 
-<!-- RESUME SCORE CHECKER -->
-<section id="score" class="section-gradient snap-section py-5 py-lg-6">
+<!-- HOW IT WORKS SECTION -->
+<section id="how-it-works" class="section-gradient snap-section py-5 py-lg-6">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
   <div class="floating-sphere"></div>
@@ -465,8 +471,8 @@
   </div>
 </section>
 
-<!-- FEATURE ICON GRID -->
-<section class="section-gradient snap-section py-5 py-lg-6">
+<!-- FEATURES SECTION -->
+<section id="features" class="section-gradient snap-section py-5 py-lg-6">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
   <div class="floating-cube"></div>

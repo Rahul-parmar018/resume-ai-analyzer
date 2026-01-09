@@ -13,6 +13,7 @@
     initScrollReveal();
     initIndustryPills();
     initFaqHelpers();
+    initHeroParallax();
   });
 
   // Tilt effect for preview card
@@ -169,6 +170,36 @@ function initFaqHelpers(){
     });
   });
 }
+
+  // Hero parallax effect
+  function initHeroParallax() {
+    if (prefersReducedMotion) return;
+    
+    // Check if we're on mobile (disable parallax on small screens)
+    const isMobile = window.matchMedia('(max-width: 900px)').matches;
+    if (isMobile) return;
+
+    const hero = document.querySelector('.hero-visual');
+    if (!hero) return;
+
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = (y - centerY) / 40;
+      const rotateY = (x - centerX) / 40;
+
+      hero.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    hero.addEventListener('mouseleave', () => {
+      hero.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+  }
 
 // Hero flipper: enlarge + auto flip every 2s
 document.addEventListener('DOMContentLoaded', () => {
