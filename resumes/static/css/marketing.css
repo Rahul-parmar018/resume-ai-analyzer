@@ -727,19 +727,19 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--heading);
 }
 
-/* Hero Section */
+/* Hero Section - Reduced background gradient intensity for cleaner look */
 .hero {
   position: relative;
   overflow: hidden;
   background:
-  radial-gradient(900px 480px at 100% -10%, rgba(124,58,237,.15), transparent 60%),
-  radial-gradient(900px 520px at 0% 110%, rgba(34,197,94,.18), transparent 55%),
+  radial-gradient(900px 480px at 100% -10%, rgba(124,58,237,.12), transparent 60%), /* Reduced from .15 */
+  radial-gradient(900px 520px at 0% 110%, rgba(34,197,94,.14), transparent 55%), /* Reduced from .18 */
   linear-gradient(180deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   min-height: 90vh;
   display: flex;
   align-items: center;
-  padding-top: 100px;
-  padding-bottom: 100px;
+  padding-top: 110px; /* Increased for more breathing room */
+  padding-bottom: 110px; /* Increased for more breathing room */
 }
 
 /* Hero Visual Wrapper */
@@ -765,8 +765,39 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 24px;
   perspective: 1000px;
   transform-style: preserve-3d;
-  transition: transform 0.1s ease-out;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   isolation: isolate; /* Create new stacking context */
+  cursor: pointer; /* Indicate interactivity */
+  will-change: transform; /* Optimize for animations */
+}
+
+/* Background Glow Breathing Animation - Reduced intensity for cleaner look */
+.hero-visual-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, rgba(34, 197, 94, 0.08) 50%, transparent 70%); /* Reduced opacity */
+  border-radius: 50%;
+  opacity: 0.5; /* Reduced from 0.6 */
+  z-index: 0;
+  animation: glowBreathing 7s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes glowBreathing {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5; /* Reduced from 0.6 */
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04); /* Reduced from 1.05 */
+    opacity: 0.75; /* Reduced from 0.9 */
+  }
 }
 
 /* Hero Mockup Image - Premium Animation */
@@ -783,6 +814,8 @@ h1, h2, h3, h4, h5, h6 {
   animation: heroIn 1s ease-out forwards, floatHero 6s ease-in-out infinite;
   animation-delay: 0.2s, 1.2s;
   transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes heroIn {
@@ -805,6 +838,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Floating UI Cards - Positioned absolutely inside hero-visual container */
+/* Base styles with safe padding bounds and reduced glow */
 .float-card {
   position: absolute !important;
   max-width: 180px;
@@ -816,17 +850,20 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: white;
   font-weight: 600;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); /* Reduced glow by ~25% */
   z-index: 10; /* Above the hero image */
   white-space: nowrap;
   pointer-events: none;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
               box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               opacity 0.4s ease;
   /* Initial state for fade-in animation */
   opacity: 0;
   transform: translateY(20px);
   animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform; /* Optimize for parallax */
+  /* Safe padding bounds - ensure chips never touch edges */
+  min-width: fit-content;
 }
 
 /* Fade-in + slide-up animation for chips */
@@ -842,92 +879,115 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Position each card using top/right/bottom/left - SAFELY INSIDE container */
+/* Score card - MAIN visual focus (larger, brighter, more prominent) */
 .score-card {
   top: 42%;
-  right: 8%;
+  right: 10%; /* Moved in from edge for safe padding */
   animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
              floatCardScore 5s ease-in-out infinite,
              glowPulse 2.5s ease-in-out infinite;
   animation-delay: 0ms, 0.6s, 0.6s; /* Stagger: fade-in, then float, then glow */
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(22, 163, 74, 0.1));
-  border-color: rgba(34, 197, 94, 0.3);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.15)); /* Slightly brighter */
+  border-color: rgba(34, 197, 94, 0.4); /* Stronger border */
   color: #22c55e;
+  transform-origin: center center; /* Ensure parallax works from center */
+  font-size: 14px; /* Slightly larger */
+  padding: 10px 14px; /* More padding for prominence */
+  max-width: 190px; /* Slightly larger */
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.45),
+              0 0 20px rgba(34, 197, 94, 0.3); /* Enhanced glow */
 }
 
+/* Secondary chips - Smaller and more transparent for hierarchy */
 .ats-card {
-  bottom: 18%;
-  left: 8%;
+  bottom: 20%; /* Moved in from edge */
+  left: 10%; /* Moved in from edge */
   animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
              floatCardAts 5s ease-in-out infinite;
   animation-delay: 100ms, 0.7s; /* Stagger: fade-in delay, then float */
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(99, 102, 241, 0.1));
-  border-color: rgba(124, 58, 237, 0.3);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(99, 102, 241, 0.08)); /* More transparent */
+  border-color: rgba(124, 58, 237, 0.25); /* Reduced border */
   color: #a78bfa;
+  opacity: 0.85; /* Slightly more transparent */
+  font-size: 12px; /* Smaller */
+  padding: 7px 11px; /* Less padding */
+  max-width: 160px; /* Smaller */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); /* Reduced glow by ~25% */
 }
 
 .issue-card {
-  top: 16px;
-  right: 16px;
+  top: 20px; /* Increased from 16px for safe padding */
+  right: 20px; /* Increased from 16px for safe padding - ensures never touches edge */
   animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
              floatCardIssue 5s ease-in-out infinite;
   animation-delay: 200ms, 0.8s; /* Stagger: fade-in delay, then float */
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.1));
-  border-color: rgba(251, 146, 60, 0.3);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.12), rgba(249, 115, 22, 0.08)); /* More transparent */
+  border-color: rgba(251, 146, 60, 0.25); /* Reduced border */
   color: #fb923c;
+  opacity: 0.85; /* Slightly more transparent */
+  font-size: 12px; /* Smaller */
+  padding: 7px 11px; /* Less padding */
+  max-width: 160px; /* Smaller */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); /* Reduced glow by ~25% */
 }
 
 .suggestion-card {
-  bottom: 10%;
-  right: 12%;
+  bottom: 12%; /* Moved in from edge */
+  right: 14%; /* Moved in from edge */
   animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards,
              floatCardSuggestion 5s ease-in-out infinite;
   animation-delay: 300ms, 0.9s; /* Stagger: fade-in delay, then float */
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
-  border-color: rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.08)); /* More transparent */
+  border-color: rgba(59, 130, 246, 0.25); /* Reduced border */
   color: #60a5fa;
+  opacity: 0.85; /* Slightly more transparent */
+  font-size: 12px; /* Smaller */
+  padding: 7px 11px; /* Less padding */
+  max-width: 160px; /* Smaller */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); /* Reduced glow by ~25% */
 }
 
-/* Pulsing glow animation for score ring */
+/* Pulsing glow animation for score ring - Reduced intensity by ~25% */
 @keyframes glowPulse {
   0%, 100% {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4),
-                0 0 20px rgba(34, 197, 94, 0.3);
+                0 0 15px rgba(34, 197, 94, 0.25); /* Reduced from 0.3 */
   }
   50% {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(34, 197, 94, 0.5),
-                0 0 40px rgba(34, 197, 94, 0.3);
+                0 0 22px rgba(34, 197, 94, 0.4), /* Reduced from 0.5 */
+                0 0 30px rgba(34, 197, 94, 0.25); /* Reduced from 0.3 */
   }
 }
 
-/* Hero hover effects - lift chips with glow */
+/* Hero hover effects - lift chips with glow (reduced intensity by ~25%) */
 .hero-visual:hover .float-card {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.5),
-              0 0 25px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.45), /* Reduced from 0.5 */
+              0 0 18px rgba(124, 58, 237, 0.15); /* Reduced from 0.2 */
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-visual:hover .score-card {
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.5),
-              0 0 30px rgba(34, 197, 94, 0.4),
-              0 0 45px rgba(34, 197, 94, 0.25);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.45), /* Reduced from 0.5 */
+              0 0 22px rgba(34, 197, 94, 0.3), /* Reduced from 0.4 */
+              0 0 34px rgba(34, 197, 94, 0.2); /* Reduced from 0.25 */
 }
 
 .hero-visual:hover .ats-card {
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.5),
-              0 0 25px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.45), /* Reduced from 0.5 */
+              0 0 18px rgba(124, 58, 237, 0.22); /* Reduced from 0.3 */
 }
 
 .hero-visual:hover .issue-card {
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.5),
-              0 0 25px rgba(251, 146, 60, 0.3);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.45), /* Reduced from 0.5 */
+              0 0 18px rgba(251, 146, 60, 0.22); /* Reduced from 0.3 */
 }
 
 .hero-visual:hover .suggestion-card {
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.5),
-              0 0 25px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.45), /* Reduced from 0.5 */
+              0 0 18px rgba(59, 130, 246, 0.22); /* Reduced from 0.3 */
 }
 
 /* Respect prefers-reduced-motion */
@@ -949,10 +1009,43 @@ h1, h2, h3, h4, h5, h6 {
     transition: none !important;
   }
   
+  .hero-visual-wrapper::before {
+    animation: none !important;
+    opacity: 0.7 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+  
+  .hero-visual,
+  .hero-mockup,
+  .float-card {
+    transform: none !important;
+    will-change: auto !important;
+  }
+  
   @keyframes glowPulse {
     0%, 100% {
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
+  }
+}
+
+/* Disable motion effects on mobile/touch devices */
+@media (max-width: 900px) {
+  .hero-visual-wrapper::before {
+    animation: none !important;
+    opacity: 0.7 !important;
+  }
+  
+  .hero-visual,
+  .hero-mockup,
+  .float-card {
+    will-change: auto !important;
+  }
+}
+
+@media (hover: none) {
+  .hero-visual-wrapper::before {
+    animation: none !important;
   }
 }
 
@@ -1237,28 +1330,28 @@ html.light-theme .hero-placeholder::before {
     max-width: 150px;
   }
   
-  /* Adjust positions and scale for tablets */
+  /* Adjust positions and scale for tablets - with safe padding */
   .score-card {
     top: 40%;
-    right: 6%;
+    right: 8%; /* Safe padding from edge */
     transform: scale(0.9);
   }
   
   .ats-card {
-    bottom: 16%;
-    left: 6%;
+    bottom: 18%; /* Safe padding from edge */
+    left: 8%; /* Safe padding from edge */
     transform: scale(0.9);
   }
   
   .issue-card {
-    top: 12px;
-    right: 12px;
+    top: 16px; /* Safe padding from edge */
+    right: 16px; /* Safe padding from edge */
     transform: scale(0.9);
   }
   
   .suggestion-card {
-    bottom: 8%;
-    right: 10%;
+    bottom: 10%; /* Safe padding from edge */
+    right: 12%; /* Safe padding from edge */
     transform: scale(0.9);
   }
   
@@ -1375,28 +1468,28 @@ html.light-theme .hero-placeholder::before {
     max-width: 110px;
   }
   
-  /* Reposition for mobile - stack vertically, no overlap */
+  /* Reposition for mobile - stack vertically, no overlap - with safe padding */
   .score-card {
     top: 32%;
-    right: 4%;
+    right: 6%; /* Safe padding from edge */
     transform: scale(0.75);
   }
   
   .ats-card {
-    bottom: 12%;
-    left: 4%;
+    bottom: 14%; /* Safe padding from edge */
+    left: 6%; /* Safe padding from edge */
     transform: scale(0.75);
   }
   
   .issue-card {
-    top: 8px;
-    right: 8px;
+    top: 12px; /* Safe padding from edge */
+    right: 12px; /* Safe padding from edge - ensures never touches */
     transform: scale(0.75);
   }
   
   .suggestion-card {
-    bottom: 4%;
-    right: 6%;
+    bottom: 6%; /* Safe padding from edge */
+    right: 8%; /* Safe padding from edge */
     transform: scale(0.75);
   }
   
@@ -1511,21 +1604,23 @@ html.light-theme .hero-placeholder::before {
   z-index: 2;
 }
 
-/* Background Orbs */
+/* Background Orbs - Reduced opacity for cleaner, premium look */
 .bg-orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
   pointer-events: none;
+  opacity: 0.4; /* Reduced from default for less visual noise */
 }
 
+/* Background Orbs - Reduced opacity for cleaner, premium look */
 .orb-1 {
   width: 200px;
   height: 200px;
   background: linear-gradient(45deg, var(--accent), var(--accent-2));
   top: -100px;
   right: -50px;
-  opacity: 0.6;
+  opacity: 0.35; /* Reduced from 0.6 for less visual noise */
 }
 
 .orb-2 {
@@ -1534,7 +1629,7 @@ html.light-theme .hero-placeholder::before {
   background: linear-gradient(45deg, var(--brand), var(--brand-2));
   bottom: -75px;
   left: -25px;
-  opacity: 0.4;
+  opacity: 0.35; /* Reduced from 0.4 for less visual noise */
 }
 
 /* Preview Card Tilt Effect */

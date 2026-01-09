@@ -171,18 +171,46 @@ function initFaqHelpers(){
   });
 }
 
-  // Hero parallax effect
+  // Premium Hero Parallax & 3D Tilt Effect
   function initHeroParallax() {
     if (prefersReducedMotion) return;
     
-    // Check if we're on mobile (disable parallax on small screens)
+    // Check if we're on mobile/touch device (disable parallax on small screens and touch devices)
     const isMobile = window.matchMedia('(max-width: 900px)').matches;
-    if (isMobile) return;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isMobile || isTouchDevice) return;
 
     const hero = document.querySelector('.hero-visual');
-    if (!hero) return;
+    const heroCard = document.querySelector('.hero-mockup');
+    const floatCards = document.querySelectorAll('.float-card');
+    
+    if (!hero || !heroCard) return;
 
-    hero.addEventListener('mousemove', (e) => {
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let targetCardX = 0;
+    let targetCardY = 0;
+    let targetChipX = 0;
+    let targetChipY = 0;
+    let currentTiltX = 0;
+    let currentTiltY = 0;
+    let currentCardX = 0;
+    let currentCardY = 0;
+    let currentChipX = 0;
+    let currentChipY = 0;
+    let rafId = null;
+
+    // Throttle mouse move events
+    let lastMoveTime = 0;
+    const throttleDelay = 16; // ~60fps
+
+    function handleMouseMove(e) {
+      const now = Date.now();
+      if (now - lastMoveTime < throttleDelay) return;
+      lastMoveTime = now;
+
       const rect = hero.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -190,15 +218,113 @@ function initFaqHelpers(){
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotateX = (y - centerY) / 40;
-      const rotateY = (x - centerX) / 40;
+      // Calculate normalized position (-1 to 1)
+      const normalizedX = (x - centerX) / centerX;
+      const normalizedY = (y - centerY) / centerY;
 
-      hero.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
-    });
+      // Target values for smooth interpolation
+      // 3D Tilt: max 5.6 degrees (reduced by 20% from 7)
+      targetX = normalizedX * 5.6;
+      targetY = normalizedY * -5.6; // Inverted for natural feel
 
-    hero.addEventListener('mouseleave', () => {
-      hero.style.transform = 'rotateX(0deg) rotateY(0deg)';
-    });
+      // Card parallax: max 6.4px movement (reduced by 20% from 8)
+      targetCardX = normalizedX * 6.4;
+      targetCardY = normalizedY * 6.4;
+
+      // Chip parallax: max 9.6px movement (reduced by 20% from 12)
+      targetChipX = normalizedX * -9.6; // Inverted for depth effect
+      targetChipY = normalizedY * -9.6;
+    }
+
+    function animate() {
+      // Smooth interpolation (easing)
+      const ease = 0.15;
+      currentTiltX += (targetX - currentTiltX) * ease;
+      currentTiltY += (targetY - currentTiltY) * ease;
+      currentCardX += (targetCardX - currentCardX) * ease;
+      currentCardY += (targetCardY - currentCardY) * ease;
+      currentChipX += (targetChipX - currentChipX) * ease;
+      currentChipY += (targetChipY - currentChipY) * ease;
+
+      // Apply 3D tilt to hero container
+      hero.style.transform = `perspective(1000px) rotateX(${currentTiltY}deg) rotateY(${currentTiltX}deg)`;
+
+      // Apply parallax to card
+      heroCard.style.transform = `translate3d(${currentCardX}px, ${currentCardY}px, 0)`;
+
+      // Apply parallax to floating chips (inverted for depth)
+      floatCards.forEach((chip) => {
+        chip.style.transform = `translate3d(${currentChipX}px, ${currentChipY}px, 0)`;
+      });
+
+      // Continue animation if mouse is over hero
+      if (Math.abs(targetX) > 0.01 || Math.abs(targetY) > 0.01) {
+        rafId = requestAnimationFrame(animate);
+      }
+    }
+
+    function handleMouseEnter() {
+      if (rafId) return; // Already animating
+      rafId = requestAnimationFrame(animate);
+    }
+
+    function handleMouseLeave() {
+      // Smoothly reset to center
+      targetX = 0;
+      targetY = 0;
+      targetCardX = 0;
+      targetCardY = 0;
+      targetChipX = 0;
+      targetChipY = 0;
+
+      // Continue animation until reset
+      function reset() {
+        const ease = 0.1;
+        currentTiltX += (0 - currentTiltX) * ease;
+        currentTiltY += (0 - currentTiltY) * ease;
+        currentCardX += (0 - currentCardX) * ease;
+        currentCardY += (0 - currentCardY) * ease;
+        currentChipX += (0 - currentChipX) * ease;
+        currentChipY += (0 - currentChipY) * ease;
+
+        hero.style.transform = `perspective(1000px) rotateX(${currentTiltY}deg) rotateY(${currentTiltX}deg)`;
+        hero.style.setProperty('--parallax-x', `${currentCardX}px`);
+        hero.style.setProperty('--parallax-y', `${currentCardY}px`);
+        heroCard.style.transform = `translate3d(${currentCardX}px, ${currentCardY}px, 0)`;
+        floatCards.forEach((chip) => {
+          chip.style.setProperty('--chip-parallax-x', `${currentChipX}px`);
+          chip.style.setProperty('--chip-parallax-y', `${currentChipY}px`);
+          chip.style.transform = `translate3d(${currentChipX}px, ${currentChipY}px, 0)`;
+        });
+
+        if (Math.abs(currentTiltX) > 0.01 || Math.abs(currentTiltY) > 0.01 ||
+            Math.abs(currentCardX) > 0.01 || Math.abs(currentCardY) > 0.01 ||
+            Math.abs(currentChipX) > 0.01 || Math.abs(currentChipY) > 0.01) {
+          rafId = requestAnimationFrame(reset);
+        } else {
+          // Fully reset - clear transforms to allow CSS animations to resume
+          hero.style.transform = '';
+          heroCard.style.transform = '';
+          floatCards.forEach((chip) => {
+            chip.style.transform = '';
+            chip.style.removeProperty('--chip-parallax-x');
+            chip.style.removeProperty('--chip-parallax-y');
+          });
+          hero.style.removeProperty('--parallax-x');
+          hero.style.removeProperty('--parallax-y');
+          rafId = null;
+        }
+      }
+
+      if (!rafId) {
+        rafId = requestAnimationFrame(reset);
+      }
+    }
+
+    // Event listeners
+    hero.addEventListener('mousemove', handleMouseMove);
+    hero.addEventListener('mouseenter', handleMouseEnter);
+    hero.addEventListener('mouseleave', handleMouseLeave);
   }
 
 // Hero flipper: enlarge + auto flip every 2s
