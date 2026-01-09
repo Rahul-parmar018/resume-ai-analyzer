@@ -1,6 +1,8 @@
-# Resume AI Analyzer (Django)
+# Resume AI Analyzer - Django-based AI Resume Screening Platform
 
-An AI-powered web application that analyzes, reviews, and scores resumes using machine learning and natural language processing. Get instant feedback on your resume's ATS compatibility, readability, and job-role matching.
+A Django-only, AI-powered web application that analyzes, reviews, and scores resumes using machine learning and natural language processing. Get instant feedback on your resume's ATS compatibility, readability, and job-role matching.
+
+**This is a pure Django project** - no mobile app or Flutter dependencies.
 
 ## ✨ Features
 

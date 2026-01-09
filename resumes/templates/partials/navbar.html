@@ -1,8 +1,12 @@
+{% load static %}
 <nav id="siteNav" class="navbar navbar-expand-lg navbar-dark fixed-top nav-floating py-3" role="navigation" aria-label="Main">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand fw-bold fs-4" href="{% url 'home' %}">
-      <i class="bi bi-file-earmark-person me-2"></i>AI Resume Screener
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}" aria-label="CandidexAI Home">
+      <div class="logo-icon-wrapper">
+        <img src="{% static 'logos/image_logo.png' %}?v=4" alt="Logo Icon" class="logo-icon-img">
+      </div>
+      <span class="logo-text-brand">Candide<span class="logo-text-accent">xAI</span></span>
     </a>
 
     <!-- Mobile toggle -->
