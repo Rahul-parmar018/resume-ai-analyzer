@@ -68,40 +68,40 @@
 
     <div class="how-steps-grid">
       <!-- Step 01: Upload -->
-      <div class="how-step how-step--upload sa fade-up" data-sa-delay="0">
+      <a href="{% url 'score_checker' %}" class="how-step how-step--upload sa fade-up" data-sa-delay="0">
         <div class="how-step-icon">
           <i class="bi bi-cloud-arrow-up"></i>
         </div>
         <h3>Upload Your Resume</h3>
         <p>Upload your PDF or DOCX resume. No signup required.</p>
-      </div>
+      </a>
 
       <!-- Step 02: Analyze -->
-      <div class="how-step how-step--analyze sa fade-up" data-sa-delay="100">
+      <a href="{% url 'score_checker' %}" class="how-step how-step--analyze sa fade-up" data-sa-delay="100">
         <div class="how-step-icon">
           <i class="bi bi-cpu"></i>
         </div>
         <h3>AI Analyzes Everything</h3>
         <p>Our AI checks ATS, skills, keywords, structure, and highlights mistakes.</p>
-      </div>
+      </a>
 
       <!-- Step 03: Score -->
-      <div class="how-step how-step--score sa fade-up" data-sa-delay="200">
+      <a href="{% url 'score_checker' %}" class="how-step how-step--score sa fade-up" data-sa-delay="200">
         <div class="how-step-icon">
           <i class="bi bi-speedometer2"></i>
         </div>
         <h3>Get Your Score</h3>
         <p>Instantly see your score, issues, and detailed improvement suggestions.</p>
-      </div>
+      </a>
 
       <!-- Step 04: Fix -->
-      <div class="how-step how-step--fix sa fade-up" data-sa-delay="300">
+      <a href="{% url 'review_resume' %}" class="how-step how-step--fix sa fade-up" data-sa-delay="300">
         <div class="how-step-icon">
           <i class="bi bi-magic"></i>
         </div>
         <h3>Fix & Download</h3>
         <p>Apply AI fixes and download a professional, interview-ready resume.</p>
-      </div>
+      </a>
     </div>
   </div>
 </section>

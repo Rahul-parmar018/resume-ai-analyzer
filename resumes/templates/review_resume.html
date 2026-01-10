@@ -3,172 +3,289 @@
 {% block content %}
 
 <section class="section-dark py-5">
-  <div class="container-fluid">
-    <div class="row gx-5">
-      <!-- Left: Sticky tall video -->
-      <div class="col-lg-6 d-flex flex-column align-items-center">
-        <div class="sticky-video">
-          <div class="d-flex justify-content-center align-items-center" style="width:100%;">
-            <video id="reviewVideo"
-                   class="review-video-img"
-                   autoplay loop muted playsinline
-                   poster="{% static 'img/templates/Banner.png' %}">
-              <source src="{% static 'img/templates/AI_Resume_Screener_Video_Generation.mp4' %}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <div class="video-caption text-center text-muted mb-4">
-            <i class="bi bi-stars me-1"></i> See how AI reviews your resume in real time.
-          </div>
-        </div>
-      </div>
-      
-      <!-- Right: Sticky form -->
-      <div class="col-lg-6 d-flex flex-column align-items-center">
-        <div class="sticky-form">
-          <h2 class="display-5 fw-bold text-white mb-2">AI Resume Review</h2>
-          <p class="lead text-muted mb-4">Upload your resume for a deep, actionable review. No scores—just real feedback and fixes.</p>
-          <div class="card card-glass p-4 mb-4">
-            <form id="reviewForm" enctype="multipart/form-data">
-              <label class="form-label text-light">Upload your resume (PDF or DOCX)</label>
-              <input id="reviewFile" type="file" class="form-control mb-3" accept=".pdf,.docx" required>
-              <button id="reviewBtn" type="submit" class="btn btn-brand">Review</button>
-              <span id="reviewSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
-            </form>
-            <div id="reviewAlert" class="alert alert-danger d-none mt-2"></div>
-          </div>
-        </div>
-      </div>
+  <div class="container container-custom">
+    <!-- Breadcrumb -->
+    <nav class="mb-4 sa fade-up" aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}"
+            class="text-muted text-decoration-none hover-white">Home</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Resume Review</li>
+      </ol>
+    </nav>
+
+    <div class="text-center mb-5 sa fade-up">
+      <h1 class="display-4 fw-bold text-white mb-3">Resume Review & Improvement</h1>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">
+        Get a comprehensive audit of your resume with detailed feedback on detected issues and AI-powered suggestions
+        for improvement.
+      </p>
     </div>
 
-    <!-- Long, animated info cards (scrollable) -->
-    <div class="row g-5 mt-2">
-      <div class="col-12">
-        <div class="info-card-lg sa fade-up">
-          <div class="info-icon-lg"><i class="bi bi-search"></i></div>
-          <h3 class="fw-bold text-white mb-3">What we check</h3>
-          <ul class="info-list-lg">
-            <li>Presence and clarity of all key sections: <b>Contact, Experience, Skills, Education, Summary</b></li>
-            <li>ATS blockers: images, tables, non-standard fonts, headers/footers, graphics</li>
-            <li>Passive voice, weak verbs, missing metrics, first-person pronouns</li>
-            <li>Formatting: bullet consistency, section order, length, whitespace</li>
-            <li>File type, text extraction quality, and parse errors</li>
-          </ul>
+    <!-- MAIN UPLOAD ZONE -->
+    <div class="mx-auto sa fade-up mb-5" style="max-width: 800px;">
+      <div class="product-card p-4 p-lg-5 text-center">
+        <h3 class="text-white mb-4">Upload Your Resume for Review</h3>
+        <input id="reviewFile" type="file" class="d-none" accept=".pdf,.docx">
+        <div class="d-flex justify-content-center gap-3">
+          <button type="button" class="btn btn-outline-light btn-lg px-4"
+            onclick="document.getElementById('reviewFile').click()">
+            <i class="bi bi-file-earmark-arrow-up me-2"></i> Choose File
+          </button>
+          <button id="reviewBtn" class="btn btn-primary-glow btn-lg px-5">
+            <i class="bi bi-magic me-2"></i> Start AI Review
+          </button>
         </div>
-      </div>
-      <div class="col-12">
-        <div class="info-card-lg sa fade-up" data-sa-delay="120">
-          <div class="info-icon-lg"><i class="bi bi-lightbulb"></i></div>
-          <h3 class="fw-bold text-white mb-3">How it works</h3>
-          <ol class="info-list-lg">
-            <li><b>AI parses your file</b> and extracts all text, even from PDFs and DOCX.</li>
-            <li><b>Detects missing or weak sections</b> and bullets, and flags ATS blockers.</li>
-            <li><b>Analyzes readability</b> (Flesch score, sentence length, jargon, filler).</li>
-            <li><b>Suggests prioritized fixes</b> and section-by-section improvements.</li>
-            <li><b>Shows a "fix this first" list</b> for the fastest impact.</li>
-          </ol>
-        </div>
-      </div>
-      <div class="col-12">
-        <div class="info-card-lg sa fade-up" data-sa-delay="240">
-          <div class="info-icon-lg"><i class="bi bi-shield-check"></i></div>
-          <h3 class="fw-bold text-white mb-3">Why use it?</h3>
-          <ul class="info-list-lg">
-            <li>Spot ATS blockers <b>before</b> you apply—avoid silent rejections.</li>
-            <li>Get <b>actionable, section-by-section feedback</b> (not just a score).</li>
-            <li>Improve clarity and impact in minutes with AI-powered suggestions.</li>
-            <li>See a prioritized "fix first" list for quick wins.</li>
-            <li>Re-upload to see improvements and track progress.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-12">
-        <div class="info-card-lg sa fade-up" data-sa-delay="360">
-          <div class="info-icon-lg"><i class="bi bi-stars"></i></div>
-          <h3 class="fw-bold text-white mb-3">What you get</h3>
-          <ul class="info-list-lg">
-            <li>Health checklist and mistake list (with explanations)</li>
-            <li>Readability meter and section-by-section review</li>
-            <li>Prioritized "fix this first" list for fastest improvement</li>
-            <li>AI-powered suggestions, not just scores</li>
-            <li>All feedback is private—no data is stored after review</li>
-          </ul>
-        </div>
+        <p class="text-muted mt-3 mb-0 small">No signup required. PDF or DOCX supported.</p>
       </div>
     </div>
+  </div> <!-- END OF CONSTRAINED CONTAINER -->
 
-    <!-- Review result -->
-    <div id="reviewResult" class="d-none mt-4">
-      <!-- 3D Level/XP bar and health emoji -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <div class="d-flex align-items-center gap-3 mb-2">
-          <span id="reviewHealthEmoji" class="health-emoji-3d"></span>
-          <div>
-            <div class="fw-bold text-white" id="reviewHealthLabel"></div>
-            <div id="reviewSummary" class="text-muted fs-5"></div>
-            <div class="progress mt-2 progress-3d">
-              <div id="healthBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+  <!-- FLUID WORKSPACE (Full Width Reconstruction) -->
+  <div class="px-4 pb-5">
+    <!-- RESULTS SECTION (True CSS Grid Workspace - 3fr 2fr) -->
+    <div id="reviewResult" class="d-none sa fade-up">
+      <div class="review-workspace">
+
+        <!-- LEFT COLUMN: PROBLEMS AREA (3fr) -->
+        <div class="workspace-panel shadow-lg">
+
+          <!-- DETECTED ISSUES -->
+          <div id="issuesSection" class="mb-5">
+            <div class="d-flex align-items-center justify-content-between mb-4 sticky-top-header">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-octagon-fill text-warning fs-3 me-3"></i>
+                <h2 class="h4 mb-0 text-white fw-bold">Detected Issues</h2>
+              </div>
+              <span id="issueCount" class="badge bg-white/10 text-muted px-3 py-2 rounded-pill">0 Issues Found</span>
+            </div>
+
+            <div id="issuesList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- AI SUGGESTIONS -->
+          <div id="suggestionsSection">
+            <div class="d-flex align-items-center mb-4">
+              <i class="bi bi-lightbulb-fill text-success fs-3 me-3"></i>
+              <h2 class="h4 mb-0 text-white fw-bold">AI Suggestions</h2>
+            </div>
+
+            <div id="suggestionsList" class="d-flex flex-column gap-3">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: SOLUTION AREA (2fr) -->
+        <div class="workspace-solution-area">
+          <div class="resume-preview-container h-100">
+            <div class="p-3 bg-light d-flex justify-content-between align-items-center border-bottom">
+              <div class="d-flex align-items-center text-dark small fw-bold">
+                <i class="bi bi-file-pdf-fill text-danger me-2"></i> improved_resume_preview.pdf
+              </div>
+              <div class="d-flex gap-1">
+                <div class="btn btn-sm btn-light border p-1"><i class="bi bi-zoom-in"></i></div>
+                <div class="btn btn-sm btn-light border p-1"><i class="bi bi-printer"></i></div>
+              </div>
+            </div>
+
+            <div class="position-relative h-100" style="min-height: 800px;">
+              <!-- Blurred Resume Content -->
+              <div class="resume-preview-blur p-4 h-100"
+                style="color: #333; font-size: 8px; line-height: 1.6; background: #fff;">
+                <div class="text-center mb-5 pb-4 border-bottom">
+                  <div class="h5 fw-bold mb-1">ALEX R. CANDIDATE</div>
+                  <div>New York, NY | +1 555 123 4567 | alex.c@email.com</div>
+                </div>
+                <div class="mb-4">
+                  <div class="fw-bold border-bottom mb-2 pb-1 text-uppercase tracking-wider">Professional Summary
+                  </div>
+                  <p>Results-driven Software Engineer with 5+ years of experience in AI-driven development. Proven
+                    track record of improving system efficiency by 30% through optimized algorithms.</p>
+                </div>
+                <div class="mb-4">
+                  <div class="fw-bold border-bottom mb-2 pb-1 text-uppercase tracking-wider">Experience</div>
+                  <div class="d-flex justify-content-between mb-1 fw-bold"><span>Senior AI Developer | TechFlow
+                      Inc.</span><span>2021 - Present</span></div>
+                  <ul class="ps-3 mb-3">
+                    <li>Spearheaded the migration of legacy systems to modern architecture...</li>
+                    <li>Orchestrated a team of 10 developers for AI analytics...</li>
+                    <li>Developed proprietary algorithms resulting in 20% growth...</li>
+                  </ul>
+                  <div class="d-flex justify-content-between mb-1 fw-bold"><span>Software Engineer |
+                      DataScale</span><span>2018 - 2021</span></div>
+                  <ul class="ps-3">
+                    <li>Optimized cloud infrastructure spending by $50k/month...</li>
+                    <li>Automated CI/CD pipelines reducing deployment time by 40%...</li>
+                  </ul>
+                </div>
+                <div class="mb-4">
+                  <div class="fw-bold border-bottom mb-2 pb-1 text-uppercase tracking-wider">Education</div>
+                  <div class="d-flex justify-content-between mb-1 fw-bold"><span>BS Computer Science | Goal
+                      University</span><span>2014 - 2018</span></div>
+                </div>
+              </div>
+
+              <!-- Premium Lock Overlay -->
+              <div class="premium-lock-overlay">
+                <div class="lock-shield-icon">
+                  <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <h4 class="text-white mb-2 fw-bold">Detailed Results Locked</h4>
+                <p class="text-muted small mb-4 px-3">Upgrade to Premium to unlock the full improved resume and
+                  actionable fixes for every detected issue.</p>
+                <button class="btn btn-unlock-premium px-5 py-3 fs-6">
+                  <i class="bi bi-lightning-charge-fill me-2"></i> Unlock Full Report
+                </button>
+                <div class="mt-5 pt-4 border-top border-white/10 w-100">
+                  <button id="newReviewBtn"
+                    class="btn btn-outline-light btn-sm w-100 opacity-50 hover-opacity-100 transition-all">
+                    <i class="bi bi-arrow-repeat me-2"></i> Start New Review
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- 3D flip cards for mistakes/fixes -->
-      <div class="row g-4 mb-4" id="mistakeCards"></div>
-
-      <!-- 3D Health checklist -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-clipboard-check me-1"></i> Resume Health</h5>
-        <ul id="reviewChecklist" class="mb-0"></ul>
-      </div>
-
-      <!-- 3D Section-by-section stepper -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-list-check me-1"></i> Section-by-section</h5>
-        <ul id="reviewSections" class="section-stepper"></ul>
-      </div>
-
-      <!-- 3D Readability meter -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-bar-chart me-1"></i> Readability</h5>
-        <div class="d-flex align-items-center gap-3">
-          <div id="reviewReadability" class="fs-4"></div>
-          <div id="readMeterLabel" class="badge"></div>
-          <span class="ms-2" data-bs-toggle="tooltip" title="Short sentences and simple words improve recruiter response."><i class="bi bi-info-circle"></i></span>
-        </div>
-        <div class="progress mt-2 progress-3d">
-          <div id="readMeterBar" class="progress-bar" role="progressbar" style="width:0%"></div>
-        </div>
-        <div class="small text-muted mt-2">Flesch Reading Ease: 90+ (easy), 60–89 (good), 30–59 (hard), &lt;30 (very hard)</div>
-      </div>
-
-      <!-- 3D Fix this first: quest/mission list -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-lightbulb me-1"></i> Fix this first</h5>
-        <ul id="reviewFixFirst" class="quest-list"></ul>
-      </div>
-
-      <!-- 3D Suggestions card -->
-      <div class="card card-3d p-4 mb-4 sa fade-up" id="suggestionsCard" style="display:none;">
-        <h5 class="fw-bold text-white mb-3"><i class="bi bi-lightbulb me-2"></i> Suggestions to Improve Your Resume</h5>
-        <ul id="suggestionsList" class="text-muted"></ul>
-      </div>
-
-      <!-- 3D What recruiters see (ATS parse) -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-eye me-1"></i> What recruiters see</h5>
-        <pre id="atsParse" class="ats-parse"></pre>
-      </div>
-
-      <!-- 3D What to do next -->
-      <div class="card card-3d p-4 mb-4 sa fade-up">
-        <h5 class="fw-bold text-white mb-2"><i class="bi bi-arrow-right-circle me-1"></i> What to do next</h5>
-        <ul id="reviewNextSteps" class="mb-0"></ul>
-        <button id="improveResumeBtn" class="btn btn-brand btn-lg mt-3 btn-3d">Improve your resume</button>
       </div>
     </div>
   </div>
 </section>
 
 <script defer src="{% static 'js/review_resume.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const reviewBtn = document.getElementById('reviewBtn');
+    const reviewResult = document.getElementById('reviewResult');
+    const reviewFile = document.getElementById('reviewFile');
+    const uploadZone = document.querySelector('.upload-zone-wrapper') || document.querySelector('.product-card.mb-5');
+
+    // Function to populate and show results
+    const revealResults = (data) => {
+      if (!data) return;
+
+      // Update Detected Issues
+      const issuesList = document.getElementById('issuesList');
+      const issueCount = document.getElementById('issueCount');
+      if (issuesList && data.issues) {
+        issuesList.innerHTML = '';
+        issueCount.textContent = `${data.issues.length} Issues Found`;
+
+        data.issues.forEach(issue => {
+          const severityClass = issue.severity.toLowerCase(); // high, medium, low
+          const card = document.createElement('div');
+          card.className = `issue-card issue-card--${severityClass} mb-4`;
+          card.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="text-white h6 mb-0">${issue.title}</h5>
+              <span class="badge bg-${severityClass === 'high' ? 'danger' : severityClass === 'medium' ? 'warning' : 'info'}-subtle text-${severityClass === 'high' ? 'danger' : severityClass === 'medium' ? 'warning' : 'info'}">${issue.severity} Severity</span>
+            </div>
+            <p class="text-muted small mb-0">${issue.desc}</p>
+          `;
+          issuesList.appendChild(card);
+        });
+      }
+
+      // Update Suggestions
+      const suggestionsList = document.getElementById('suggestionsList');
+      if (suggestionsList && data.suggestions) {
+        suggestionsList.innerHTML = data.suggestions.map(s => {
+          // Random icon for variety
+          const icons = ['bi-plus-lg', 'bi-arrow-up', 'bi-check2', 'bi-lightning-fill'];
+          const icon = icons[Math.floor(Math.random() * icons.length)];
+          return `
+            <div class="suggestion-item">
+              <div class="suggestion-icon"><i class="bi ${icon}"></i></div>
+              <div class="text-muted small">${s}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Reveal results
+      reviewResult.classList.remove('d-none');
+      if (uploadZone) uploadZone.style.display = 'none'; // Hide upload zone on auto-load
+
+      // Trigger animations
+      const fadeElems = reviewResult.querySelectorAll('.sa');
+      fadeElems.forEach((el, i) => {
+        setTimeout(() => el.classList.add('in'), i * 100);
+      });
+      reviewResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Reset function
+    const newReviewBtn = document.getElementById('newReviewBtn');
+    if (newReviewBtn) {
+      newReviewBtn.addEventListener('click', () => {
+        localStorage.removeItem('simulatedAnalysis');
+        window.location.reload();
+      });
+    }
+
+    // Check for simulated data from Score Checker
+    const simData = localStorage.getItem('simulatedAnalysis');
+    if (simData) {
+      console.log('Passed simulation data found');
+      const data = JSON.parse(simData);
+      revealResults(data);
+      // Optional: Clear after use or keep for persistence?
+      // localStorage.removeItem('simulatedAnalysis'); 
+    }
+
+    if (reviewBtn) {
+      reviewBtn.addEventListener('click', () => {
+        // Fake file check
+        if (!reviewFile.files.length && !reviewBtn.getAttribute('data-simulated')) {
+          // If no file and not already simulating, we'll allow it for demo purposes
+          console.log('No file selected, proceeding with demo simulation');
+        }
+
+        reviewBtn.disabled = true;
+        const originalText = reviewBtn.innerHTML;
+
+        // Simulation stages
+        const stages = [
+          { t: '⚡ Parsing document...', d: 1000 },
+          { t: '🧪 Checking ATS health...', d: 1200 },
+          { t: '✍️ Identifying weak verbs...', d: 1500 },
+          { t: '💡 Generating suggestions...', d: 1000 }
+        ];
+
+        let currentStage = 0;
+        const runStage = () => {
+          if (currentStage < stages.length) {
+            reviewBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> ${stages[currentStage].t}`;
+            setTimeout(() => {
+              currentStage++;
+              runStage();
+            }, stages[currentStage].d);
+          } else {
+            reviewBtn.innerHTML = originalText;
+            reviewBtn.disabled = false;
+
+            // Just reveal hardcoded ones if no simData
+            if (!localStorage.getItem('simulatedAnalysis')) {
+              reviewResult.classList.remove('d-none');
+              reviewResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+              // Trigger animations if any (like fade-up)
+              const fadeElems = reviewResult.querySelectorAll('.sa');
+              fadeElems.forEach((el, i) => {
+                setTimeout(() => el.classList.add('in'), i * 150);
+              });
+            } else {
+              revealResults(JSON.parse(localStorage.getItem('simulatedAnalysis')));
+            }
+          }
+        };
+
+        runStage();
+      });
+    }
+  });
+</script>
 {% endblock %}
