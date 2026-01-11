@@ -1156,6 +1156,20 @@ h6 {
   z-index: 2 !important;
 }
 
+/* Visualize Results Mascot Integration */
+.visualize-right {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mascot-visual {
+  width: 580px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  filter: drop-shadow(0 0 40px rgba(0, 255, 180, 0.25)) !important;
+}
+
 .hero-content {
   position: relative;
   z-index: 5;
