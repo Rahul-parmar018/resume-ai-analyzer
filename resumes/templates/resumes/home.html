@@ -2022,4 +2022,195 @@
   </div>
 </section>
 
+
+<!-- FINAL CTA SECTION -->
+<style>
+  .final-cta-section {
+    padding: 140px 0;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .final-cta-bg-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .final-cta-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .final-cta-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 850;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.04em;
+  }
+
+  .final-cta-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    margin-bottom: 56px;
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  .final-cta-bullets {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+  }
+
+  .final-cta-bullet {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .final-cta-bullet i {
+    color: #10b981;
+    font-size: 1.25rem;
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+  }
+
+  .final-cta-btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .btn-cta-primary {
+    padding: 20px 48px;
+    font-size: 1.25rem;
+    font-weight: 750;
+    color: #fff;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-cta-primary:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.6);
+    color: #fff;
+  }
+
+  .btn-cta-secondary {
+    padding: 20px 48px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(12px);
+  }
+
+  .btn-cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .final-cta-footer-info {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 767.98px) {
+    .final-cta-btns {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .btn-cta-primary,
+    .btn-cta-secondary {
+      width: 100%;
+      padding: 18px 32px;
+    }
+
+    .final-cta-section {
+      padding: 100px 0;
+    }
+
+    .final-cta-bullets {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+</style>
+
+<section id="final-cta" class="final-cta-section">
+  <div class="final-cta-bg-glow"></div>
+  <div class="container">
+    <div class="final-cta-content sa fade-up">
+      <h2 class="final-cta-title">Stop Getting Rejected by ATS. Start Getting Interviews.</h2>
+      <p class="final-cta-subtitle">
+        Upload your resume and get instant, AI-powered feedback that shows exactly what to fix, what to improve, and how
+        to beat hiring systems.
+      </p>
+
+      <div class="final-cta-bullets">
+        <div class="final-cta-bullet">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>No signup required</span>
+        </div>
+        <div class="final-cta-bullet">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Takes less than 60 seconds</span>
+        </div>
+        <div class="final-cta-bullet">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Used by students & professionals</span>
+        </div>
+        <div class="final-cta-bullet">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>ATS + Recruiter aligned analysis</span>
+        </div>
+      </div>
+
+      <div class="final-cta-btns">
+        <a href="{% url 'score_checker' %}" class="btn-cta-primary">Check My Resume Free</a>
+        <a href="#how-it-works" class="btn-cta-secondary">See How It Works</a>
+      </div>
+
+      <p class="final-cta-footer-info">Free • No credit card • Instant results</p>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
