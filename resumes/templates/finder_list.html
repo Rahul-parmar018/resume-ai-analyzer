@@ -4,19 +4,21 @@
 
 <section class="section-dark py-5">
   <div class="container">
-    
+
     <!-- Simple hero with one button -->
     <div class="finder-hero text-center">
       <h2 class="text-white fw-bold mb-2">Find Best Candidates</h2>
       <p class="text-muted mb-4">Upload resumes, analyze, and rank the best matches with AI.</p>
-      <button id="newReqBtn" type="button" class="btn btn-brand btn-lg" data-bs-toggle="modal" data-bs-target="#newReqModal">
+      <button id="newReqBtn" type="button" class="btn btn-brand btn-lg" data-bs-toggle="modal"
+        data-bs-target="#newReqModal">
         New requisition
       </button>
     </div>
 
     <!-- Powered by AI -->
     <div class="text-center mt-5">
-      <div class="text-muted small mb-2">A smart pipeline that reads, understands, and improves your resume screening.</div>
+      <div class="text-muted small mb-2">A smart pipeline that reads, understands, and improves your resume screening.
+      </div>
       <div class="ai-divider"></div>
     </div>
 
@@ -79,7 +81,8 @@
               <li><strong>Readability (15%)</strong> — clarity, concision, tone.</li>
               <li><strong>Structure (15%)</strong> — bullet quality, layout, tense consistency.</li>
             </ul>
-            <code class="d-inline-block small">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</code>
+            <code
+              class="d-inline-block small">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</code>
           </div>
         </div>
       </div>
@@ -117,7 +120,8 @@
 
           <div class="col-md-4">
             <label class="form-label text-light">Min experience (years)</label>
-            <input id="nrMinExp" type="number" inputmode="numeric" min="0" step="1" class="form-control fx-field" value="0">
+            <input id="nrMinExp" type="number" inputmode="numeric" min="0" step="1" class="form-control fx-field"
+              value="0">
             <div class="invalid-feedback" id="nrMinErr">Enter a valid non‑negative number.</div>
           </div>
           <div class="col-md-8">
@@ -137,21 +141,31 @@
             <div class="col-md-4">
               <label class="form-label text-light">Role type</label>
               <select id="advType" class="form-select fx-field">
-                <option value="">—</option><option>Full‑time</option><option>Contract</option><option>Intern</option><option>Part‑time</option>
+                <option value="">—</option>
+                <option>Full‑time</option>
+                <option>Contract</option>
+                <option>Intern</option>
+                <option>Part‑time</option>
               </select>
             </div>
             <div class="col-md-4">
               <label class="form-label text-light">Salary min (USD)</label>
-              <input id="advSalaryMin" type="number" min="0" step="1000" class="form-control fx-field" placeholder="e.g., 80000">
+              <input id="advSalaryMin" type="number" min="0" step="1000" class="form-control fx-field"
+                placeholder="e.g., 80000">
             </div>
             <div class="col-md-4">
               <label class="form-label text-light">Salary max (USD)</label>
-              <input id="advSalaryMax" type="number" min="0" step="1000" class="form-control fx-field" placeholder="e.g., 120000">
+              <input id="advSalaryMax" type="number" min="0" step="1000" class="form-control fx-field"
+                placeholder="e.g., 120000">
             </div>
             <div class="col-md-6">
               <label class="form-label text-light">Priority</label>
               <select id="advPriority" class="form-select fx-field">
-                <option value="">—</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                <option value="">—</option>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Critical</option>
               </select>
             </div>
             <div class="col-md-6">
@@ -172,6 +186,174 @@
     </div>
   </div>
 </div>
+
+
+<!-- VISUALIZATION & CSV EXPORT -->
+<section class="section-dark py-5 border-top border-white-5">
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-8">
+        <h2 class="fw-bold display-5 mb-3 text-white">Visualize Results & Export Data</h2>
+        <p class="lead text-muted">Get deep insights from your candidate analysis with smart charts, rankings, and
+          structured data exports.
+        </p>
+      </div>
+    </div>
+
+    <!-- Insights row -->
+    <div class="row g-4 metric-grid mb-5">
+      <div class="col-md-4">
+        <div class="metric-card sa fade-up">
+          <div class="metric-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <h3 class="metric-title text-white">Score Distribution</h3>
+          <p class="metric-desc">See overall score spread with suggested cutoffs (e.g., 75 / 85) to shortlist
+            high-quality talent quickly.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="metric-card sa fade-up" data-sa-delay="100">
+          <div class="metric-icon">
+            <i class="bi bi-tags"></i>
+          </div>
+          <h3 class="metric-title text-white">Keyword Gaps</h3>
+          <p class="metric-desc">View which must‑have keywords are missing most frequently across all submitted resumes.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="metric-card sa fade-up" data-sa-delay="200">
+          <div class="metric-icon">
+            <i class="bi bi-trophy"></i>
+          </div>
+          <h3 class="metric-title text-white">Ranked Shortlist</h3>
+          <p class="metric-desc">Get a prioritized list with scores, top strengths, and critical gaps—ready to share
+            with your team.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSV export schema -->
+    <div class="schema-card mt-5 sa fade-up" data-sa-delay="150">
+      <div class="schema-head p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-filetype-csv fs-4 text-brand"></i>
+          <h4 class="mb-0 text-white">Standard CSV Export Fields</h4>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button id="copyCsvHeaders" class="btn btn-sm btn-outline-light copy-button" type="button"
+            data-headers="candidate_id, file_name, name, email, phone, location, years_experience, total_score, match_score, skills_score, ats_score, readability_score, keywords_present, keywords_missing, top_titles, seniority, education_level, parsed_success, notes">
+            Copy Headers
+          </button>
+          <a class="btn btn-sm btn-brand" href="{% static 'samples/candidate_export_sample.csv' %}" download>
+            Download Sample
+          </a>
+        </div>
+      </div>
+
+      <div class="schema-body p-4">
+        <div class="schema-code mb-4">
+          <pre id="csvHeadersText"
+            class="copyable-field p-3 bg-black rounded border border-white-10"><code>candidate_id, file_name, name, email, phone, location, years_experience, total_score, match_score, skills_score, ats_score, readability_score, keywords_present, keywords_missing, top_titles, seniority, education_level, parsed_success, notes</code></pre>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-borderless align-middle schema-table mb-0">
+            <thead>
+              <tr class="border-bottom border-white-10">
+                <th style="width: 220px;" class="pb-3">Field</th>
+                <th class="pb-3">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="py-3"><code>candidate_id</code></td>
+                <td class="text-muted">Stable internal identifier for each parsed candidate.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>file_name</code></td>
+                <td class="text-muted">Original filename as uploaded.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>name</code></td>
+                <td class="text-muted">Detected full name (if extractable).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>email</code> / <code>phone</code></td>
+                <td class="text-muted">Primary contact info (normalized if possible).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>location</code></td>
+                <td class="text-muted">Detected city/region when present.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>years_experience</code></td>
+                <td class="text-muted">Estimated total years relevant experience.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>total_score</code></td>
+                <td class="text-muted">Overall composite score (0–100).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>match_score</code></td>
+                <td class="text-muted">Requirement match based on your must‑have/optional skills.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>skills_score</code></td>
+                <td class="text-muted">Coverage of required skills/keywords.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>ats_score</code></td>
+                <td class="text-muted">ATS readiness (structure, sections, formatting).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>readability_score</code></td>
+                <td class="text-muted">Clarity and concision of text.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>keywords_present</code></td>
+                <td class="text-muted">Semicolon‑separated list of matched keywords.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>keywords_missing</code></td>
+                <td class="text-muted">Semicolon‑separated list of missing must‑haves.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>top_titles</code></td>
+                <td class="text-muted">Best‑fit job titles inferred (semicolon‑separated).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>seniority</code></td>
+                <td class="text-muted">Predicted seniority (e.g., Junior, Mid, Senior, Lead).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>education_level</code></td>
+                <td class="text-muted">Highest level detected (e.g., Bachelors, Masters).</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>parsed_success</code></td>
+                <td class="text-muted">Boolean flag for parser success.</td>
+              </tr>
+              <tr>
+                <td class="py-3"><code>notes</code></td>
+                <td class="text-muted">Optional comments or parsing notes.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="schema-foot mt-4 pt-3 border-top border-white-10 text-muted small d-flex gap-3">
+          <span>Delimiter: <strong>Comma (,)</strong></span>
+          <span>Keywords: <strong>Semicolon (;)</strong></span>
+          <span>Encoding: <strong>UTF‑8</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script defer src="{% static 'js/finder_create.js' %}?v=3"></script>
 {% endblock %}

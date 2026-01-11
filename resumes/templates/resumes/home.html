@@ -628,6 +628,211 @@
   </div>
 </section>
 
+
+<!-- WHY CANDIDEXAI SECTION -->
+<style>
+  .why-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .why-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px;
+  }
+
+  .why-header h2 {
+    color: #fff;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .why-header p {
+    color: var(--muted);
+    font-size: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .why-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 40px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .why-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .why-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .why-card:hover::before {
+    opacity: 1;
+  }
+
+  .why-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .why-card:hover .why-icon {
+    background: #fff;
+    color: #000;
+    transform: scale(1.1);
+  }
+
+  .why-card h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .why-card p {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 1199.98px) {
+    .why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .why-header h2 {
+      font-size: 2.75rem;
+    }
+
+    .why-section {
+      padding: 70px 0;
+    }
+  }
+</style>
+
+<section class="why-section">
+  <!-- Decorative Glows -->
+  <div
+    style="position: absolute; top: 0; left: 50%; translate: -50% -50%; width: 800px; height: 400px; background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative">
+    <div class="why-header sa fade-up">
+      <h2 class="sa fade-up">Why CandidexAI?</h2>
+      <p class="sa fade-up" data-sa-delay="100">Built for modern hiring systems. Designed to improve real career
+        outcomes.</p>
+    </div>
+
+    <div class="why-grid">
+      <!-- Card 1 -->
+      <article class="why-card sa fade-up" data-sa-delay="0">
+        <div class="why-icon">
+          <i class="bi bi-diagram-3"></i>
+        </div>
+        <h3>Not Just Keyword Matching</h3>
+        <p>Most resume tools only count keywords. CandidexAI uses AI to analyze your resume’s structure, skills, ATS
+          compatibility, readability, and real hiring signals — giving you a complete and accurate resume evaluation.
+        </p>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="why-card sa fade-up" data-sa-delay="100">
+        <div class="why-icon">
+          <i class="bi bi-person-check"></i>
+        </div>
+        <h3>ATS + Recruiter Aligned</h3>
+        <p>Your resume is reviewed the same way applicant tracking systems (ATS) and human recruiters actually screen
+          resumes, so you know exactly how it will perform in real hiring processes.</p>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="why-card sa fade-up" data-sa-delay="200">
+        <div class="why-icon">
+          <i class="bi bi-lightning-charge"></i>
+        </div>
+        <h3>Actionable, Not Generic</h3>
+        <p>No vague advice or useless tips. Every issue comes with clear, specific, and practical recommendations you
+          can apply immediately to improve your resume.</p>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="why-card sa fade-up" data-sa-delay="300">
+        <div class="why-icon">
+          <i class="bi bi-briefcase"></i>
+        </div>
+        <h3>Built for Real Jobs</h3>
+        <p>CandidexAI is optimized for real job descriptions, real company requirements, and real recruitment workflows
+          — not template-based guesses.</p>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="why-card sa fade-up" data-sa-delay="400">
+        <div class="why-icon">
+          <i class="bi bi-graph-up"></i>
+        </div>
+        <h3>Transparent Resume Scoring</h3>
+        <p>You can see exactly how your resume score is calculated across ATS compatibility, skills, keywords,
+          structure, and readability — no black-box scoring and no hidden logic.</p>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="why-card sa fade-up" data-sa-delay="500">
+        <div class="why-icon">
+          <i class="bi bi-trophy"></i>
+        </div>
+        <h3>Career-Focused AI</h3>
+        <p>CandidexAI is built to help you get more interviews, not just generate reports. Every analysis is focused on
+          improving your real-world hiring results.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- STUDENTS & JOB SEEKERS SECTION -->
 <style>
   .students-section {
@@ -978,209 +1183,7 @@
   </div>
 </section>
 
-<!-- WHY CANDIDEXAI SECTION -->
-<style>
-  .why-section {
-    background-color: var(--bg);
-    padding: 100px 0;
-    position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
 
-  .why-header {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 60px;
-  }
-
-  .why-header h2 {
-    color: #fff;
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-    letter-spacing: -0.02em;
-  }
-
-  .why-header p {
-    color: var(--muted);
-    font-size: 1.25rem;
-    line-height: 1.6;
-  }
-
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-  }
-
-  .why-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 24px;
-    padding: 40px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .why-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
-    opacity: 0;
-    transition: opacity 0.5s;
-    pointer-events: none;
-  }
-
-  .why-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  }
-
-  .why-card:hover::before {
-    opacity: 1;
-  }
-
-  .why-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 24px;
-    margin-bottom: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-  }
-
-  .why-card:hover .why-icon {
-    background: #fff;
-    color: #000;
-    transform: scale(1.1);
-  }
-
-  .why-card h3 {
-    color: #fff;
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-
-  .why-card p {
-    color: var(--muted);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 0;
-  }
-
-  @media (max-width: 1199.98px) {
-    .why-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 767.98px) {
-    .why-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .why-header h2 {
-      font-size: 2.75rem;
-    }
-
-    .why-section {
-      padding: 70px 0;
-    }
-  }
-</style>
-
-<section class="why-section">
-  <!-- Decorative Glows -->
-  <div
-    style="position: absolute; top: 0; left: 50%; translate: -50% -50%; width: 800px; height: 400px; background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 70%); pointer-events: none;">
-  </div>
-
-  <div class="container position-relative">
-    <div class="why-header sa fade-up">
-      <h2 class="sa fade-up">Why CandidexAI?</h2>
-      <p class="sa fade-up" data-sa-delay="100">Built for modern hiring systems. Designed to improve real career
-        outcomes.</p>
-    </div>
-
-    <div class="why-grid">
-      <!-- Card 1 -->
-      <article class="why-card sa fade-up" data-sa-delay="0">
-        <div class="why-icon">
-          <i class="bi bi-diagram-3"></i>
-        </div>
-        <h3>Not Just Keyword Matching</h3>
-        <p>Most resume tools only count keywords. CandidexAI uses AI to analyze your resume’s structure, skills, ATS
-          compatibility, readability, and real hiring signals — giving you a complete and accurate resume evaluation.
-        </p>
-      </article>
-
-      <!-- Card 2 -->
-      <article class="why-card sa fade-up" data-sa-delay="100">
-        <div class="why-icon">
-          <i class="bi bi-person-check"></i>
-        </div>
-        <h3>ATS + Recruiter Aligned</h3>
-        <p>Your resume is reviewed the same way applicant tracking systems (ATS) and human recruiters actually screen
-          resumes, so you know exactly how it will perform in real hiring processes.</p>
-      </article>
-
-      <!-- Card 3 -->
-      <article class="why-card sa fade-up" data-sa-delay="200">
-        <div class="why-icon">
-          <i class="bi bi-lightning-charge"></i>
-        </div>
-        <h3>Actionable, Not Generic</h3>
-        <p>No vague advice or useless tips. Every issue comes with clear, specific, and practical recommendations you
-          can apply immediately to improve your resume.</p>
-      </article>
-
-      <!-- Card 4 -->
-      <article class="why-card sa fade-up" data-sa-delay="300">
-        <div class="why-icon">
-          <i class="bi bi-briefcase"></i>
-        </div>
-        <h3>Built for Real Jobs</h3>
-        <p>CandidexAI is optimized for real job descriptions, real company requirements, and real recruitment workflows
-          — not template-based guesses.</p>
-      </article>
-
-      <!-- Card 5 -->
-      <article class="why-card sa fade-up" data-sa-delay="400">
-        <div class="why-icon">
-          <i class="bi bi-graph-up"></i>
-        </div>
-        <h3>Transparent Resume Scoring</h3>
-        <p>You can see exactly how your resume score is calculated across ATS compatibility, skills, keywords,
-          structure, and readability — no black-box scoring and no hidden logic.</p>
-      </article>
-
-      <!-- Card 6 -->
-      <article class="why-card sa fade-up" data-sa-delay="500">
-        <div class="why-icon">
-          <i class="bi bi-trophy"></i>
-        </div>
-        <h3>Career-Focused AI</h3>
-        <p>CandidexAI is built to help you get more interviews, not just generate reports. Every analysis is focused on
-          improving your real-world hiring results.</p>
-      </article>
-    </div>
-  </div>
-</section>
 
 
 
@@ -1239,471 +1242,115 @@
 </section>
 
 
-<!-- HOW IT WORKS SECTION -->
-<section id="how-it-works" class="section-gradient snap-section py-5 py-lg-6">
-  <!-- 3D Background Elements -->
-  <div class="floating-cube"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-pyramid"></div>
 
-  <div class="container position-relative" style="z-index: 3;">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-6">
-        <h2 class="display-5 fw-bold mb-4 sa fade-up" data-sa-delay="0">Resume Score Checker</h2>
-        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="100">
-          Get instant scoring and detailed analysis of your resume with actionable insights to improve your chances.
-        </p>
-        <ul class="list-unstyled" data-sa-stagger="80">
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Overall score + subscores (ATS, match, skills, readability, structure)</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Missing keywords and exact sections to fix</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Instant tips and exportable report</span>
-          </li>
-        </ul>
-        <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="200">Upload and
-          score</a>
-      </div>
-      <div class="col-lg-6">
-        <div class="text-center">
-          <div class="img-skin-dark cursor-anim tilt-on-cursor sa fade-right" data-sa-delay="150">
-            <div class="img-skin-inner">
-              <img class="img-fluid rounded-3" src="{% static 'img/templates/Tailor.webp' %}"
-                alt="Resume scoring feature" onerror="this.style.display='none'">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- RESUME REVIEW -->
-<section id="review" class="section-light snap-section py-5 py-lg-6">
+<!-- EVERYTHING YOU CAN DO WITH CANDIDEXAI SECTION -->
+<section id="capabilities" class="section-gradient snap-section py-5 py-lg-6 position-relative overflow-hidden">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
   <div class="floating-sphere"></div>
   <div class="floating-pyramid"></div>
 
   <div class="container position-relative" style="z-index: 3;">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-6">
-        <div class="text-center">
-          <div class="img-skin-dark cursor-anim tilt-on-cursor sa fade-left" data-sa-delay="150">
-            <div class="img-skin-inner">
-              <img class="img-fluid rounded-3" src="{% static 'img/templates/ATS.webp' %}"
-                alt="Resume mistake finder feature" onerror="this.style.display='none'">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <h2 class="display-5 fw-bold mb-4 sa fade-up" data-sa-delay="0">Find resume mistakes instantly</h2>
-        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="100">
-          Detect and flag common resume issues that could hurt your chances of landing interviews.
-        </p>
-        <ul class="list-unstyled" data-sa-stagger="80">
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Flag vague bullets and missing measurable results</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Grammar/tense, dates/gaps, formatting issues</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Clear, actionable fixes for each problem</span>
-          </li>
-        </ul>
-        <a href="{% url 'review_resume' %}" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="200">Scan my
-          resume</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- IMPROVE RESUME -->
-<section id="improve" class="section-gradient snap-section py-5 py-lg-6">
-  <!-- 3D Background Elements -->
-  <div class="floating-cube"></div>
-  <div class="floating-cube"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-pyramid"></div>
-
-  <div class="container position-relative" style="z-index: 3;">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-6">
-        <h2 class="display-5 fw-bold mb-4 sa fade-up" data-sa-delay="0">Improve your resume with AI</h2>
-        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="100">
-          Rewrite bullets for clarity and impact, add missing keywords, and optimize summary and layout.
-        </p>
-        <ul class="list-unstyled" data-sa-stagger="80">
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>AI-powered content rewriting and enhancement</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Keyword optimization and ATS compatibility</span>
-          </li>
-          <li class="mb-3 d-flex align-items-center sa fade-up">
-            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
-            <span>Professional formatting and layout improvements</span>
-          </li>
-        </ul>
-        <a href="#improve" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="200">Improve my resume</a>
-      </div>
-      <div class="col-lg-6">
-        <div class="text-center">
-          <div class="img-skin-dark cursor-anim tilt-on-cursor sa fade-right" data-sa-delay="150">
-            <div class="img-skin-inner">
-              <img class="img-fluid rounded-3" src="{% static 'img/templates/highlight.webp' %}"
-                alt="Resume improvement feature" onerror="this.style.display='none'">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- VISUALIZATION & CSV EXPORT -->
-<section class="section-dark py-4 py-lg-5">
-  <div class="container">
-    <div class="row justify-content-center text-center mb-4">
-      <div class="col-lg-8">
-        <h2 class="fw-bold display-5 mb-3">Visualize results and export data</h2>
-        <p class="lead text-muted">Get insights from your candidate analysis with charts, rankings, and exportable data.
-        </p>
-      </div>
-    </div>
-
-    <!-- Insights row -->
-    <div class="row g-4 metric-grid">
-      <div class="col-md-4">
-        <div class="metric-card sa fade-up">
-          <div class="metric-icon">
-            <i class="bi bi-graph-up-arrow"></i>
-          </div>
-          <h3 class="metric-title">Score distribution</h3>
-          <p class="metric-desc">See overall score spread with suggested cutoffs (e.g., 75 / 85) to shortlist quickly.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="metric-card sa fade-up" data-sa-delay="90">
-          <div class="metric-icon">
-            <i class="bi bi-tags"></i>
-          </div>
-          <h3 class="metric-title">Must‑have keywords</h3>
-          <p class="metric-desc">View which must‑have keywords are missing most and their frequency across resumes.</p>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="metric-card sa fade-up" data-sa-delay="180">
-          <div class="metric-icon">
-            <i class="bi bi-trophy"></i>
-          </div>
-          <h3 class="metric-title">Ranked candidates</h3>
-          <p class="metric-desc">Get a ranked list with scores, top reasons, and gaps—ready to share or export.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- CSV export schema -->
-    <div class="schema-card mt-4 sa fade-up" data-sa-delay="120">
-      <div class="schema-head">
-        <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-filetype-csv"></i>
-          <h4 class="mb-0">CSV export fields</h4>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <button id="copyCsvHeaders" class="btn btn-sm btn-outline-light copy-button" type="button"
-            data-headers="candidate_id, file_name, name, email, phone, location, years_experience, total_score, match_score, skills_score, ats_score, readability_score, keywords_present, keywords_missing, top_titles, seniority, education_level, parsed_success, notes">
-            Copy headers
-          </button>
-          <a class="btn btn-sm btn-brand" href="{% static 'samples/candidate_export_sample.csv' %}" download>Download
-            sample</a>
-        </div>
-      </div>
-
-      <div class="schema-body">
-        <div class="schema-code">
-          <pre id="csvHeadersText"
-            class="copyable-field"><code>candidate_id, file_name, name, email, phone, location, years_experience, total_score, match_score, skills_score, ats_score, readability_score, keywords_present, keywords_missing, top_titles, seniority, education_level, parsed_success, notes</code></pre>
-        </div>
-
-        <div class="table-responsive mt-3">
-          <table class="table table-dark table-borderless align-middle schema-table">
-            <thead>
-              <tr>
-                <th style="width: 220px;">Field</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>candidate_id</code></td>
-                <td>Stable internal identifier for each parsed candidate.</td>
-              </tr>
-              <tr>
-                <td><code>file_name</code></td>
-                <td>Original filename as uploaded.</td>
-              </tr>
-              <tr>
-                <td><code>name</code></td>
-                <td>Detected full name (if extractable).</td>
-              </tr>
-              <tr>
-                <td><code>email</code> / <code>phone</code></td>
-                <td>Primary contact info (normalized if possible).</td>
-              </tr>
-              <tr>
-                <td><code>location</code></td>
-                <td>Detected city/region when present.</td>
-              </tr>
-              <tr>
-                <td><code>years_experience</code></td>
-                <td>Estimated total years relevant experience.</td>
-              </tr>
-              <tr>
-                <td><code>total_score</code></td>
-                <td>Overall composite score (0–100).</td>
-              </tr>
-              <tr>
-                <td><code>match_score</code></td>
-                <td>Requirement match based on your must‑have/optional skills.</td>
-              </tr>
-              <tr>
-                <td><code>skills_score</code></td>
-                <td>Coverage of required skills/keywords.</td>
-              </tr>
-              <tr>
-                <td><code>ats_score</code></td>
-                <td>ATS readiness (structure, sections, formatting).</td>
-              </tr>
-              <tr>
-                <td><code>readability_score</code></td>
-                <td>Clarity and concision of text.</td>
-              </tr>
-              <tr>
-                <td><code>keywords_present</code></td>
-                <td>Semicolon‑separated list of matched keywords.</td>
-              </tr>
-              <tr>
-                <td><code>keywords_missing</code></td>
-                <td>Semicolon‑separated list of missing must‑haves.</td>
-              </tr>
-              <tr>
-                <td><code>top_titles</code></td>
-                <td>Best‑fit job titles inferred (semicolon‑separated).</td>
-              </tr>
-              <tr>
-                <td><code>seniority</code></td>
-                <td>Predicted seniority (e.g., Junior, Mid, Senior, Lead).</td>
-              </tr>
-              <tr>
-                <td><code>education_level</code></td>
-                <td>Highest level detected (e.g., Bachelors, Masters).</td>
-              </tr>
-              <tr>
-                <td><code>parsed_success</code></td>
-                <td>Boolean flag for parser success.</td>
-              </tr>
-              <tr>
-                <td><code>notes</code></td>
-                <td>Optional comments or parsing notes.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="schema-foot text-muted small">
-          Tips:
-          <span class="chip">Delimiter: comma</span>
-          <span class="chip">Keywords fields: semicolon list</span>
-          <span class="chip">Encoding: UTF‑8</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- VALUE LIST -->
-<section class="section-dark py-5 py-lg-6">
-  <!-- 3D Background Elements -->
-  <div class="floating-cube"></div>
-  <div class="floating-cube"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-pyramid"></div>
-
-  <div class="container position-relative" style="z-index: 3;">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold text-white mb-3">Why choose our AI resume services?</h2>
-      <p class="lead text-muted">Built by professionals, for professionals</p>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center text-white">
-          <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-            style="width: 60px; height: 60px;">
-            <i class="bi bi-lightning-charge-fill fs-4"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Fast & Easy</h5>
-          <p class="text-muted small">Score and analyze resumes in seconds, not hours</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center text-white">
-          <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-            style="width: 60px; height: 60px;">
-            <i class="bi bi-robot fs-4"></i>
-          </div>
-          <h5 class="fw-bold mb-2">AI-Powered</h5>
-          <p class="text-muted small">Smart scoring and candidate ranking</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center text-white">
-          <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-            style="width: 60px; height: 60px;">
-            <i class="bi bi-shield-check fs-4"></i>
-          </div>
-          <h5 class="fw-bold mb-2">ATS Optimized</h5>
-          <p class="text-muted small">Designed to pass applicant tracking systems</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center text-white">
-          <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-            style="width: 60px; height: 60px;">
-            <i class="bi bi-download fs-4"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Instant Export</h5>
-          <p class="text-muted small">Get candidate data in CSV format immediately</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- IMPORT SECTION -->
-<section id="import" class="section-dark py-5 py-lg-6">
-  <div class="container">
-    <div class="row g-5 align-items-start">
-      <div class="col-lg-6">
-        <h2 class="display-6 fw-bold text-white sa fade-up">Import your existing resume</h2>
-        <p class="text-muted sa fade-up" data-sa-delay="80">
-          Already have a resume? Upload it and we'll enhance it with AI—clean structure, stronger bullets, and better
-          keyword coverage.
-        </p>
-        <ul class="list-unstyled fs-5 text-muted mb-4" data-sa-stagger="90">
-          <li class="sa fade-up"><i class="bi bi-check2-circle text-success me-2"></i>PDF, Word, and text support</li>
-          <li class="sa fade-up"><i class="bi bi-check2-circle text-success me-2"></i>Automatic content extraction</li>
-          <li class="sa fade-up"><i class="bi bi-check2-circle text-success me-2"></i>Smart formatting and optimization
-          </li>
-        </ul>
-        <a href="#score" class="btn btn-brand sa fade-up" data-sa-delay="100">Import Resume</a>
-      </div>
-      <div class="col-lg-6">
-        <!-- Dark glass steps card -->
-        <div class="steps-card-dark sa fade-left" aria-label="Import flow">
-          <div class="step-row">
-            <div class="step-badge">1</div>
-            <div class="step-line">Drag & drop or browse a PDF/DOCX.</div>
-          </div>
-          <div class="step-divider"></div>
-          <div class="step-row">
-            <div class="step-badge">2</div>
-            <div class="step-line">Experience, skills, education — clean and consistent.</div>
-          </div>
-          <div class="step-divider"></div>
-          <div class="step-row">
-            <div class="step-badge">3</div>
-            <div class="step-line">Rewrite bullets, add metrics, and fill missing keywords.</div>
-          </div>
-          <div class="step-divider"></div>
-          <div class="step-row">
-            <div class="step-badge">4</div>
-            <div class="step-line">Download updated copy or use it to apply directly.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES SECTION -->
-<section id="features" class="section-gradient snap-section py-5 py-lg-6">
-  <!-- 3D Background Elements -->
-  <div class="floating-cube"></div>
-  <div class="floating-cube"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-pyramid"></div>
-
-  <div class="container position-relative" style="z-index: 3;">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold mb-3 sa fade-up" data-sa-delay="0">Our AI-powered services</h2>
-      <p class="lead text-muted sa fade-up" data-sa-delay="100">Everything you need for resume screening and improvement
-      </p>
+    <div class="text-center mb-5 sa fade-up">
+      <h2 class="display-5 fw-bold text-white mb-3">Everything You Can Do With CandidexAI</h2>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">A complete suite of AI-powered tools designed to help
+        you perfect your resume, beat the ATS, and land more interviews.</p>
     </div>
 
     <div class="row g-4" data-sa-stagger="100">
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center sa fade-up">
-          <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
-            style="width: 80px; height: 80px;">
-            <i class="bi bi-speedometer2 text-primary fs-3"></i>
+      <!-- Feature 1: Score Checker -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-speedometer2 text-primary fs-3"></i>
+            </div>
           </div>
-          <h5 class="fw-bold mb-2">Resume Score Checker</h5>
-          <p class="text-muted">Overall score + ATS, match, skills, readability.</p>
-          <a href="#score" class="link-primary fw-semibold">Try now →</a>
+          <h4 class="fw-bold text-white mb-3">Resume Score Checker</h4>
+          <p class="text-muted mb-4">Get an instant 0–100 score based on ATS compatibility, skills match, readability,
+            and structure.</p>
+          <a href="{% url 'score_checker' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Check Score Free</a>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center sa fade-up">
-          <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
-            style="width: 80px; height: 80px;">
-            <i class="bi bi-people text-primary fs-3"></i>
+
+      <!-- Feature 2: Mistake Finder -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up" data-sa-delay="100">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-exclamation-triangle text-danger fs-3"></i>
+            </div>
           </div>
-          <h5 class="fw-bold mb-2">Candidate Finder</h5>
-          <p class="text-muted">Batch upload, ranked list, CSV export.</p>
-          <a href="#finder" class="link-primary fw-semibold">Start ranking →</a>
+          <h4 class="fw-bold text-white mb-3">Resume Mistake Finder</h4>
+          <p class="text-muted mb-4">Instantly flag vague bullets, missing metrics, grammar errors, and formatting
+            issues that hurt your chances.</p>
+          <a href="{% url 'review_resume' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Scan Mistakes</a>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center sa fade-up">
-          <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
-            style="width: 80px; height: 80px;">
-            <i class="bi bi-exclamation-triangle text-primary fs-3"></i>
+
+      <!-- Feature 3: AI Improvement -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up" data-sa-delay="200">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-magic text-success fs-3"></i>
+            </div>
           </div>
-          <h5 class="fw-bold mb-2">Resume Mistake Finder</h5>
-          <p class="text-muted">Flag vague bullets, grammar, format issues.</p>
-          <a href="{% url 'review_resume' %}" class="link-primary fw-semibold">Scan my resume →</a>
+          <h4 class="fw-bold text-white mb-3">AI Improvement Engine</h4>
+          <p class="text-muted mb-4">Rewrite your bullets using professional action verbs and measurable impact to
+            impress recruiters.</p>
+          <a href="{% url 'improve_resume' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Improve with AI</a>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
-        <div class="text-center sa fade-up">
-          <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
-            style="width: 80px; height: 80px;">
-            <i class="bi bi-magic text-primary fs-3"></i>
+
+      <!-- Feature 4: Keyword Optimization -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up" data-sa-delay="300">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-tags text-info fs-3"></i>
+            </div>
           </div>
-          <h5 class="fw-bold mb-2">Improve My Resume</h5>
-          <p class="text-muted">Rewrite bullets, add metrics and keywords.</p>
-          <a href="#improve" class="link-primary fw-semibold">Improve now →</a>
+          <h4 class="fw-bold text-white mb-3">Smart Keyword Match</h4>
+          <p class="text-muted mb-4">Identify missing must-have keywords and skills required for specific job
+            descriptions.</p>
+          <a href="{% url 'score_checker' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Optimize Keywords</a>
+        </div>
+      </div>
+
+      <!-- Feature 5: Resume Import -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up" data-sa-delay="400">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-file-earmark-arrow-up text-warning fs-3"></i>
+            </div>
+          </div>
+          <h4 class="fw-bold text-white mb-3">Universal Resume Import</h4>
+          <p class="text-muted mb-4">Upload any PDF or Word resume and we'll extract the content into a clean,
+            professional structure.</p>
+          <a href="{% url 'upload' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Import Resume</a>
+        </div>
+      </div>
+
+      <!-- Feature 6: Candidate Ranking -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass p-4 h-100 sa fade-up" data-sa-delay="500">
+          <div class="feature-icon-wrapper mb-4">
+            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+              style="width: 64px; height: 64px;">
+              <i class="bi bi-trophy text-primary fs-3"></i>
+            </div>
+          </div>
+          <h4 class="fw-bold text-white mb-3">AI Candidate Ranking</h4>
+          <p class="text-muted mb-4">Batch upload dozens of resumes and rank them instantly based on your specific job
+            requirements.</p>
+          <a href="{% url 'finder_list' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Start Ranking</a>
         </div>
       </div>
     </div>
@@ -2174,41 +1821,23 @@
   }
 </style>
 
+
 <section id="final-cta" class="final-cta-section">
   <div class="final-cta-bg-glow"></div>
   <div class="container">
     <div class="final-cta-content sa fade-up">
-      <h2 class="final-cta-title">Stop Getting Rejected by ATS. Start Getting Interviews.</h2>
+      <h2 class="final-cta-title">Ready to see why your resume gets rejected?</h2>
       <p class="final-cta-subtitle">
-        Upload your resume and get instant, AI-powered feedback that shows exactly what to fix, what to improve, and how
-        to beat hiring systems.
+        Join 50,000+ professionals who've optimized their resumes with CandidexAI. Get instant, AI-powered feedback that
+        beats the hiring systems.
       </p>
 
-      <div class="final-cta-bullets">
-        <div class="final-cta-bullet">
-          <i class="bi bi-check-circle-fill"></i>
-          <span>No signup required</span>
-        </div>
-        <div class="final-cta-bullet">
-          <i class="bi bi-check-circle-fill"></i>
-          <span>Takes less than 60 seconds</span>
-        </div>
-        <div class="final-cta-bullet">
-          <i class="bi bi-check-circle-fill"></i>
-          <span>Used by students & professionals</span>
-        </div>
-        <div class="final-cta-bullet">
-          <i class="bi bi-check-circle-fill"></i>
-          <span>ATS + Recruiter aligned analysis</span>
-        </div>
-      </div>
-
       <div class="final-cta-btns">
-        <a href="{% url 'score_checker' %}" class="btn-cta-primary">Check My Resume Free</a>
-        <a href="#how-it-works" class="btn-cta-secondary">See How It Works</a>
+        <a href="{% url 'score_checker' %}" class="btn-cta-primary">Check My Resume (Free)</a>
+        <a href="#capabilities" class="btn-cta-secondary">See All Features</a>
       </div>
 
-      <p class="final-cta-footer-info">Free • No credit card • Instant results</p>
+      <p class="final-cta-footer-info">No signup required • Takes less than 60 seconds</p>
     </div>
   </div>
 </section>
