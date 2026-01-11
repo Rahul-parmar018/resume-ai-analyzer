@@ -107,6 +107,170 @@
 </section>
 
 
+<!-- ANALYSIS FEATURES SECTION -->
+<style>
+  .analysis-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .analysis-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .analysis-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(22, 163, 74, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(22, 163, 74, 0.1);
+  }
+
+  .analysis-icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(22, 163, 74, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+    color: #22c55e;
+    font-size: 24px;
+    transition: all 0.3s ease;
+  }
+
+  .analysis-card:hover .analysis-icon-box {
+    background: #22c55e;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.4);
+  }
+
+  .analysis-card h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .analysis-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 991.98px) {
+    .analysis-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .analysis-section {
+      padding: 60px 0;
+    }
+
+    .analysis-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 40px;
+    }
+  }
+</style>
+
+<section class="analysis-section position-relative overflow-hidden">
+  <!-- Decorative background glow -->
+  <div
+    style="position: absolute; top: 0; right: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative" style="z-index: 2;">
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold text-white mb-3 sa fade-up">What CandidexAI Analyzes in Your Resume</h2>
+      <p class="subtitle text-muted lead mx-auto sa fade-up" data-sa-delay="100" style="max-width: 700px;">
+        Our AI evaluates your resume like a real recruiter and an ATS system — not just keywords.
+      </p>
+    </div>
+
+    <div class="analysis-grid">
+      <!-- Feature 1: ATS Compatibility -->
+      <article class="analysis-card sa fade-up" data-sa-delay="0">
+        <div class="analysis-icon-box">
+          <i class="bi bi-file-earmark-check"></i>
+        </div>
+        <h3>ATS Compatibility</h3>
+        <p>Checks if your resume can pass modern ATS systems and parsing engines.</p>
+      </article>
+
+      <!-- Feature 2: Keyword & Role Matching -->
+      <article class="analysis-card sa fade-up" data-sa-delay="100">
+        <div class="analysis-icon-box">
+          <i class="bi bi-bullseye"></i>
+        </div>
+        <h3>Keyword & Role Matching</h3>
+        <p>Finds missing and weak keywords based on your target job role requirements.</p>
+      </article>
+
+      <!-- Feature 3: Skills Detection -->
+      <article class="analysis-card sa fade-up" data-sa-delay="200">
+        <div class="analysis-icon-box">
+          <i class="bi bi-cpu"></i>
+        </div>
+        <h3>Skills Detection</h3>
+        <p>Detects technical and soft skills from your resume content using NLP.</p>
+      </article>
+
+      <!-- Feature 4: Structure & Formatting -->
+      <article class="analysis-card sa fade-up" data-sa-delay="300">
+        <div class="analysis-icon-box">
+          <i class="bi bi-layout-three-columns"></i>
+        </div>
+        <h3>Structure & Formatting</h3>
+        <p>Analyzes layout, sections, headings, and overall document structure.</p>
+      </article>
+
+      <!-- Feature 5: Readability & Clarity -->
+      <article class="analysis-card sa fade-up" data-sa-delay="400">
+        <div class="analysis-icon-box">
+          <i class="bi bi-eye"></i>
+        </div>
+        <h3>Readability & Clarity</h3>
+        <p>Checks how easy your resume is to read and understand by human eyes.</p>
+      </article>
+
+      <!-- Feature 6: Mistakes & Red Flags -->
+      <article class="analysis-card sa fade-up" data-sa-delay="500">
+        <div class="analysis-icon-box">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h3>Mistakes & Red Flags</h3>
+        <p>Finds weak lines, vague bullets, and critical issues that recruiters hate.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+
 <!-- FEATURES SECTION -->
 <section id="features" class="section-stars snap-section py-5 py-lg-6 position-relative overflow-hidden">
   <div class="container position-relative">

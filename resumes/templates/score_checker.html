@@ -294,6 +294,30 @@
   </div>
 </section>
 
+<!-- Firebase Config -->
+<script src="{% static 'js/firebase-config.js' %}"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+  // Initialize Firebase using the config from firebase-config.js
+  const app = initializeApp(window.firebaseConfig);
+
+  // Initialize services
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Make these available to the existing script
+  window.firebaseAuth = { auth };
+  window.firebaseStorage = { getStorage, ref, uploadBytesResumable, getDownloadURL, storage };
+  window.firebaseFirestore = { db, collection, addDoc, serverTimestamp };
+</script>
+
 <!-- Real Scoring JavaScript -->
 <script>
   // ===== Score Checker: real scoring + UI render =====
@@ -435,57 +459,100 @@
       const file = files[0] || input?.files?.[0];
       if (!file) { alert('Please select a PDF/DOCX first.'); return; }
 
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!allowedTypes.includes(file.type) && ext !== 'pdf' && ext !== 'docx') {
+        alert('Only PDF and DOCX files are allowed.');
+        return;
+      }
+
       btn.disabled = true;
       const originalText = btn.innerHTML;
 
-      // Simulation stages
-      const stages = [
-        { t: '🔍 Scanning structure...', d: 800 },
-        { t: '📊 Calculating scores...', d: 1000 },
-        { t: '🧠 AI Analysis...', d: 1200 },
-        { t: '✨ Finalizing results...', d: 600 }
-      ];
-
-      let currentStage = 0;
-      const runStage = () => {
-        if (currentStage < stages.length) {
-          btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> ${stages[currentStage].t}`;
-          setTimeout(() => {
-            currentStage++;
-            runStage();
-          }, stages[currentStage].d);
-        } else {
-          btn.innerHTML = originalText;
+      try {
+        // Firebase Auth
+        const { auth } = window.firebaseAuth;
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Please sign in to analyze your resume.");
           btn.disabled = false;
-
-          // Show simulated results
-          const fakeData = {
-            total: 82,
-            ats: 88,
-            skills: 75,
-            read: 80,
-            struct: 85,
-            issues: [
-              { title: 'Weak Action Verbs', severity: 'High', desc: 'Phrases like "Responsible for" or "Helped with" lack impact. Use verbs like "Spearheaded" or "Orchestrated".' },
-              { title: 'Missing Quantifiable Metrics', severity: 'Medium', desc: 'Your experience bullet points lack numbers or percentages to demonstrate real impact.' },
-              { title: 'ATS Header Formatting', severity: 'Low', desc: 'Contact information in headers/footers can sometimes be missed by older ATS scanners.' }
-            ],
-            suggestions: [
-              'Add a "Professional Summary" section to grab attention in the first 6 seconds.',
-              'Move your "Skills" section to the top for better keyword visibility.',
-              'Use consistent date formatting (e.g., MM/YYYY) throughout the document.',
-              'Ensure your contact info includes your LinkedIn profile URL.'
-            ]
-          };
-
-          // Store for Resume Review page
-          localStorage.setItem('simulatedAnalysis', JSON.stringify(fakeData));
-
-          render(fakeData);
+          return;
         }
-      };
 
-      runStage();
+        // Firebase Storage Upload
+        const { getStorage, ref, uploadBytesResumable, getDownloadURL, storage } = window.firebaseStorage;
+        const { db, collection, addDoc, serverTimestamp } = window.firebaseFirestore;
+
+        const timestamp = Date.now();
+        const storagePath = `resumes/${user.uid}/${timestamp}_${file.name}`;
+        const storageRef = ref(storage, storagePath);
+
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Uploading: ${progress}%`;
+          },
+          (error) => {
+            console.error("Upload failed:", error);
+            alert("Upload failed: " + error.message);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("File available at:", downloadURL);
+
+            // Store metadata in Firestore
+            try {
+              await addDoc(collection(db, "resumes"), {
+                userId: user.uid,
+                filename: file.name,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                uploadedAt: serverTimestamp(),
+                status: "uploaded"
+              });
+            } catch (fsErr) {
+              console.warn("Firestore metadata save failed:", fsErr);
+            }
+
+            // Continue to existing fake analysis flow
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            const fakeData = {
+              total: 82,
+              ats: 88,
+              skills: 75,
+              read: 80,
+              struct: 85,
+              issues: [
+                { title: 'Weak Action Verbs', severity: 'High', desc: 'Phrases like "Responsible for" or "Helped with" lack impact. Use verbs like "Spearheaded" or "Orchestrated".' },
+                { title: 'Missing Quantifiable Metrics', severity: 'Medium', desc: 'Your experience bullet points lack numbers or percentages to demonstrate real impact.' },
+                { title: 'ATS Header Formatting', severity: 'Low', desc: 'Contact information in headers/footers can sometimes be missed by older ATS scanners.' }
+              ],
+              suggestions: [
+                'Add a "Professional Summary" section to grab attention in the first 6 seconds.',
+                'Move your "Skills" section to the top for better keyword visibility.',
+                'Use consistent date formatting (e.g., MM/YYYY) throughout the document.',
+                'Ensure your contact info includes your LinkedIn profile URL.'
+              ]
+            };
+
+            localStorage.setItem('simulatedAnalysis', JSON.stringify(fakeData));
+            render(fakeData);
+          }
+        );
+
+      } catch (err) {
+        console.error("Firebase error:", err);
+        alert("An error occurred during upload. Please check your Firebase configuration.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
     });
   })();
 </script>
