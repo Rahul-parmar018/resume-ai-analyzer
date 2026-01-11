@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}CandidexAI - Free AI Resume Checker & ATS Screening Platform{% endblock %}
+
+{% block meta %}
+<meta name="description"
+  content="Analyze your resume with AI! CandidexAI finds mistakes, checks ATS compatibility, and provides scoring for students, job seekers, and recruiters.">
+<meta name="keywords"
+  content="CandidexAI, AI resume checker, ATS screening platform, resume score, free resume analysis, recruiter screening tool">
+{% endblock %}
+
 {% block content %}
 
 <!-- HERO SECTION -->
@@ -613,6 +623,356 @@
       <div class="score-info-card sa fade-up" data-sa-delay="200">
         <h4>Designed to Improve, Not Just Judge</h4>
         <p>Every score comes with clear fixes, suggestions, and improvement paths — not just a number.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDENTS & JOB SEEKERS SECTION -->
+<style>
+  .students-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .students-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .students-content h2 {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    line-height: 1.1;
+  }
+
+  .students-content p {
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    margin-bottom: 0;
+    max-width: 500px;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .benefit-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(34, 197, 94, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .benefit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(22, 163, 74, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #22c55e;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .benefit-card h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .benefit-card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 991.98px) {
+    .students-grid {
+      grid-template-columns: 1fr;
+      gap: 50px;
+    }
+
+    .students-content {
+      text-align: center;
+    }
+
+    .students-content p {
+      margin: 0 auto;
+    }
+
+    .students-content h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .students-section {
+      padding: 60px 0;
+    }
+  }
+</style>
+
+<section class="students-section overflow-hidden">
+  <!-- Background Glow -->
+  <div
+    style="position: absolute; top: 10%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(22, 163, 74, 0.03) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative">
+    <div class="students-grid">
+      <!-- Left Column -->
+      <div class="students-content sa fade-right">
+        <h2 class="sa fade-up">AI Resume Checker for Students & Job Seekers</h2>
+        <p class="sa fade-up" data-sa-delay="100">
+          CandidexAI is an AI-powered resume checker that helps students and job seekers understand why their resume
+          gets rejected, fix weak points, and optimize their resume for ATS systems and real recruiters. Instead of
+          guessing, you get clear, actionable feedback to make your resume job-ready and interview-worthy.
+        </p>
+      </div>
+
+      <!-- Right Column -->
+      <div class="benefits-grid sa fade-left">
+        <!-- Benefit 1 -->
+        <article class="benefit-card sa fade-up" data-sa-delay="0">
+          <div class="benefit-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h3>Beat ATS Filters</h3>
+          <p>Make sure your resume actually passes company screening systems and makes it to human eyes.</p>
+        </article>
+
+        <!-- Benefit 2 -->
+        <article class="benefit-card sa fade-up" data-sa-delay="100">
+          <div class="benefit-icon">
+            <i class="bi bi-search"></i>
+          </div>
+          <h3>Find & Fix Weak Points</h3>
+          <p>Detect weak bullets, vague lines, and missing impact metrics that hurt your credibility.</p>
+        </article>
+
+        <!-- Benefit 3 -->
+        <article class="benefit-card sa fade-up" data-sa-delay="200">
+          <div class="benefit-icon">
+            <i class="bi bi-briefcase"></i>
+          </div>
+          <h3>Optimize for Any Role</h3>
+          <p>Tailor your resume for different job titles using intelligent keyword and skills matching algorithms.</p>
+        </article>
+
+        <!-- Benefit 4 -->
+        <article class="benefit-card sa fade-up" data-sa-delay="300">
+          <div class="benefit-icon">
+            <i class="bi bi-lightning"></i>
+          </div>
+          <h3>Actionable Feedback</h3>
+          <p>No vague advice — only specific, practical improvements you can apply immediately to get results.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- RECRUITERS & HIRING TEAMS SECTION -->
+<style>
+  .recruiters-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .recruiters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .recruiters-content h2 {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    line-height: 1.1;
+  }
+
+  .recruiters-content p {
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    margin-bottom: 0;
+    max-width: 500px;
+  }
+
+  .recruiters-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .recruiter-benefit-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+  }
+
+  .recruiter-benefit-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(124, 58, 237, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .recruiter-benefit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(124, 58, 237, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .recruiter-benefit-card h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .recruiter-benefit-card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 991.98px) {
+    .recruiters-grid {
+      grid-template-columns: 1fr;
+      gap: 50px;
+    }
+
+    .recruiters-content {
+      text-align: center;
+      order: 1;
+    }
+
+    .recruiters-benefits-grid {
+      order: 2;
+    }
+
+    .recruiters-content p {
+      margin: 0 auto;
+    }
+
+    .recruiters-content h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .recruiters-benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .recruiters-section {
+      padding: 60px 0;
+    }
+  }
+</style>
+
+<section class="recruiters-section overflow-hidden">
+  <!-- Background Glow -->
+  <div
+    style="position: absolute; bottom: 10%; left: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative">
+    <div class="recruiters-grid">
+      <!-- Left Column (Benefits Cards) -->
+      <div class="recruiters-benefits-grid sa fade-right">
+        <!-- Benefit 1 -->
+        <article class="recruiter-benefit-card sa fade-up" data-sa-delay="0">
+          <div class="recruiter-benefit-icon">
+            <i class="bi bi-lightning-charge"></i>
+          </div>
+          <h3>Screen Faster</h3>
+          <p>Automatically filter and prioritize candidates using AI-powered resume scoring and ATS compatibility
+            checks.</p>
+        </article>
+
+        <!-- Benefit 2 -->
+        <article class="recruiter-benefit-card sa fade-up" data-sa-delay="100">
+          <div class="recruiter-benefit-icon">
+            <i class="bi bi-stars"></i>
+          </div>
+          <h3>Improve Candidate Quality</h3>
+          <p>Focus only on resumes that meet quality, structure, and relevance standards.</p>
+        </article>
+
+        <!-- Benefit 3 -->
+        <article class="recruiter-benefit-card sa fade-up" data-sa-delay="200">
+          <div class="recruiter-benefit-icon">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <h3>Reduce Manual Review</h3>
+          <p>Save hours of human screening by letting AI handle first-level resume evaluation.</p>
+        </article>
+
+        <!-- Benefit 4 -->
+        <article class="recruiter-benefit-card sa fade-up" data-sa-delay="300">
+          <div class="recruiter-benefit-icon">
+            <i class="bi bi-ui-checks"></i>
+          </div>
+          <h3>Standardized Evaluation</h3>
+          <p>Compare candidates using consistent scoring instead of subjective human judgment.</p>
+        </article>
+      </div>
+
+      <!-- Right Column (Content) -->
+      <div class="recruiters-content sa fade-left">
+        <h2 class="sa fade-up">AI Resume Screening for Recruiters & Hiring Teams</h2>
+        <p class="sa fade-up" data-sa-delay="100">
+          CandidexAI is an AI-powered resume screening platform that helps recruiters and hiring teams screen candidates
+          faster, reduce manual resume review, and focus only on high-quality, relevant profiles. Instead of scanning
+          hundreds of resumes, your team gets structured, scored, and quality-checked resumes that match real job
+          requirements.
+        </p>
       </div>
     </div>
   </div>
