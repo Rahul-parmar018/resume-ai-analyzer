@@ -978,6 +978,210 @@
   </div>
 </section>
 
+<!-- WHY CANDIDEXAI SECTION -->
+<style>
+  .why-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .why-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px;
+  }
+
+  .why-header h2 {
+    color: #fff;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .why-header p {
+    color: var(--muted);
+    font-size: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .why-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 40px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .why-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .why-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .why-card:hover::before {
+    opacity: 1;
+  }
+
+  .why-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .why-card:hover .why-icon {
+    background: #fff;
+    color: #000;
+    transform: scale(1.1);
+  }
+
+  .why-card h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .why-card p {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 1199.98px) {
+    .why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .why-header h2 {
+      font-size: 2.75rem;
+    }
+
+    .why-section {
+      padding: 70px 0;
+    }
+  }
+</style>
+
+<section class="why-section">
+  <!-- Decorative Glows -->
+  <div
+    style="position: absolute; top: 0; left: 50%; translate: -50% -50%; width: 800px; height: 400px; background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative">
+    <div class="why-header sa fade-up">
+      <h2 class="sa fade-up">Why CandidexAI?</h2>
+      <p class="sa fade-up" data-sa-delay="100">Built for modern hiring systems. Designed to improve real career
+        outcomes.</p>
+    </div>
+
+    <div class="why-grid">
+      <!-- Card 1 -->
+      <article class="why-card sa fade-up" data-sa-delay="0">
+        <div class="why-icon">
+          <i class="bi bi-diagram-3"></i>
+        </div>
+        <h3>Not Just Keyword Matching</h3>
+        <p>Most resume tools only count keywords. CandidexAI uses AI to analyze your resume’s structure, skills, ATS
+          compatibility, readability, and real hiring signals — giving you a complete and accurate resume evaluation.
+        </p>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="why-card sa fade-up" data-sa-delay="100">
+        <div class="why-icon">
+          <i class="bi bi-person-check"></i>
+        </div>
+        <h3>ATS + Recruiter Aligned</h3>
+        <p>Your resume is reviewed the same way applicant tracking systems (ATS) and human recruiters actually screen
+          resumes, so you know exactly how it will perform in real hiring processes.</p>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="why-card sa fade-up" data-sa-delay="200">
+        <div class="why-icon">
+          <i class="bi bi-lightning-charge"></i>
+        </div>
+        <h3>Actionable, Not Generic</h3>
+        <p>No vague advice or useless tips. Every issue comes with clear, specific, and practical recommendations you
+          can apply immediately to improve your resume.</p>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="why-card sa fade-up" data-sa-delay="300">
+        <div class="why-icon">
+          <i class="bi bi-briefcase"></i>
+        </div>
+        <h3>Built for Real Jobs</h3>
+        <p>CandidexAI is optimized for real job descriptions, real company requirements, and real recruitment workflows
+          — not template-based guesses.</p>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="why-card sa fade-up" data-sa-delay="400">
+        <div class="why-icon">
+          <i class="bi bi-graph-up"></i>
+        </div>
+        <h3>Transparent Resume Scoring</h3>
+        <p>You can see exactly how your resume score is calculated across ATS compatibility, skills, keywords,
+          structure, and readability — no black-box scoring and no hidden logic.</p>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="why-card sa fade-up" data-sa-delay="500">
+        <div class="why-icon">
+          <i class="bi bi-trophy"></i>
+        </div>
+        <h3>Career-Focused AI</h3>
+        <p>CandidexAI is built to help you get more interviews, not just generate reports. Every analysis is focused on
+          improving your real-world hiring results.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
 
 
 
