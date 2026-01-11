@@ -13,8 +13,7 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero section-dark snap-section position-relative overflow-hidden"
-  style="min-height: 90vh; display: flex; align-items: center;">
+<section class="hero snap-section position-relative overflow-hidden">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
   <div class="floating-cube"></div>
@@ -22,38 +21,27 @@
   <div class="floating-sphere"></div>
   <div class="floating-pyramid"></div>
 
-  <div class="container position-relative" style="z-index: 3;">
-    <div class="row align-items-center g-5">
-      <!-- Left Column: Text Content -->
-      <div class="col-lg-6 order-2 order-lg-1">
-        <h1 class="fw-bold text-white lh-1 mb-4 sa fade-up" data-sa-delay="0">
-          Your AI that tells you exactly why your resume gets rejected.
-        </h1>
-        <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="120">
-          Upload your resume and let CandidexAI analyze it using AI. It finds mistakes, checks ATS compatibility, and
-          guides you step-by-step to improve your chances of getting interviews.
-        </p>
-        <div class="d-flex flex-wrap gap-3 align-items-center mb-4 sa fade-up" data-sa-delay="180">
-          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">
-            Check My Resume (Free)
-          </a>
-          <a href="#how-it-works" class="btn btn-outline-light btn-lg">
-            See how it works
-          </a>
-        </div>
-        <p class="text-muted small mb-0 sa fade-up" data-sa-delay="240" style="font-size: 0.95rem; opacity: 0.85;">
-          <i class="bi bi-shield-check me-1"></i>
-          No signup required • Takes less than 60 seconds • Used by students & job seekers
-        </p>
-      </div>
-
-      <!-- Right Column: Visual -->
-      <div class="col-lg-6 order-1 order-lg-2">
-        <div class="hero-visual">
-          <img src="{% static 'images/hero_mock.png' %}" class="hero-main-image" alt="CandidexAI Resume Preview">
-        </div>
-      </div>
+  <div class="hero-bg-image"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <h1 class="fw-bold text-white mb-4 sa fade-up" data-sa-delay="0">
+      Upload your resume and let AI fix it, score it, and optimize it for jobs
+    </h1>
+    <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="120">
+      Get an ATS score, find mistakes, and improve your resume in minutes using AI.
+    </p>
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-4 sa fade-up" data-sa-delay="180">
+      <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">
+        Check My Resume Free
+      </a>
+      <a href="#how-it-works" class="btn btn-outline-light btn-lg">
+        See how it works
+      </a>
     </div>
+    <p class="text-muted small mb-0 sa fade-up" data-sa-delay="240" style="font-size: 0.95rem; opacity: 0.85;">
+      <i class="bi bi-shield-check me-1"></i>
+      No signup required • Takes less than 60 seconds • Used by students & job seekers
+    </p>
   </div>
 
   <!-- Scroll down indicator -->
@@ -67,13 +55,94 @@
   </button>
 </section>
 
+<!-- PROBLEM → SOLUTION: DETAILED MISTAKE FINDER SECTION -->
+<section id="detailed-review" class="section-light snap-section py-5 py-lg-6 saas-layout mt-0">
+  <div class="container position-relative" style="z-index: 3;">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <div class="text-center">
+          <div class="img-skin-dark tilt-on-cursor sa fade-left" data-sa-delay="150">
+            <div class="img-skin-inner">
+              <img class="img-fluid rounded-3" src="{% static 'img/templates/ATS.webp' %}"
+                alt="Resume mistake finder feature">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <h2 class="display-5 fw-bold mb-4 sa fade-up">Find resume mistakes instantly</h2>
+        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="100">
+          Detect and flag common resume issues that could hurt your chances of landing interviews.
+        </p>
+        <ul class="list-unstyled" data-sa-stagger="80">
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>Flag vague bullets and missing measurable results</span>
+          </li>
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>Grammar/tense, dates/gaps, formatting issues</span>
+          </li>
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>Clear, actionable fixes for each problem</span>
+          </li>
+        </ul>
+        <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="200">Scan My
+          Resume</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- HOW CANDIDEXAI WORKS SECTION -->
-<section class="how-it-works-section py-6">
+<!-- PROBLEM → SOLUTION: DETAILED AI IMPROVEMENT SECTION -->
+<section id="detailed-improve" class="section-gradient snap-section py-5 py-lg-6 saas-layout">
+  <div class="container position-relative" style="z-index: 3;">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <h2 class="display-5 fw-bold mb-4 sa fade-up">Improve your resume with AI</h2>
+        <p class="lead text-muted mb-4 sa fade-up" data-sa-delay="100">
+          Rewrite bullets for clarity and impact, add missing keywords, and optimize summary and layout.
+        </p>
+        <ul class="list-unstyled" data-sa-stagger="80">
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>AI-powered content rewriting and enhancement</span>
+          </li>
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>Keyword optimization and ATS compatibility</span>
+          </li>
+          <li class="mb-3 d-flex align-items-center sa fade-up">
+            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+            <span>Professional formatting and layout improvements</span>
+          </li>
+        </ul>
+        <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="200">Improve My
+          Resume</a>
+      </div>
+      <div class="col-lg-6">
+        <div class="text-center">
+          <div class="img-skin-dark tilt-on-cursor sa fade-right" data-sa-delay="150">
+            <div class="img-skin-inner">
+              <img class="img-fluid rounded-3" src="{% static 'img/templates/highlight.webp' %}"
+                alt="Resume improvement feature">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- HOW IT WORKS SECTION -->
+<section id="how-it-works" class="how-it-works-section py-6">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold text-white mb-2">How CandidexAI Works</h2>
-      <p class="subtitle text-muted lead">From upload to job-ready in under 60 seconds</p>
+      <h2 class="display-5 fw-bold text-white mb-2 sa fade-up">How It Works in 4 Simple Steps</h2>
+      <p class="subtitle text-muted lead sa fade-up" data-sa-delay="100">From upload to job-ready in under 60 seconds
+      </p>
     </div>
 
     <div class="how-steps-grid">
@@ -82,7 +151,7 @@
         <div class="how-step-icon">
           <i class="bi bi-cloud-arrow-up"></i>
         </div>
-        <h3>Upload Your Resume</h3>
+        <h3>1. Upload Resume</h3>
         <p>Upload your PDF or DOCX resume. No signup required.</p>
       </a>
 
@@ -91,8 +160,8 @@
         <div class="how-step-icon">
           <i class="bi bi-cpu"></i>
         </div>
-        <h3>AI Analyzes Everything</h3>
-        <p>Our AI checks ATS, skills, keywords, structure, and highlights mistakes.</p>
+        <h3>2. AI Analyzes</h3>
+        <p>Our AI checks ATS, skills, keywords, and highlights mistakes.</p>
       </a>
 
       <!-- Step 03: Score -->
@@ -100,17 +169,17 @@
         <div class="how-step-icon">
           <i class="bi bi-speedometer2"></i>
         </div>
-        <h3>Get Your Score</h3>
-        <p>Instantly see your score, issues, and detailed improvement suggestions.</p>
+        <h3>3. Get Score + Fixes</h3>
+        <p>Instantly see your score and detailed improvement suggestions.</p>
       </a>
 
       <!-- Step 04: Fix -->
-      <a href="{% url 'review_resume' %}" class="how-step how-step--fix sa fade-up" data-sa-delay="300">
+      <a href="{% url 'score_checker' %}" class="how-step how-step--fix sa fade-up" data-sa-delay="300">
         <div class="how-step-icon">
           <i class="bi bi-magic"></i>
         </div>
-        <h3>Fix & Download</h3>
-        <p>Apply AI fixes and download a professional, interview-ready resume.</p>
+        <h3>4. Improve & Download</h3>
+        <p>Apply AI fixes and download your interview-ready resume.</p>
       </a>
     </div>
   </div>
@@ -207,7 +276,7 @@
   }
 </style>
 
-<section class="analysis-section position-relative overflow-hidden">
+<section class="analysis-section position-relative overflow-hidden saas-layout">
   <!-- Decorative background glow -->
   <div
     style="position: absolute; top: 0; right: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%); pointer-events: none;">
@@ -220,6 +289,7 @@
         Our AI evaluates your resume like a real recruiter and an ATS system — not just keywords.
       </p>
     </div>
+
 
     <div class="analysis-grid">
       <!-- Feature 1: ATS Compatibility -->
@@ -276,8 +346,51 @@
         <p>Finds weak lines, vague bullets, and critical issues that recruiters hate.</p>
       </article>
     </div>
+
+    <!-- RESUME ANALYSIS PREVIEW (Formerly Templates) -->
+    <div class="mt-6 pt-5">
+      <div class="text-center mb-5">
+        <h3 class="fw-bold text-white mb-3 sa fade-up">Upload your resume and let AI analyze everything</h3>
+        <p class="text-muted sa fade-up" data-sa-delay="100">CandidexAI scans your resume, checks ATS, finds mistakes,
+          and shows exactly how to improve it.</p>
+      </div>
+
+      <div class="resume-viewport mx-auto sa fade-up" data-sa-delay="200">
+        <div class="shoulder shoulder-left" aria-hidden="true"></div>
+        <div class="shoulder shoulder-right" aria-hidden="true"></div>
+
+        <!-- Auto-scrolling belt -->
+        <div class="resume-belt auto" id="templatesAutoBelt" data-px-per-sec="120">
+          {% for i in "123456789" %}
+          <article class="resume-card" role="img" aria-label="Resume analysis preview R-{{ forloop.counter }}">
+            <div class="paper-frame">
+              <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
+                decoding="async"
+                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
+            </div>
+          </article>
+          {% endfor %}
+          {% for i in "123456789" %}
+          <article class="resume-card" role="img" aria-label="Resume analysis preview R-{{ forloop.counter }} clone">
+            <div class="paper-frame">
+              <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
+                decoding="async"
+                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="text-center mt-5">
+        <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg sa fade-up" data-sa-delay="300">
+          Check My Resume Free
+        </a>
+      </div>
+    </div>
   </div>
 </section>
+
 
 
 <!-- SCORE EXPLAINER SECTION -->
@@ -510,7 +623,7 @@
   }
 </style>
 
-<section class="score-explainer-section position-relative overflow-hidden">
+<section class="score-explainer-section position-relative overflow-hidden saas-layout">
   <!-- Decorative background glow -->
   <div
     style="position: absolute; bottom: 0; left: 0; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%); pointer-events: none;">
@@ -944,7 +1057,7 @@
   }
 </style>
 
-<section class="students-section overflow-hidden">
+<section class="students-section overflow-hidden saas-layout">
   <!-- Background Glow -->
   <div
     style="position: absolute; top: 10%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(22, 163, 74, 0.03) 0%, transparent 70%); pointer-events: none;">
@@ -1121,7 +1234,7 @@
   }
 </style>
 
-<section class="recruiters-section overflow-hidden">
+<section class="recruiters-section overflow-hidden saas-layout">
   <!-- Background Glow -->
   <div
     style="position: absolute; bottom: 10%; left: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, transparent 70%); pointer-events: none;">
@@ -1178,64 +1291,69 @@
           hundreds of resumes, your team gets structured, scored, and quality-checked resumes that match real job
           requirements.
         </p>
+
+        <div class="mt-4 sa fade-up" data-sa-delay="200">
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">Upload Resume</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 
-
-
-
-
-<!-- FEATURES SECTION -->
-<section id="features" class="section-stars snap-section py-5 py-lg-6 position-relative overflow-hidden">
-  <div class="container position-relative">
-    <h2 class="fw-bold display-5 text-center text-white mb-4">Pick a template and build your resume in minutes!</h2>
-
-    <div class="resume-viewport mx-auto">
-      <div class="shoulder shoulder-left" aria-hidden="true"></div>
-      <div class="shoulder shoulder-right" aria-hidden="true"></div>
-
-      <!-- Auto-scrolling belt (two copies for seamless loop) -->
-      <div class="resume-belt auto" id="templatesAutoBelt" data-px-per-sec="120">
-        {% for i in "123456789" %}
-        <article class="resume-card" role="img" aria-label="Resume template R-{{ forloop.counter }}">
-          <div class="paper-frame">
-            <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
-              decoding="async"
-              onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
-          </div>
-        </article>
-        {% endfor %}
-        {% for i in "123456789" %}
-        <article class="resume-card" role="img" aria-label="Resume template R-{{ forloop.counter }} clone">
-          <div class="paper-frame">
-            <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
-              decoding="async"
-              onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
-          </div>
-        </article>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BLACK BAND -->
-<section class="section-dark py-4">
-  <!-- 3D Background Elements -->
-  <div class="floating-cube"></div>
-  <div class="floating-sphere"></div>
-  <div class="floating-pyramid"></div>
-
+<!-- VISUALIZE RESULTS & EXPORT DATA SECTION -->
+<section class="section-dark py-5 py-lg-6 position-relative overflow-hidden saas-layout">
   <div class="container position-relative" style="z-index: 3;">
-    <div class="row align-items-center">
-      <div class="col-md-8">
-        <h3 class="text-white mb-0">Join 50,000+ professionals who've built winning resumes</h3>
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-7">
+        <h2 class="display-5 fw-bold text-white mb-4 sa fade-up">Visualize Results & Export Data</h2>
+        <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="100">
+          Get deep insights into your resume performance. See exactly where you stand and export your optimized data for
+          any application system.
+        </p>
+        <div class="row g-4 sa fade-up" data-sa-delay="200">
+          <div class="col-6 col-md-4">
+            <div class="card card-glass p-3 h-100">
+              <div class="h3 fw-bold text-success mb-1">98%</div>
+              <div class="small text-muted">ATS Parsing Success</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="card card-glass p-3 h-100">
+              <div class="h3 fw-bold text-success mb-1">CSV/PDF</div>
+              <div class="small text-muted">Instant Export</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="card card-glass p-3 h-100">
+              <div class="h3 fw-bold text-success mb-1">10X</div>
+              <div class="small text-muted">More Callbacks</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5 sa fade-up" data-sa-delay="300">
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">Check My Resume Free</a>
+        </div>
       </div>
-      <div class="col-md-4 text-md-end mt-3 mt-md-0">
-        <a href="#" class="btn btn-outline-light">Get Started Now</a>
+      <div class="col-lg-5">
+        <div class="img-skin-dark sa fade-left shadow-lg" data-sa-delay="150">
+          <div class="img-skin-inner p-4">
+            <div class="d-flex flex-column gap-3">
+              <div class="metric-glass px-4 py-3 text-start bg-white bg-opacity-5 rounded-3">
+                <div class="text-white small mb-1">Top Skills Detected</div>
+                <div class="text-success fw-bold">Python • Django • React • AWS</div>
+              </div>
+              <div class="metric-glass px-4 py-3 text-start bg-white bg-opacity-5 rounded-3">
+                <div class="text-white small mb-1">Industry Compatibility</div>
+                <div class="text-success fw-bold">Technology / SaaS</div>
+              </div>
+              <div class="metric-glass px-4 py-3 text-start bg-white bg-opacity-5 rounded-3">
+                <div class="text-white small mb-1">Impact Metrics Found</div>
+                <div class="text-success fw-bold">12 Significant Data Points</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1243,7 +1361,9 @@
 
 
 
-<!-- EVERYTHING YOU CAN DO WITH CANDIDEXAI SECTION -->
+
+
+<!-- OUR AI-POWERED SERVICES SECTION -->
 <section id="capabilities" class="section-gradient snap-section py-5 py-lg-6 position-relative overflow-hidden">
   <!-- 3D Background Elements -->
   <div class="floating-cube"></div>
@@ -1252,9 +1372,9 @@
 
   <div class="container position-relative" style="z-index: 3;">
     <div class="text-center mb-5 sa fade-up">
-      <h2 class="display-5 fw-bold text-white mb-3">Everything You Can Do With CandidexAI</h2>
-      <p class="lead text-muted mx-auto" style="max-width: 700px;">A complete suite of AI-powered tools designed to help
-        you perfect your resume, beat the ATS, and land more interviews.</p>
+      <h2 class="display-5 fw-bold text-white mb-3">Everything CandidexAI Can Do For Your Resume</h2>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">Everything you need to perfect your resume and land
+        your dream job.</p>
     </div>
 
     <div class="row g-4" data-sa-stagger="100">
@@ -1270,7 +1390,7 @@
           <h4 class="fw-bold text-white mb-3">Resume Score Checker</h4>
           <p class="text-muted mb-4">Get an instant 0–100 score based on ATS compatibility, skills match, readability,
             and structure.</p>
-          <a href="{% url 'score_checker' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Check Score Free</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Check My Resume Free</a>
         </div>
       </div>
 
@@ -1286,7 +1406,7 @@
           <h4 class="fw-bold text-white mb-3">Resume Mistake Finder</h4>
           <p class="text-muted mb-4">Instantly flag vague bullets, missing metrics, grammar errors, and formatting
             issues that hurt your chances.</p>
-          <a href="{% url 'review_resume' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Scan Mistakes</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Scan My Resume</a>
         </div>
       </div>
 
@@ -1302,7 +1422,7 @@
           <h4 class="fw-bold text-white mb-3">AI Improvement Engine</h4>
           <p class="text-muted mb-4">Rewrite your bullets using professional action verbs and measurable impact to
             impress recruiters.</p>
-          <a href="{% url 'improve_resume' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Improve with AI</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Improve My Resume</a>
         </div>
       </div>
 
@@ -1318,7 +1438,7 @@
           <h4 class="fw-bold text-white mb-3">Smart Keyword Match</h4>
           <p class="text-muted mb-4">Identify missing must-have keywords and skills required for specific job
             descriptions.</p>
-          <a href="{% url 'score_checker' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Optimize Keywords</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Check Keywords</a>
         </div>
       </div>
 
@@ -1334,7 +1454,7 @@
           <h4 class="fw-bold text-white mb-3">Universal Resume Import</h4>
           <p class="text-muted mb-4">Upload any PDF or Word resume and we'll extract the content into a clean,
             professional structure.</p>
-          <a href="{% url 'upload' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Import Resume</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Upload Resume</a>
         </div>
       </div>
 
@@ -1350,12 +1470,13 @@
           <h4 class="fw-bold text-white mb-3">AI Candidate Ranking</h4>
           <p class="text-muted mb-4">Batch upload dozens of resumes and rank them instantly based on your specific job
             requirements.</p>
-          <a href="{% url 'finder_list' %}" class="btn btn-outline-brand btn-sm mt-auto w-100">Start Ranking</a>
+          <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Rank Resumes</a>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="section-dark py-5 py-lg-6 position-relative">
@@ -1593,13 +1714,14 @@
         <h2 class="accordion-header" id="h1">
           <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
             data-bs-target="#c1" aria-expanded="false" aria-controls="c1">
-            <span class="faq-emoji">💬</span> Is the resume builder really free?
+            <div class="faq-icon-box"><i class="bi bi-chat-dots"></i></div> Is CandidexAI free to use?
           </button>
         </h2>
         <div id="c1" class="accordion-collapse collapse" aria-labelledby="h1" data-bs-parent="#faqAcc">
           <div class="accordion-body">
-            Yes. You can create, edit, and download without cost. Premium features are available for extra customization
-            and AI upgrades.
+            Yes, CandidexAI offers free resume scanning and scoring. You can upload your resume, see your score, and
+            find mistakes without paying a dime. Premium features are available for bulk screening and advanced AI
+            exports.
           </div>
         </div>
       </div>
@@ -1609,13 +1731,14 @@
         <h2 class="accordion-header" id="h2">
           <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
             data-bs-target="#c2" aria-expanded="false" aria-controls="c2">
-            <span class="faq-emoji">🤖</span> How does the AI optimization work?
+            <div class="faq-icon-box"><i class="bi bi-cpu"></i></div> How does the AI resume scoring work?
           </button>
         </h2>
         <div id="c2" class="accordion-collapse collapse" aria-labelledby="h2" data-bs-parent="#faqAcc">
           <div class="accordion-body">
-            We parse your resume, compute subscores (ATS, Match, Skills, Readability, Structure), detect gaps, and
-            generate rewrites with action verbs and measurable outcomes.
+            Our AI analyzes your resume across 5 critical dimensions: ATS compatibility, keyword matching, skill
+            coverage, formatting, and readability. It identifies exactly what recruiters are looking for and tells you
+            how to rank higher.
           </div>
         </div>
       </div>
@@ -1625,12 +1748,15 @@
         <h2 class="accordion-header" id="h3">
           <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
             data-bs-target="#c3" aria-expanded="false" aria-controls="c3">
-            <span class="faq-emoji">📥</span> Can I import my existing resume?
+            <div class="faq-icon-box"><i class="bi bi-file-earmark-arrow-up"></i></div> Can I upload my existing PDF or
+            Word resume?
           </button>
         </h2>
         <div id="c3" class="accordion-collapse collapse" aria-labelledby="h3" data-bs-parent="#faqAcc">
           <div class="accordion-body">
-            Yes—upload a PDF or DOCX. We’ll extract sections cleanly and enhance content for clarity and impact.
+            Absolutely! Simply upload your existing PDF or DOCX file. Our universal importer extracts your data and
+            analyzes the content instantly, highlighting exactly where your resume needs improvement for modern hiring
+            systems.
           </div>
         </div>
       </div>
@@ -1640,13 +1766,14 @@
         <h2 class="accordion-header" id="h4">
           <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
             data-bs-target="#c4" aria-expanded="false" aria-controls="c4">
-            <span class="faq-emoji">🧲</span> Are the templates ATS‑friendly?
+            <div class="faq-icon-box"><i class="bi bi-shield-check"></i></div> Is CandidexAI ATS-friendly?
           </button>
         </h2>
         <div id="c4" class="accordion-collapse collapse" aria-labelledby="h4" data-bs-parent="#faqAcc">
           <div class="accordion-body">
-            Yes. Our layouts use ATS‑safe headings, structured sections, and parsable text—no hidden elements that block
-            parsing.
+            Yes, CandidexAI is built specifically to beat Applicant Tracking Systems. We check your resume for illegal
+            characters, hidden tables, and non-standard formatting that often causes resume rejection in large company
+            databases.
           </div>
         </div>
       </div>
@@ -1656,12 +1783,31 @@
         <h2 class="accordion-header" id="h5">
           <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
             data-bs-target="#c5" aria-expanded="false" aria-controls="c5">
-            <span class="faq-emoji">⬇️</span> How do I download my resume?
+            <div class="faq-icon-box"><i class="bi bi-graph-up-arrow"></i></div> What do I get after the analysis?
           </button>
         </h2>
         <div id="c5" class="accordion-collapse collapse" aria-labelledby="h5" data-bs-parent="#faqAcc">
           <div class="accordion-body">
-            Click Download to export as PDF or TXT. Your design, sections, and AI improvements are preserved.
+            You get a detailed score report, a list of critical mistakes FOUND, and AI-powered suggests for improvement.
+            You can then apply these fixes directly and export a perfectly optimized version of your resume for your
+            next application.
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 6 -->
+      <div class="accordion-item faq-item">
+        <h2 class="accordion-header" id="h6">
+          <button class="accordion-button collapsed faq-btn" type="button" data-bs-toggle="collapse"
+            data-bs-target="#c6" aria-expanded="false" aria-controls="c6">
+            <div class="faq-icon-box"><i class="bi bi-people"></i></div> Can recruiters use this to screen candidates?
+          </button>
+        </h2>
+        <div id="c6" class="accordion-collapse collapse" aria-labelledby="h6" data-bs-parent="#faqAcc">
+          <div class="accordion-body">
+            Yes! Recruiters can use our bulk screening tool to upload dozens of resumes at once. The platform ranks
+            candidates based on job-specific criteria, saving hours of manual review and ensuring the best talent rises
+            to the top.
           </div>
         </div>
       </div>

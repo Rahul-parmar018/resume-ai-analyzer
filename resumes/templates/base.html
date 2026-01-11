@@ -55,45 +55,25 @@
     <footer class="py-5">
         <div class="container">
             <div class="row g-4">
-                <!-- Get Started -->
+                <!-- Product -->
                 <div class="col-md-3">
-                    <h5>Get started</h5>
+                    <h5>Product</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'requirements' %}">Create Resume</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#terms">Terms of Service</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
-                        <li><a href="#cookies">Cookie Preferences</a></li>
+                        <li><a href="{% url 'score_checker' %}">Resume Score Checker</a></li>
+                        <li><a href="{% url 'score_checker' %}">Resume Mistake Finder</a></li>
+                        <li><a href="{% url 'score_checker' %}">Resume Improvement</a></li>
+                        <li><a href="{% url 'score_checker' %}">Candidate Ranking</a></li>
+                        <li><a href="{% url 'score_checker' %}">CSV Export</a></li>
                     </ul>
                 </div>
 
-                <!-- Resume -->
+                <!-- For Recruiters -->
                 <div class="col-md-3">
-                    <h5>Resume</h5>
+                    <h5>For Recruiters</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#examples">Resume Examples</a></li>
-                        <li><a href="#templates">Resume Templates</a></li>
-                        <li><a href="{% url 'requirements' %}">Resume Builder</a></li>
-                        <li><a href="#summary">Resume Summary Generator</a></li>
-                        <li><a href="#linkedin">LinkedIn Resume Builder</a></li>
-                        <li><a href="#formats">Resume Formats</a></li>
-                        <li><a href="#checker">Resume Checker</a></li>
-                        <li><a href="#review">AI Resume Review</a></li>
-                        <li><a href="#skills">Resume Skills</a></li>
-                        <li><a href="#how-to">How to Write a Resume</a></li>
-                    </ul>
-                </div>
-
-                <!-- Cover Letter -->
-                <div class="col-md-3">
-                    <h5>Cover Letter</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#cover-builder">Cover Letter Builder</a></li>
-                        <li><a href="#cover-examples">Cover Letter Examples</a></li>
-                        <li><a href="#cover-generator">Cover Letter Generator</a></li>
-                        <li><a href="#cover-templates">Cover Letter Templates</a></li>
-                        <li><a href="#cover-formats">Cover Letter Formats</a></li>
-                        <li><a href="#cover-how">How to Write a Cover Letter</a></li>
+                        <li><a href="{% url 'score_checker' %}">Bulk Resume Screening</a></li>
+                        <li><a href="{% url 'score_checker' %}">Candidate Ranking</a></li>
+                        <li><a href="{% url 'score_checker' %}">Export Reports</a></li>
                     </ul>
                 </div>
 
@@ -103,10 +83,19 @@
                     <ul class="list-unstyled">
                         <li><a href="#blog">Blog</a></li>
                         <li><a href="#guides">Resume Guides</a></li>
-                        <li><a href="#cover-guides">Cover Letter Guides</a></li>
-                        <li><a href="#interview">Job Interview Guides</a></li>
-                        <li><a href="#questions">Job Interview Questions</a></li>
-                        <li><a href="#career">Career Resources</a></li>
+                        <li><a href="#ats-guide">ATS Guide</a></li>
+                        <li><a href="#interview">Interview Prep</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div class="col-md-3">
+                    <h5>Company</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#privacy">Privacy</a></li>
+                        <li><a href="#terms">Terms</a></li>
                     </ul>
                 </div>
             </div>
@@ -169,7 +158,7 @@
             <hr class="my-4" style="border-color: var(--border);">
 
             <div class="text-center text-muted">
-                <p class="mb-0">&copy; 2025 AI Resume Screener. All rights reserved.</p>
+                <p class="mb-0">&copy; 2025 CandidexAI. All rights reserved.</p>
             </div>
         </div>
     </footer>
