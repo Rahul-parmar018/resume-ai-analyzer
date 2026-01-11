@@ -52,113 +52,64 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-5">
-        <div class="container">
-            <div class="row g-4">
-                <!-- Product -->
-                <div class="col-md-3">
-                    <h5>Product</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'score_checker' %}">Resume Score Checker</a></li>
-                        <li><a href="{% url 'score_checker' %}">Resume Mistake Finder</a></li>
-                        <li><a href="{% url 'score_checker' %}">Resume Improvement</a></li>
-                        <li><a href="{% url 'score_checker' %}">Candidate Ranking</a></li>
-                        <li><a href="{% url 'score_checker' %}">CSV Export</a></li>
+    <!-- Premium site-footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="footer-brand">
+                    <img src="{% static 'logos/image_logo.png' %}" alt="CandidexAI" class="footer-logo-img">
+                    <span class="footer-logo-text">Candide<span class="footer-logo-accent">xAI</span></span>
+                </div>
+                <p class="footer-desc">AI-powered resume analysis and optimization platform. Built for high-growth teams
+                    and ambitious job seekers.</p>
+                <a href="{% url 'score_checker' %}" class="footer-cta-btn">Check My Resume Free <i
+                        class="bi bi-arrow-right"></i></a>
+            </div>
+
+            <div class="footer-links-grid">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul class="footer-list">
+                        <li><a href="{% url 'score_checker' %}">Resume Score</a></li>
+                        <li><a href="{% url 'score_checker' %}">Resume Review</a></li>
+                        <li><a href="{% url 'score_checker' %}">AI Improvement</a></li>
+                        <li><a href="{% url 'score_checker' %}">ATS Checker</a></li>
                     </ul>
                 </div>
-
-                <!-- For Recruiters -->
-                <div class="col-md-3">
-                    <h5>For Recruiters</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'score_checker' %}">Bulk Resume Screening</a></li>
-                        <li><a href="{% url 'score_checker' %}">Candidate Ranking</a></li>
-                        <li><a href="{% url 'score_checker' %}">Export Reports</a></li>
-                    </ul>
-                </div>
-
-                <!-- Resources -->
-                <div class="col-md-3">
-                    <h5>Resources</h5>
-                    <ul class="list-unstyled">
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-list">
+                        <li><a href="#about">About Us</a></li>
                         <li><a href="#blog">Blog</a></li>
-                        <li><a href="#guides">Resume Guides</a></li>
-                        <li><a href="#ats-guide">ATS Guide</a></li>
-                        <li><a href="#interview">Interview Prep</a></li>
-                    </ul>
-                </div>
-
-                <!-- Company -->
-                <div class="col-md-3">
-                    <h5>Company</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#about">About</a></li>
+                        <li><a href="#careers">Careers</a></li>
                         <li><a href="#contact">Contact</a></li>
-                        <li><a href="#privacy">Privacy</a></li>
-                        <li><a href="#terms">Terms</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul class="footer-list">
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#security">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <ul class="footer-list">
+                        <li><a href="{% url 'finder_list' %}">For Recruiters</a></li>
+                        <li><a href="{% url 'score_checker' %}">Bulk Screening</a></li>
+                        <li><a href="#api">API Access</a></li>
                     </ul>
                 </div>
             </div>
+        </div>
 
-            <hr class="my-4" style="border-color: var(--border);">
-
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <div class="row g-4">
-                        <!-- About -->
-                        <div class="col-md-4">
-                            <h6>About us</h6>
-                            <ul class="list-unstyled">
-                                <li><a href="#company">Company</a></li>
-                                <li><a href="#careers">Careers</a></li>
-                                <li><a href="#reviews">Reviews</a></li>
-                            </ul>
-                        </div>
-
-                        <!-- Contact -->
-                        <div class="col-md-4">
-                            <h6>Contact us</h6>
-                            <ul class="list-unstyled">
-                                <li><a href="mailto:support@airesumescreener.com">support@airesumescreener.com</a></li>
-                                <li><a href="#help">Help</a></li>
-                            </ul>
-                        </div>
-
-                        <!-- Languages -->
-                        <div class="col-md-4">
-                            <h6>Languages</h6>
-                            <ul class="list-unstyled">
-                                <li><a href="#en">English (US)</a></li>
-                                <li><a href="#fr">French (FR)</a></li>
-                                <li><a href="#de">German (DE)</a></li>
-                                <li><a href="#es">Spanish (ES)</a></li>
-                                <li><a href="#pt">Portuguese (BR)</a></li>
-                                <li><a href="#it">Italian (IT)</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews -->
-                <div class="col-md-4 text-md-end">
-                    <div class="d-flex align-items-center justify-content-md-end gap-2 mb-2">
-                        <div class="stars">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i>
-                        </div>
-                        <span class="text-muted">1,200 Reviews</span>
-                    </div>
-                    <a href="#reviews" class="text-muted small">Read More Reviews</a>
-                </div>
-            </div>
-
-            <hr class="my-4" style="border-color: var(--border);">
-
-            <div class="text-center text-muted">
-                <p class="mb-0">&copy; 2025 CandidexAI. All rights reserved.</p>
+        <div class="footer-bottom">
+            <div class="copyright">&copy; 2026 CandidexAI. All rights reserved.</div>
+            <div class="social-links">
+                <a href="#" aria-label="X"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                <a href="#" aria-label="GitHub"><i class="bi bi-github"></i></a>
             </div>
         </div>
     </footer>

@@ -508,16 +508,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const toTop = document.getElementById('toTop');
 
   // 1) Ensure content isn't hidden behind the fixed navbar
-  const setBodyPadding = () => {
-    if (!nav) return;
-    document.body.style.paddingTop = nav.offsetHeight + 'px';
-  };
-  setBodyPadding();
-  window.addEventListener('resize', setBodyPadding);
+  // Dynamic padding removed in favor of CSS 'body { padding-top: 72px }' for no-jump stability.
 
   // 2) Add solid background and shadow after slight scroll
   const onScroll = () => {
-    if (nav) nav.classList.toggle('nav-scrolled', window.scrollY > 8);
+    if (nav) {
+      const isScrolled = window.scrollY > 10;
+      nav.classList.toggle('nav-scrolled', isScrolled);
+      nav.classList.toggle('scrolled', isScrolled);
+    }
     if (toTop) toTop.classList.toggle('show', window.scrollY > 400);
   };
   onScroll();
