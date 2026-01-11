@@ -270,6 +270,356 @@
 </section>
 
 
+<!-- SCORE EXPLAINER SECTION -->
+<style>
+  .score-explainer-section {
+    background-color: var(--bg);
+    padding: 100px 0;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .score-explainer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-top: 60px;
+  }
+
+  /* Left Column: Donut Ring */
+  .score-ring-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .score-ring-wrapper {
+    width: 280px;
+    height: 280px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 12;
+  }
+
+  .score-ring-progress {
+    fill: none;
+    stroke: url(#scoreGradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 628;
+    /* 2 * PI * 100 */
+    stroke-dashoffset: 150;
+    /* (1 - 0.76) * 628 */
+    filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.3));
+  }
+
+  .score-ring-content {
+    position: absolute;
+    text-align: center;
+  }
+
+  .score-ring-number {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .score-ring-label {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .score-ring-caption {
+    margin-top: 24px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  /* Right Column: Breakdown */
+  .score-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .breakdown-row {
+    width: 100%;
+  }
+
+  .breakdown-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .breakdown-title {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .breakdown-percent {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .breakdown-bar-bg {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .breakdown-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    position: relative;
+  }
+
+  .breakdown-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    animation: bar-glow 3s infinite;
+  }
+
+  @keyframes bar-glow {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .score-explainer-grid {
+      grid-template-columns: 1fr;
+      gap: 60px;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .score-explainer-section {
+      padding: 60px 0;
+    }
+
+    .score-ring-wrapper {
+      width: 220px;
+      height: 220px;
+    }
+
+    .score-ring-number {
+      font-size: 3.5rem;
+    }
+  }
+
+  .score-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 80px;
+  }
+
+  .score-info-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+
+  .score-info-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .score-info-card h4 {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .score-info-card h4::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: #22c55e;
+    border-radius: 2px;
+  }
+
+  .score-info-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 767.98px) {
+    .score-cards-grid {
+      grid-template-columns: 1fr;
+      margin-top: 50px;
+    }
+  }
+</style>
+
+<section class="score-explainer-section position-relative overflow-hidden">
+  <!-- Decorative background glow -->
+  <div
+    style="position: absolute; bottom: 0; left: 0; width: 500px; height: 500px; background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%); pointer-events: none;">
+  </div>
+
+  <div class="container position-relative" style="z-index: 2;">
+    <div class="text-center mb-4">
+      <h2 class="display-5 fw-bold text-white mb-3 sa fade-up">How Your Resume Score Is Calculated</h2>
+      <p class="subtitle text-muted lead mx-auto sa fade-up" data-sa-delay="100" style="max-width: 700px;">
+        Your overall score is a weighted combination of multiple quality checks — not just keywords.
+      </p>
+    </div>
+
+    <div class="score-explainer-grid">
+      <!-- Left Column: Donut -->
+      <div class="score-ring-container sa fade-right">
+        <div class="score-ring-wrapper">
+          <svg class="score-ring-svg">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color: #22c55e; stop-opacity: 1" />
+                <stop offset="100%" style="stop-color: #10b981; stop-opacity: 1" />
+              </linearGradient>
+            </defs>
+            <circle class="score-ring-bg" cx="140" cy="140" r="100" />
+            <circle class="score-ring-progress" cx="140" cy="140" r="100" />
+          </svg>
+          <div class="score-ring-content">
+            <div class="score-ring-number">76</div>
+            <div class="score-ring-label">Overall Score</div>
+          </div>
+        </div>
+        <p class="score-ring-caption">Example score shown for demonstration</p>
+      </div>
+
+      <!-- Right Column: Breakdown Items -->
+      <div class="score-breakdown sa fade-left">
+        <!-- Item 1 -->
+        <div class="breakdown-row">
+          <div class="breakdown-info">
+            <span class="breakdown-title">ATS Compatibility</span>
+            <span class="breakdown-percent">72%</span>
+          </div>
+          <div class="breakdown-bar-bg">
+            <div class="breakdown-bar-fill" style="width: 72%; background: #22c55e;"></div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="breakdown-row">
+          <div class="breakdown-info">
+            <span class="breakdown-title">Keywords & Role Match</span>
+            <span class="breakdown-percent">65%</span>
+          </div>
+          <div class="breakdown-bar-bg">
+            <div class="breakdown-bar-fill" style="width: 65%; background: #3b82f6;"></div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="breakdown-row">
+          <div class="breakdown-info">
+            <span class="breakdown-title">Skills Coverage</span>
+            <span class="breakdown-percent">80%</span>
+          </div>
+          <div class="breakdown-bar-bg">
+            <div class="breakdown-bar-fill" style="width: 80%; background: #7c3aed;"></div>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="breakdown-row">
+          <div class="breakdown-info">
+            <span class="breakdown-title">Structure & Formatting</span>
+            <span class="breakdown-percent">78%</span>
+          </div>
+          <div class="breakdown-bar-bg">
+            <div class="breakdown-bar-fill" style="width: 78%; background: #f59e0b;"></div>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="breakdown-row">
+          <div class="breakdown-info">
+            <span class="breakdown-title">Readability</span>
+            <span class="breakdown-percent">75%</span>
+          </div>
+          <div class="breakdown-bar-bg">
+            <div class="breakdown-bar-fill" style="width: 75%; background: #06b6d4;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-cards-grid">
+      <!-- Card 1 -->
+      <div class="score-info-card sa fade-up" data-sa-delay="0">
+        <h4>Not Just Keyword Matching</h4>
+        <p>Most tools only count keywords. CandidexAI evaluates structure, readability, skills, ATS compatibility, and
+          real hiring signals.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="score-info-card sa fade-up" data-sa-delay="100">
+        <h4>Built for Real Hiring Systems</h4>
+        <p>Your score reflects how both ATS systems and human recruiters will judge your resume — not just machines.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="score-info-card sa fade-up" data-sa-delay="200">
+        <h4>Designed to Improve, Not Just Judge</h4>
+        <p>Every score comes with clear fixes, suggestions, and improvement paths — not just a number.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
 
 <!-- FEATURES SECTION -->
 <section id="features" class="section-stars snap-section py-5 py-lg-6 position-relative overflow-hidden">
