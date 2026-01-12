@@ -1,50 +1,46 @@
 {% load static %}
-<nav id="siteNav" class="navbar navbar-expand-lg navbar-dark fixed-top nav-floating" role="navigation" aria-label="Main">
-  <div class="container">
+<nav id="siteNav" class="navbar navbar-expand-lg navbar-dark fixed-top nav-floating" role="navigation"
+  aria-label="Main">
+  <div class="header-container container-fluid d-flex align-items-center justify-content-between">
     <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}" aria-label="CandidexAI Home">
-      <div class="logo-icon-wrapper">
-        <img src="{% static 'logos/image_logo.png' %}?v=4" alt="Logo Icon" class="logo-icon-img">
-      </div>
+      <img src="{% static 'logos/image_logo.png' %}?v=4" alt="Logo" class="logo-icon-img">
       <span class="logo-text-brand">Candide<span class="logo-text-accent">xAI</span></span>
     </a>
 
-    <!-- Mobile toggle -->
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
     <!-- Navigation -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-auto">
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}">Home</a>
+          <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}"
+            href="{% url 'home' %}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link{% if request.resolver_match.url_name == 'score_checker' %} active{% endif %}" href="{% url 'score_checker' %}">Score Checker</a>
+          <a class="nav-link" href="#features">Features</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link{% if request.resolver_match.url_name == 'finder_list' %} active{% endif %}" href="{% url 'finder_list' %}">Candidate Finder</a>
+          <a class="nav-link" href="#how-it-works">How It Works</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link{% if request.resolver_match.url_name == 'review_resume' %} active{% endif %}" href="{% url 'review_resume' %}">Resume Review</a>
+          <a class="nav-link" href="{% url 'finder_list' %}">For Recruiters</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link{% if request.resolver_match.url_name == 'improve_resume' %} active{% endif %}" href="{% url 'improve_resume' %}">Improve Resume</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link{% if 'pricing' in request.path %} active{% endif %}" href="#pricing">Pricing</a>
+          <a class="nav-link" href="#blog">Blog</a>
         </li>
       </ul>
+    </div>
 
-      <!-- Auth buttons -->
-      <div class="d-flex gap-2">
-        <button id="themeToggleBtn" class="btn btn-outline-light ms-3" aria-label="Toggle light/dark theme" title="Toggle light/dark theme" type="button">
-          <i class="bi bi-moon-fill"></i>
-        </button>
-        <a href="#" class="btn btn-outline-light btn-sm">Sign in</a>
-        <a href="{% url 'requirements' %}" class="btn btn-brand btn-sm">Get Started</a>
-      </div>
+    <!-- Auth & Tools -->
+    <div class="d-flex gap-3 align-items-center">
+      <button id="themeToggleBtn" class="btn btn-icon-glass" aria-label="Toggle theme" title="Toggle theme">
+        <i class="bi bi-moon-fill"></i>
+      </button>
+      <a href="{% url 'score_checker' %}" class="btn btn-brand-sm">Check Resume</a>
+      <!-- Mobile toggle -->
+      <button class="navbar-toggler border-0 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </div>
 </nav>

@@ -2,102 +2,142 @@
 {% load static %}
 {% block content %}
 
-<section class="section-dark py-5">
-  <div class="container">
-    <nav class="small text-muted mb-3">
-      <a href="{% url 'home' %}" class="link-light text-decoration-none"><i class="bi bi-house-door me-1"></i>Home</a>
-      <span class="mx-2">/</span>
-      <span>Score Checker</span>
+<section class="section-dark py-5" style="min-height: 80vh;">
+  <div class="container container-custom">
+    <!-- Breadcrumb -->
+    <nav class="mb-4 sa fade-up" aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}"
+            class="text-muted text-decoration-none hover-white">Home</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Score Checker</li>
+      </ol>
     </nav>
 
-    <!-- Centered upload UI -->
-    <div class="mx-auto" style="max-width: 860px;">
-      <h1 class="display-5 fw-bold text-white text-center mb-2">Upload and score your resume</h1>
-      <p class="lead text-muted text-center mb-4">
-        Our AI analyzes your resume for overall quality, ATS readiness, keyword coverage, readability, and structure—then gives clear, actionable tips.
+    <div class="text-center mb-5 sa fade-up">
+      <h1 class="display-4 fw-bold text-white mb-3">Resume Score Checker</h1>
+      <p class="lead text-muted mx-auto" style="max-width: 700px;">
+        Upload your resume and let our AI analyze it for overall quality, ATS compatibility, and keyword density.
       </p>
+    </div>
 
-      <div class="checker-card p-3" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%); box-shadow:0 18px 40px rgba(0,0,0,.28);">
-        <h6 class="mb-2 d-flex justify-content-between align-items-center">
-          <span>Upload resume</span>
-          <span class="badge bg-success-subtle text-success fw-semibold">AI powered</span>
-        </h6>
-
-        <!-- Dropzone -->
-        <div id="checkerDrop" class="dz mt-2" style="background:rgba(255,255,255,.06); border:1px dashed rgba(255,255,255,.25); border-radius:12px; padding:16px; text-align:center; color:#e5e7eb;">
-          <input id="checkerInput" type="file" class="d-none" accept=".pdf,.doc,.docx">
-          <div class="dz-inner">
-            <i class="bi bi-cloud-arrow-up" style="font-size:28px; display:block; margin-bottom:6px; color:#9ec5fe"></i>
-            <div>Drag & drop your resume here or <button type="button" class="btn btn-link p-0" id="checkerBrowse">browse</button></div>
-            <small class="text-muted">PDF or DOCX · Max ~10 MB</small>
+    <!-- MAIN UPLOAD CARD -->
+    <div class="mx-auto sa fade-up" style="max-width: 800px;">
+      <div class="product-card p-4 p-lg-5">
+        <div class="upload-zone-wrapper">
+          <div id="checkerDrop" class="upload-dropzone">
+            <input id="checkerInput" type="file" class="d-none" accept=".pdf,.doc,.docx">
+            <div class="upload-content text-center">
+              <div class="upload-icon-pulse mb-4">
+                <i class="bi bi-cloud-arrow-up"></i>
+              </div>
+              <h3 class="h4 text-white mb-2">Drag & Drop Your Resume</h3>
+              <p class="text-muted mb-4">Supported formats: <span class="text-white fw-medium">PDF, DOCX</span></p>
+              <button type="button" class="btn btn-brand btn-lg px-5 py-3" id="checkerBrowse">
+                <i class="bi bi-folder-plus me-2"></i> Browse Files
+              </button>
+            </div>
           </div>
         </div>
-        <div id="checkerFiles" class="dz-list mt-2" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
 
-        <div class="d-grid mt-3">
-          <button id="checkScoreBtn" type="button" class="btn btn-brand btn-lg" disabled>Check score</button>
+        <div id="checkerFiles" class="dz-list mt-4"
+          style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center;"></div>
+
+        <div class="d-grid mt-5">
+          <button id="checkScoreBtn" type="button" class="btn btn-primary-glow btn-lg py-3" disabled>
+            <i class="bi bi-rocket-takeoff me-2"></i> Analyze Resume
+          </button>
         </div>
+      </div>
+    </div>
 
+    <!-- PLACEHOLDER RESULTS SECTION -->
+    <div id="scoreResults" class="mt-5 pt-5 d-none sa fade-up">
+      <div class="text-center mb-5">
+        <h2 class="h1 fw-bold text-white mb-2">Analysis Results</h2>
+        <div class="badge bg-primary-glow px-4 py-2 rounded-pill">AI Processed</div>
       </div>
 
-      <!-- RESULTS (immediately below upload card) -->
-      <section id="scoreResults" class="section-dark py-4 d-none">
-        <div class="container">
-          <div class="results-card mx-auto">
-            <div class="results-toolbar d-flex justify-content-between align-items-center mb-2">
-              <h5 class="mb-0 text-white">Results</h5>
-              <div class="d-flex gap-2">
-                <button id="newScoreBtn" type="button" class="btn btn-ghost-light">
-                  <i class="bi bi-arrow-repeat"></i> New score
-                </button>
+      <div class="row g-4">
+        <!-- Overall Score Donut -->
+        <div class="col-lg-5">
+          <div class="product-card h-100 flex-center p-5">
+            <div id="donut" class="premium-donut" aria-label="Total score">
+              <svg viewBox="0 0 100 100" class="donut-svg">
+                <circle class="donut-base" cx="50" cy="50" r="45"></circle>
+                <circle id="donutFill" class="donut-fill" cx="50" cy="50" r="45" style="stroke-dasharray: 0, 283;">
+                </circle>
+              </svg>
+              <div class="donut-content text-center">
+                <div id="donutValue" class="display-3 fw-bold text-white">0</div>
+                <div class="text-muted text-uppercase tracking-widest small">Score</div>
               </div>
             </div>
+            <div id="verdictText" class="mt-4 lead text-white-50 text-center">Processing...</div>
+          </div>
+        </div>
 
-            <div class="row g-4 align-items-center">
-              <div class="col-md-5">
-                <div class="text-center">
-                  <!-- Animated donut -->
-                  <div id="donut" class="donut" aria-label="Total score">
-                    <div class="donut-inner">
-                      <div id="donutValue" class="donut-value">0</div>
-                      <div class="donut-label">Total</div>
-                    </div>
-                  </div>
-
-                  <!-- Verdict -->
-                  <div class="mt-3 d-flex align-items-center justify-content-center gap-2">
-                    <div id="emoji3d" class="emoji3d"><span id="emojiChar" class="emoji-char">🙂</span></div>
-                    <span id="verdictText" class="verdict-text">Upload a resume to check score</span>
-                  </div>
-                </div>
+        <!-- Section-wise Scores -->
+        <div class="col-lg-7">
+          <div class="product-card h-100 p-4 p-lg-5">
+            <h4 class="text-white mb-4">Section-wise Analysis</h4>
+            <div class="subscore-item mb-4">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Education & Qualifications</span>
+                <span id="scoreEdu" class="text-white fw-bold">0%</span>
               </div>
-
-              <div class="col-md-7">
-                <h5 class="fw-bold text-white mb-2">Subscores</h5>
-
-                <div class="subscore"><div class="sub-label">ATS readiness</div><div class="bar"><div id="barATS" class="fill"></div></div></div>
-                <div class="subscore"><div class="sub-label">Match</div><div class="bar"><div id="barMatch" class="fill"></div></div></div>
-                <div class="subscore"><div class="sub-label">Skills</div><div class="bar"><div id="barSkills" class="fill"></div></div></div>
-                <div class="subscore"><div class="sub-label">Readability</div><div class="bar"><div id="barRead" class="fill"></div></div></div>
-                <div class="subscore"><div class="sub-label">Structure</div><div class="bar"><div id="barStruct" class="fill"></div></div></div>
-
-                <div class="row g-3 mt-3">
-                  <div class="col-md-6">
-                    <h6 class="mb-1 text-white">Keywords present</h6>
-                    <div id="chipsPresent"></div>
-                  </div>
-                  <div class="col-md-6">
-                    <h6 class="mb-1 text-white">Keywords missing</h6>
-                    <div id="chipsMissing"></div>
-                  </div>
-                </div>
-
-                <ul id="insightsList" class="list-unstyled mt-3 text-muted small"></ul>
+              <div class="premium-progress">
+                <div id="barEdu" class="progress-fill fill-cyan" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="subscore-item mb-4">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Professional Experience</span>
+                <span id="scoreExp" class="text-white fw-bold">0%</span>
+              </div>
+              <div class="premium-progress">
+                <div id="barExp" class="progress-fill fill-purple" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="subscore-item mb-4">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Skills & Keywords</span>
+                <span id="scoreSkills" class="text-white fw-bold">0%</span>
+              </div>
+              <div class="premium-progress">
+                <div id="barSkills" class="progress-fill fill-green" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="subscore-item">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">ATS Compatibility</span>
+                <span id="scoreATS" class="text-white fw-bold">0%</span>
+              </div>
+              <div class="premium-progress">
+                <div id="barATS" class="progress-fill fill-orange" style="width: 0%"></div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+
+        <!-- Feedback Card -->
+        <div class="col-12">
+          <div class="product-card product-card--glowing p-4 p-lg-5">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="d-flex align-items-center text-primary-glow">
+                <i class="bi bi-chat-left-dots-fill fs-3 me-3"></i>
+                <h3 class="h4 mb-0 text-white">AI Feedback Summary</h3>
+              </div>
+              <a href="{% url 'review_resume' %}" class="btn btn-outline-brand">
+                <i class="bi bi-search me-2"></i> View Detailed Review
+              </a>
+            </div>
+            <div id="aiFeedback" class="text-muted lh-lg">
+              <p>Analyzing your data to provide a detailed summary of your resume's strengths and areas for
+                improvement...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -118,7 +158,9 @@
       <div class="row g-4 mt-2 eq-grid" id="aiEqGrid">
         <div class="col-lg-6">
           <div class="holo-card sa fade-up eq">
-            <div class="holo-head"><span class="holo-emoji">✨</span><h3>What we do</h3></div>
+            <div class="holo-head"><span class="holo-emoji">✨</span>
+              <h3>What we do</h3>
+            </div>
             <ul class="holo-list">
               <li>Parse and standardize sections (experience, skills, education, summary).</li>
               <li>Detect ATS blockers (headings, bullet consistency, parsable text, fonts).</li>
@@ -131,7 +173,9 @@
 
         <div class="col-lg-6">
           <div class="holo-card sa fade-up eq" data-sa-delay="70">
-            <div class="holo-head"><span class="holo-emoji">🧠</span><h3>How it works</h3></div>
+            <div class="holo-head"><span class="holo-emoji">🧠</span>
+              <h3>How it works</h3>
+            </div>
             <ol class="holo-steps">
               <li><strong>Parse & extract:</strong> Read your PDF/DOCX and normalize content.</li>
               <li><strong>Score:</strong> Compute subscores — ATS, Match, Skills, Readability, Structure.</li>
@@ -143,20 +187,25 @@
 
         <div class="col-lg-6">
           <div class="holo-card sa fade-up eq">
-            <div class="holo-head"><span class="holo-emoji">🚀</span><h3>Why it's useful</h3></div>
+            <div class="holo-head"><span class="holo-emoji">🚀</span>
+              <h3>Why it's useful</h3>
+            </div>
             <ul class="holo-list">
               <li>Beat automated screens: avoid silent ATS rejections.</li>
               <li>Tailor faster: add the right keywords without guesswork.</li>
               <li>Show impact: rewrite bullets with measurable results.</li>
               <li>Iterate quickly: measure changes with subscores + total score.</li>
-              <li><em>Pro tip:</em> Keep resume to 1 page (early career) or 2 pages (10+ yrs) with strong recent impact.</li>
+              <li><em>Pro tip:</em> Keep resume to 1 page (early career) or 2 pages (10+ yrs) with strong recent impact.
+              </li>
             </ul>
           </div>
         </div>
 
         <div class="col-lg-6">
           <div class="holo-card sa fade-up eq" data-sa-delay="70">
-            <div class="holo-head"><span class="holo-emoji">📊</span><h3>How we score</h3></div>
+            <div class="holo-head"><span class="holo-emoji">📊</span>
+              <h3>How we score</h3>
+            </div>
             <p class="text-muted mb-2">Your total is a weighted blend of five subscores (0–100 each):</p>
             <ul class="holo-list narrow">
               <li><strong>ATS readiness (25%)</strong> — headings, formatting, parsability.</li>
@@ -165,42 +214,50 @@
               <li><strong>Readability (15%)</strong> — clarity, concision, tone.</li>
               <li><strong>Structure (15%)</strong> — bullet quality, tense consistency, layout.</li>
             </ul>
-            <div class="ai-formula">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</div>
+            <div class="ai-formula">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure
+            </div>
           </div>
         </div>
       </div>
 
-        <div class="col-12">
-          <div class="holo-card sa fade-up">
-            <div class="holo-head"><span class="holo-emoji">✍️</span><h3>How to improve</h3></div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <ul class="holo-list">
-                  <li><strong>Show impact:</strong> Use "Action + task + metric" (e.g., "Increased activation by 18% …").</li>
-                  <li><strong>Fix ATS blockers:</strong> Clear headings, consistent bullets, no images‑of‑text, standard fonts.</li>
-                  <li><strong>Add must‑haves:</strong> Cover missing keywords in Skills and in relevant bullets.</li>
-                </ul>
-              </div>
-              <div class="col-md-6">
-                <ul class="holo-list">
-                  <li><strong>Tighten writing:</strong> Short sentences, active verbs, remove filler/buzzwords.</li>
-                  <li><strong>Prioritize recency:</strong> Add most detail to the latest role (4–6 bullets).</li>
-                  <li><strong>Re‑score:</strong> Tailor per job; re‑check after edits.</li>
-                </ul>
-              </div>
+      <div class="col-12">
+        <div class="holo-card sa fade-up">
+          <div class="holo-head"><span class="holo-emoji">✍️</span>
+            <h3>How to improve</h3>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <ul class="holo-list">
+                <li><strong>Show impact:</strong> Use "Action + task + metric" (e.g., "Increased activation by 18% …").
+                </li>
+                <li><strong>Fix ATS blockers:</strong> Clear headings, consistent bullets, no images‑of‑text, standard
+                  fonts.</li>
+                <li><strong>Add must‑haves:</strong> Cover missing keywords in Skills and in relevant bullets.</li>
+              </ul>
             </div>
-            <div class="ai-scan thin" aria-hidden="true"></div>
+            <div class="col-md-6">
+              <ul class="holo-list">
+                <li><strong>Tighten writing:</strong> Short sentences, active verbs, remove filler/buzzwords.</li>
+                <li><strong>Prioritize recency:</strong> Add most detail to the latest role (4–6 bullets).</li>
+                <li><strong>Re‑score:</strong> Tailor per job; re‑check after edits.</li>
+              </ul>
+            </div>
           </div>
+          <div class="ai-scan thin" aria-hidden="true"></div>
         </div>
+      </div>
 
-        <div class="col-12">
-          <div class="holo-card subtle sa fade-up">
-            <div class="holo-head"><span class="holo-emoji">🔒</span><h3>Privacy & Security</h3></div>
-            <p class="text-muted mb-0">Uploads are encrypted in transit. You control retention (auto‑delete option). We never sell personal data.</p>
+      <div class="col-12">
+        <div class="holo-card subtle sa fade-up">
+          <div class="holo-head"><span class="holo-emoji">🔒</span>
+            <h3>Privacy & Security</h3>
           </div>
+          <p class="text-muted mb-0">Uploads are encrypted in transit. You control retention (auto‑delete option). We
+            never sell personal data.</p>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </section>
 
@@ -209,22 +266,27 @@
 <section id="contextBlock" class="section-dark py-4 d-none">
   <div class="container">
     <div class="mx-auto" style="max-width: 1100px;">
-      <div class="p-3 mb-4" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
+      <div class="p-3 mb-4"
+        style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
         <h4 class="text-white fw-bold mb-2">What we analyzed</h4>
         <ul id="analyzedList" class="text-muted mb-0"></ul>
       </div>
-      <div class="p-3 mb-4" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
+      <div class="p-3 mb-4"
+        style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
         <h4 class="text-white fw-bold mb-2">How we calculate your score</h4>
         <p class="text-muted">Your total is a weighted blend of 5 subscores (normalized 0–100).</p>
         <ul id="calcList" class="text-muted mb-2"></ul>
         <div class="small text-muted">
-          Example: <code style="background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);padding:2px 6px;border-radius:6px;">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</code>
+          Example: <code
+            style="background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);padding:2px 6px;border-radius:6px;">Total = 0.25×ATS + 0.25×Match + 0.20×Skills + 0.15×Readability + 0.15×Structure</code>
         </div>
       </div>
-      <div class="p-3" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
+      <div class="p-3"
+        style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
         <div class="d-flex align-items-center justify-content-between">
           <h4 class="text-white fw-bold mb-2">How to improve</h4>
-          <button id="copyImprove" class="btn btn-sm btn-outline-light"><i class="bi bi-clipboard"></i> Copy tips</button>
+          <button id="copyImprove" class="btn btn-sm btn-outline-light"><i class="bi bi-clipboard"></i> Copy
+            tips</button>
         </div>
         <ul id="improveList" class="text-muted mb-0"></ul>
       </div>
@@ -232,276 +294,359 @@
   </div>
 </section>
 
+<!-- Firebase Config -->
+<script src="{% static 'js/firebase-config.js' %}"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+  // Initialize Firebase using the config from firebase-config.js
+  const app = initializeApp(window.firebaseConfig);
+
+  // Initialize services
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Make these available to the existing script
+  window.firebaseAuth = { auth };
+  window.firebaseStorage = { getStorage, ref, uploadBytesResumable, getDownloadURL, storage };
+  window.firebaseFirestore = { db, collection, addDoc, serverTimestamp };
+</script>
+
 <!-- Real Scoring JavaScript -->
 <script>
-// ===== Score Checker: real scoring + UI render =====
-(() => {
-  const dz = document.getElementById('checkerDrop');
-  const input = document.getElementById('checkerInput');
-  const browse = document.getElementById('checkerBrowse');
-  const fileList = document.getElementById('checkerFiles');
-  const btn = document.getElementById('checkScoreBtn');
+  // ===== Score Checker: real scoring + UI render =====
+  (() => {
+    const dz = document.getElementById('checkerDrop');
+    const input = document.getElementById('checkerInput');
+    const browse = document.getElementById('checkerBrowse');
+    const fileList = document.getElementById('checkerFiles');
+    const btn = document.getElementById('checkScoreBtn');
 
-  const results = document.getElementById('scoreResults');
-  const context = document.getElementById('contextBlock') || document.getElementById('score-context');
-
-  // Diagram elements
-  const donut = document.getElementById('donut');
-  const donutVal = document.getElementById('donutValue');
-  const barATS = document.getElementById('barATS');
-  const barMatch = document.getElementById('barMatch');
-  const barSkills = document.getElementById('barSkills');
-  const barRead = document.getElementById('barRead');
-  const barStruct = document.getElementById('barStruct');
-  const chipsPresent = document.getElementById('chipsPresent');
-  const chipsMissing = document.getElementById('chipsMissing');
-  const insightsList = document.getElementById('insightsList');
-
-  const emoji3d = document.getElementById('emoji3d');
-  const emojiChar = document.getElementById('emojiChar') || (emoji3d?.querySelector('.emoji-char'));
-  const verdictText = document.getElementById('verdictText') || document.querySelector('#verdict .verdict-text');
-
-  // Context lists
-  const analyzedList = document.getElementById('analyzedList');
-  const calcList = document.getElementById('calcList');
-  const improveList = document.getElementById('improveList');
-  const copyImprove = document.getElementById('copyImprove');
-
-  // Dropzone UI
-  let files = [];
-  const renderFiles = () => {
-    fileList.innerHTML = '';
-    files.forEach((f,i) => {
-      const el = document.createElement('div');
-      el.className = 'dz-file';
-      el.innerHTML = `<i class="bi bi-file-earmark-text"></i><span>${f.name}</span> <button type="button" class="btn btn-sm btn-link text-danger p-0">Remove</button>`;
-      el.querySelector('button').addEventListener('click', () => { files.splice(i,1); renderFiles(); });
-      fileList.appendChild(el);
-    });
-    btn.disabled = files.length === 0;
-  };
-  browse?.addEventListener('click', () => input.click());
-  input?.addEventListener('change', e => { files = Array.from(e.target.files||[]); renderFiles(); });
-  dz?.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('active'); });
-  dz?.addEventListener('dragleave', () => dz.classList.remove('active'));
-  dz?.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('active');
-    if (e.dataTransfer?.files?.length) { files = Array.from(e.dataTransfer.files); renderFiles(); }
-  });
-
-  // Helpers
-  const ring = t => t>=80 ? '#22c55e' : t>=65 ? '#f59e0b' : '#ef4444';
-  const verdict = t => t>=85 ? {mood:'good',emoji:'😄',text:'Excellent fit — ready to apply!'}
-    : t>=75 ? {mood:'good',emoji:'🙂',text:'Good — a few quick improvements recommended.'}
-    : t>=60 ? {mood:'bad', emoji:'😕',text:'Fair — add metrics and keywords to boost.'}
-    : {mood:'bad', emoji:'😬',text:'Needs work — fix ATS issues and add impact.'};
-  const getCsrf = () => (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || '';
-
-  copyImprove?.addEventListener('click', async () => {
-    const text = Array.from(document.querySelectorAll('#improveList li')).map(li=>'• '+li.textContent).join('\n');
-    try { await navigator.clipboard.writeText(text); } catch {}
-  });
-
-  // Render helper (and call AI effects if present)
-  function render(data) {
-    // Ring color map
-    const ring = t => t>=80 ? '#22c55e' : t>=65 ? '#f59e0b' : '#ef4444';
-
-    // Donut animated
-    animateDonut(
-      document.getElementById('donut'),
-      document.getElementById('donutValue'),
-      data.total,
-      1200,
-      ring(data.total)
-    );
-
-    // Bars animated
-    animateBar(document.getElementById('barATS'), data.ats, 900);
-    animateBar(document.getElementById('barMatch'), data.match, 900);
-    animateBar(document.getElementById('barSkills'), data.skills, 900);
-    animateBar(document.getElementById('barRead'), data.read, 900);
-    animateBar(document.getElementById('barStruct'), data.struct, 900);
-
-    // Chips
-    const present = (data.present||'').split(';').filter(Boolean);
-    const missing = (data.missing||'').split(';').filter(Boolean);
-    chipsPresent.innerHTML = present.map(k=>`<span class="k-chip k-present">${k}</span>`).join('');
-    chipsMissing.innerHTML = missing.map(k=>`<span class="k-chip k-missing">${k}</span>`).join('');
-
-    // Verdict
-    const v = data.total>=85 ? {mood:'good',emoji:'😄',text:'Excellent fit — ready to apply!'}
-      : data.total>=75 ? {mood:'good',emoji:'🙂',text:'Good — a few quick improvements recommended.'}
-      : data.total>=60 ? {mood:'bad', emoji:'😕',text:'Fair — add metrics and keywords to boost.'}
-      : {mood:'bad', emoji:'😬',text:'Needs work — fix ATS issues and add impact.'};
-    const emoji3d = document.getElementById('emoji3d');
-    if (emoji3d){
-      emoji3d.style.setProperty('--c1', v.mood==='good' ? '#22c55e' : '#ef4444');
-      emoji3d.style.setProperty('--c2', v.mood==='good' ? '#16a34a' : '#b91c1c');
-    }
-    const emojiChar = document.getElementById('emojiChar'); if (emojiChar) emojiChar.textContent = v.emoji;
-    const verdictText = document.getElementById('verdictText'); if (verdictText) verdictText.textContent = v.text;
-
-    // Insights (keep your existing generation)
-    const insights = [
-      data.total >= 80 ? '🔥 Strong overall — highlight impact with quantified results.' :
-      data.total >= 65 ? '📝 Add 2–3 measurable wins in your latest role.' :
-                         '🔧 Fix ATS issues: clear headings, consistent bullets, simple fonts.',
-      data.match >= 75 ? '✅ Good match to role keywords.' : '🔎 Add missing must‑haves shown at right.',
-      data.read >= 75 ? '🟢 Readability is good.' : '✂️ Shorten long sentences; use action verbs.'
-    ];
-    document.getElementById('insightsList').innerHTML = insights.map(i=>`<li>${i}</li>`).join('');
-
-    // Static context
-    if (analyzedList) analyzedList.innerHTML = `
-      <li>Extracted sections: <em>experience</em>, <em>skills</em>, <em>education</em>, <em>summary</em>.</li>
-      <li>Normalized structure (headings, bullets, dates), flagged ATS blockers.</li>
-      <li>Matched keywords against a role keyword set.</li>
-      <li>Estimated readability and signal density.</li>
-    `;
-    if (calcList) calcList.innerHTML = `
-      <li><strong>ATS (25%)</strong> — headings/formatting/parsing</li>
-      <li><strong>Match (25%)</strong> — keyword alignment</li>
-      <li><strong>Skills (20%)</strong> — coverage of must‑haves</li>
-      <li><strong>Readability (15%)</strong> — clarity/concision</li>
-      <li><strong>Structure (15%)</strong> — bullet quality/layout</li>
-    `;
-    if (improveList) {
-      const tips=[];
-      if (data.ats < 75) tips.push('Fix ATS blockers: clear section headings, avoid text in images/tables, standard fonts.');
-      if (data.match < 75) tips.push(`Add missing must‑haves: ${missing.slice(0,3).join(', ')}.`);
-      if (data.skills < 75) tips.push('Include relevant tools in a Skills section and within bullets.');
-      if (data.read < 75) tips.push('Shorten long sentences; use Action + result + metric; remove filler.');
-      if (data.struct < 75) tips.push('Consistent bullets/tense; 4–6 bullets/role; detail the latest role.');
-      if (!tips.length) tips.push('Nice work! Add 1–2 quantified wins and tailor to each job post.');
-      improveList.innerHTML = tips.map(t=>`<li>${t}</li>`).join('');
-    }
-
-    // Reveal right under the form
-    document.getElementById('scoreResults').classList.remove('d-none');
+    const results = document.getElementById('scoreResults');
     const context = document.getElementById('contextBlock') || document.getElementById('score-context');
-    context?.classList.remove('d-none');
 
-    // Scroll to results and celebrate / warn
-    document.getElementById('scoreResults').scrollIntoView({ behavior:'smooth', block:'start' });
-    if (window.aiDecor) window.aiDecor(data.total || 0);
-  }
+    // Diagram elements
+    const donut = document.getElementById('donut');
+    const donutVal = document.getElementById('donutValue');
+    const barATS = document.getElementById('barATS');
+    const barMatch = document.getElementById('barMatch');
+    const barSkills = document.getElementById('barSkills');
+    const barRead = document.getElementById('barRead');
+    const barStruct = document.getElementById('barStruct');
+    const chipsPresent = document.getElementById('chipsPresent');
+    const chipsMissing = document.getElementById('chipsMissing');
+    const insightsList = document.getElementById('insightsList');
 
-  btn?.addEventListener('click', async () => {
-    const file = files[0] || input?.files?.[0];
-    if (!file) { alert('Please select a PDF/DOCX first.'); return; }
-    const prev = btn.textContent; btn.textContent = 'Analyzing…'; btn.disabled = true;
+    const emoji3d = document.getElementById('emoji3d');
+    const emojiChar = document.getElementById('emojiChar') || (emoji3d?.querySelector('.emoji-char'));
+    const verdictText = document.getElementById('verdictText') || document.querySelector('#verdict .verdict-text');
 
-    const fd = new FormData();
-    fd.append('resume', file);
-    // Optionally pass custom keywords:
-    // fd.append('keywords', 'SQL, Python, Tableau');
+    // Context lists
+    const analyzedList = document.getElementById('analyzedList');
+    const calcList = document.getElementById('calcList');
+    const improveList = document.getElementById('improveList');
+    const copyImprove = document.getElementById('copyImprove');
 
-    try {
-      const res = await fetch('/api/score/', { method:'POST', headers:{'X-CSRFToken': getCsrf()}, body: fd });
-      if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      render(data);
-    } catch (e) {
-      console.error(e);
-      alert('Scoring failed: ' + (e.message || 'Unknown error'));
-    } finally {
-      btn.textContent = prev; btn.disabled = false;
+    // Dropzone UI
+    let files = [];
+    const renderFiles = () => {
+      fileList.innerHTML = '';
+      files.forEach((f, i) => {
+        const el = document.createElement('div');
+        el.className = 'dz-file';
+        el.innerHTML = `<i class="bi bi-file-earmark-text"></i><span>${f.name}</span> <button type="button" class="btn btn-sm btn-link text-danger p-0">Remove</button>`;
+        el.querySelector('button').addEventListener('click', () => { files.splice(i, 1); renderFiles(); });
+        fileList.appendChild(el);
+      });
+      btn.disabled = files.length === 0;
+    };
+    browse?.addEventListener('click', () => input.click());
+    input?.addEventListener('change', e => { files = Array.from(e.target.files || []); renderFiles(); });
+    dz?.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('active'); });
+    dz?.addEventListener('dragleave', () => dz.classList.remove('active'));
+    dz?.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('active');
+      if (e.dataTransfer?.files?.length) { files = Array.from(e.dataTransfer.files); renderFiles(); }
+    });
+
+    // Helpers
+    const ring = t => t >= 80 ? '#22c55e' : t >= 65 ? '#f59e0b' : '#ef4444';
+    const verdict = t => t >= 85 ? { mood: 'good', emoji: '😄', text: 'Excellent fit — ready to apply!' }
+      : t >= 75 ? { mood: 'good', emoji: '🙂', text: 'Good — a few quick improvements recommended.' }
+        : t >= 60 ? { mood: 'bad', emoji: '😕', text: 'Fair — add metrics and keywords to boost.' }
+          : { mood: 'bad', emoji: '😬', text: 'Needs work — fix ATS issues and add impact.' };
+    const getCsrf = () => (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+
+    copyImprove?.addEventListener('click', async () => {
+      const text = Array.from(document.querySelectorAll('#improveList li')).map(li => '• ' + li.textContent).join('\n');
+      try { await navigator.clipboard.writeText(text); } catch { }
+    });
+
+    // Render helper (and call AI effects if present)
+    function render(data) {
+      // Reveal results section
+      document.getElementById('scoreResults').classList.remove('d-none');
+      document.getElementById('scoreResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Animate Donut
+      const score = data.total || 0;
+      const donutFill = document.getElementById('donutFill');
+      const donutValue = document.getElementById('donutValue');
+      const radius = 45;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (score / 100) * circumference;
+
+      donutFill.style.strokeDasharray = `${circumference} ${circumference}`;
+      donutFill.style.strokeDashoffset = circumference;
+
+      // Trigger transition
+      setTimeout(() => {
+        donutFill.style.strokeDashoffset = offset;
+        let startScore = 0;
+        const duration = 1500;
+        const stepTime = Math.abs(Math.floor(duration / score));
+        const timer = setInterval(() => {
+          startScore++;
+          donutValue.textContent = startScore;
+          if (startScore >= score) clearInterval(timer);
+        }, stepTime);
+      }, 100);
+
+      // Map subscores (API: ats, match, skills, read, struct)
+      // To UI: barEdu, barExp, barSkills, barATS
+      const subscores = {
+        Edu: data.read || 75,
+        Exp: data.struct || 70,
+        Skills: data.skills || 65,
+        ATS: data.ats || 80
+      };
+
+      Object.keys(subscores).forEach(key => {
+        const val = subscores[key];
+        const bar = document.getElementById(`bar${key}`);
+        const label = document.getElementById(`score${key}`);
+        if (bar) bar.style.width = `${val}%`;
+        if (label) label.textContent = `${val}%`;
+      });
+
+      // Verdict text
+      const v = score >= 85 ? 'Excellent! Your resume is highly competitive.'
+        : score >= 75 ? 'Good. A few minor tweaks could make it stand out.'
+          : score >= 60 ? 'Fair. Consider adding more measurable results.'
+            : 'Needs improvement. Focus on key sections and structure.';
+      document.getElementById('verdictText').textContent = v;
+
+      // AI Feedback Text
+      const feedback = `
+      <p>Based on our AI analysis, your resume has a <strong>${score}%</strong> overall score. 
+      Your <strong>${subscores.ATS}% ATS compatibility</strong> suggests it is well-formatted for automated systems. 
+      However, enhancing your <strong>${subscores.Skills}% Skill coverage</strong> by adding more industry-specific keywords could further improve your visibility to recruiters.</p>
+      <p>Recommended next step: Use our <strong>Resume Review</strong> tool for a detailed breakdown of specific mistakes and AI-powered fixes.</p>
+    `;
+      document.getElementById('aiFeedback').innerHTML = feedback;
+
+      // Call celebration effects
+      if (window.aiDecor) window.aiDecor(score);
     }
-  });
-})();
+
+    btn?.addEventListener('click', async () => {
+      const file = files[0] || input?.files?.[0];
+      if (!file) { alert('Please select a PDF/DOCX first.'); return; }
+
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!allowedTypes.includes(file.type) && ext !== 'pdf' && ext !== 'docx') {
+        alert('Only PDF and DOCX files are allowed.');
+        return;
+      }
+
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+
+      try {
+        // Firebase Auth
+        const { auth } = window.firebaseAuth;
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Please sign in to analyze your resume.");
+          btn.disabled = false;
+          return;
+        }
+
+        // Firebase Storage Upload
+        const { getStorage, ref, uploadBytesResumable, getDownloadURL, storage } = window.firebaseStorage;
+        const { db, collection, addDoc, serverTimestamp } = window.firebaseFirestore;
+
+        const timestamp = Date.now();
+        const storagePath = `resumes/${user.uid}/${timestamp}_${file.name}`;
+        const storageRef = ref(storage, storagePath);
+
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Uploading: ${progress}%`;
+          },
+          (error) => {
+            console.error("Upload failed:", error);
+            alert("Upload failed: " + error.message);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("File available at:", downloadURL);
+
+            // Store metadata in Firestore
+            try {
+              await addDoc(collection(db, "resumes"), {
+                userId: user.uid,
+                filename: file.name,
+                storagePath: storagePath,
+                downloadURL: downloadURL,
+                uploadedAt: serverTimestamp(),
+                status: "uploaded"
+              });
+            } catch (fsErr) {
+              console.warn("Firestore metadata save failed:", fsErr);
+            }
+
+            // Continue to existing fake analysis flow
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            const fakeData = {
+              total: 82,
+              ats: 88,
+              skills: 75,
+              read: 80,
+              struct: 85,
+              issues: [
+                { title: 'Weak Action Verbs', severity: 'High', desc: 'Phrases like "Responsible for" or "Helped with" lack impact. Use verbs like "Spearheaded" or "Orchestrated".' },
+                { title: 'Missing Quantifiable Metrics', severity: 'Medium', desc: 'Your experience bullet points lack numbers or percentages to demonstrate real impact.' },
+                { title: 'ATS Header Formatting', severity: 'Low', desc: 'Contact information in headers/footers can sometimes be missed by older ATS scanners.' }
+              ],
+              suggestions: [
+                'Add a "Professional Summary" section to grab attention in the first 6 seconds.',
+                'Move your "Skills" section to the top for better keyword visibility.',
+                'Use consistent date formatting (e.g., MM/YYYY) throughout the document.',
+                'Ensure your contact info includes your LinkedIn profile URL.'
+              ]
+            };
+
+            localStorage.setItem('simulatedAnalysis', JSON.stringify(fakeData));
+            render(fakeData);
+          }
+        );
+
+      } catch (err) {
+        console.error("Firebase error:", err);
+        alert("An error occurred during upload. Please check your Firebase configuration.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    });
+  })();
 </script>
 
 <!-- AI Effects JavaScript -->
 <script>
-// ===== AI Effects: confetti for good score, warning rain for low score =====
-(() => {
-  // Create fx layer once
-  let fx = document.getElementById('aiFx');
-  if (!fx) { 
-    fx = document.createElement('div'); 
-    fx.id = 'aiFx'; 
-    document.body.appendChild(fx); 
-  }
-  
-  function spawnEmojis(chars=['🎉','✨','🚀'], count=28, anim='fall'){
-    const w = window.innerWidth; 
-    const h = window.innerHeight;
-    for (let i=0;i<count;i++){
-      const s = document.createElement('span');
-      s.className = 'emo';
-      s.textContent = chars[i % chars.length];
-      s.style.left = Math.random()*w + 'px';
-      s.style.top = (-10 - Math.random()*40) + 'px';
-      s.style.animation = `${anim} ${1.6 + Math.random()*1.2}s linear forwards`;
-      fx.appendChild(s);
-      setTimeout(()=> s.remove(), 2200);
+  // ===== AI Effects: confetti for good score, warning rain for low score =====
+  (() => {
+    // Create fx layer once
+    let fx = document.getElementById('aiFx');
+    if (!fx) {
+      fx = document.createElement('div');
+      fx.id = 'aiFx';
+      document.body.appendChild(fx);
     }
-  }
 
-  // Public hook: call this after you compute the score
-  window.aiDecor = (score=75) => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (score >= 80) {
-      spawnEmojis(['🎉','✨','🚀'], 36, 'fall');
-    } else if (score < 65) {
-      spawnEmojis(['⚠️','😬','💧'], 28, 'float');
-    } else {
-      spawnEmojis(['🙂','✨'], 18, 'fall');
+    function spawnEmojis(chars = ['🎉', '✨', '🚀'], count = 28, anim = 'fall') {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement('span');
+        s.className = 'emo';
+        s.textContent = chars[i % chars.length];
+        s.style.left = Math.random() * w + 'px';
+        s.style.top = (-10 - Math.random() * 40) + 'px';
+        s.style.animation = `${anim} ${1.6 + Math.random() * 1.2}s linear forwards`;
+        fx.appendChild(s);
+        setTimeout(() => s.remove(), 2200);
+      }
     }
-  };
 
-  // Optional auto‑hook if your page already sets window.renderScoreResults
-  const orig = window.renderScoreResults;
-  if (typeof orig === 'function') {
-    window.renderScoreResults = (payload) => { 
-      try { 
-        orig(payload); 
-      } finally { 
-        window.aiDecor(payload.total || 0); 
-      } 
+    // Public hook: call this after you compute the score
+    window.aiDecor = (score = 75) => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (score >= 80) {
+        spawnEmojis(['🎉', '✨', '🚀'], 36, 'fall');
+      } else if (score < 65) {
+        spawnEmojis(['⚠️', '😬', '💧'], 28, 'float');
+      } else {
+        spawnEmojis(['🙂', '✨'], 18, 'fall');
+      }
     };
-  }
-})();
+
+    // Optional auto‑hook if your page already sets window.renderScoreResults
+    const orig = window.renderScoreResults;
+    if (typeof orig === 'function') {
+      window.renderScoreResults = (payload) => {
+        try {
+          orig(payload);
+        } finally {
+          window.aiDecor(payload.total || 0);
+        }
+      };
+    }
+  })();
 </script>
 
 <!-- Equal Height JavaScript Fallback -->
 <script>
-// ===== Equal-height fallback for AI context (per row) =====
-(() => {
-  const grid = document.getElementById('aiEqGrid');
-  if (!grid) return;
+  // ===== Equal-height fallback for AI context (per row) =====
+  (() => {
+    const grid = document.getElementById('aiEqGrid');
+    if (!grid) return;
 
-  let raf;
-  function equalizeByRow(){
-    // Reset any explicit heights
-    grid.querySelectorAll('.holo-card').forEach(c => c.style.minHeight = '');
-    // On mobile (stacked), skip
-    if (window.matchMedia('(max-width: 991.98px)').matches) return;
+    let raf;
+    function equalizeByRow() {
+      // Reset any explicit heights
+      grid.querySelectorAll('.holo-card').forEach(c => c.style.minHeight = '');
+      // On mobile (stacked), skip
+      if (window.matchMedia('(max-width: 991.98px)').matches) return;
 
-    // Group cards by their top position (i.e., rows)
-    const cards = Array.from(grid.querySelectorAll('.holo-card'));
-    const rows = [];
-    cards.forEach(c => {
-      const top = Math.round(c.getBoundingClientRect().top);
-      let row = rows.find(r => Math.abs(r.top - top) < 6);
-      if (!row) rows.push(row = { top, cards: [] });
-      row.cards.push(c);
-    });
-    // Set min-height to tallest for each row
-    rows.forEach(r => {
-      let maxH = 0;
-      r.cards.forEach(c => maxH = Math.max(maxH, c.getBoundingClientRect().height));
-      r.cards.forEach(c => c.style.minHeight = `${Math.ceil(maxH)}px`);
-    });
-  }
-  const run = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(equalizeByRow); };
+      // Group cards by their top position (i.e., rows)
+      const cards = Array.from(grid.querySelectorAll('.holo-card'));
+      const rows = [];
+      cards.forEach(c => {
+        const top = Math.round(c.getBoundingClientRect().top);
+        let row = rows.find(r => Math.abs(r.top - top) < 6);
+        if (!row) rows.push(row = { top, cards: [] });
+        row.cards.push(c);
+      });
+      // Set min-height to tallest for each row
+      rows.forEach(r => {
+        let maxH = 0;
+        r.cards.forEach(c => maxH = Math.max(maxH, c.getBoundingClientRect().height));
+        r.cards.forEach(c => c.style.minHeight = `${Math.ceil(maxH)}px`);
+      });
+    }
+    const run = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(equalizeByRow); };
 
-  window.addEventListener('load', run);
-  window.addEventListener('resize', run);
-  // If you use scroll-in animations, re-run after initial reveal
-  setTimeout(run, 500);
-})();
+    window.addEventListener('load', run);
+    window.addEventListener('resize', run);
+    // If you use scroll-in animations, re-run after initial reveal
+    setTimeout(run, 500);
+  })();
 </script>
 
 <!-- Floating Action Button -->
