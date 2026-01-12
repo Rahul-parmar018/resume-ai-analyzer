@@ -7,14 +7,13 @@
     <!-- Breadcrumb -->
     <nav class="mb-4 sa fade-up" aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}"
-            class="text-muted text-decoration-none hover-white">Home</a></li>
-        <li class="breadcrumb-item active text-white" aria-current="page">Score Checker</li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item active text-primary" aria-current="page">Score Checker</li>
       </ol>
     </nav>
 
     <div class="text-center mb-5 sa fade-up">
-      <h1 class="display-4 fw-bold text-white mb-3">Resume Score Checker</h1>
+      <h1 class="display-4 fw-bold text-primary mb-3">Resume Score Checker</h1>
       <p class="lead text-muted mx-auto" style="max-width: 700px;">
         Upload your resume and let our AI analyze it for overall quality, ATS compatibility, and keyword density.
       </p>
@@ -30,8 +29,8 @@
               <div class="upload-icon-pulse mb-4">
                 <i class="bi bi-cloud-arrow-up"></i>
               </div>
-              <h3 class="h4 text-white mb-2">Drag & Drop Your Resume</h3>
-              <p class="text-muted mb-4">Supported formats: <span class="text-white fw-medium">PDF, DOCX</span></p>
+              <h3 class="h4 text-primary mb-2">Drag & Drop Your Resume</h3>
+              <p class="text-muted mb-4">Supported formats: <span class="text-primary fw-medium">PDF, DOCX</span></p>
               <button type="button" class="btn btn-brand btn-lg px-5 py-3" id="checkerBrowse">
                 <i class="bi bi-folder-plus me-2"></i> Browse Files
               </button>
@@ -53,7 +52,7 @@
     <!-- PLACEHOLDER RESULTS SECTION -->
     <div id="scoreResults" class="mt-5 pt-5 d-none sa fade-up">
       <div class="text-center mb-5">
-        <h2 class="h1 fw-bold text-white mb-2">Analysis Results</h2>
+        <h2 class="h1 fw-bold text-primary mb-2">Analysis Results</h2>
         <div class="badge bg-primary-glow px-4 py-2 rounded-pill">AI Processed</div>
       </div>
 
@@ -68,22 +67,22 @@
                 </circle>
               </svg>
               <div class="donut-content text-center">
-                <div id="donutValue" class="display-3 fw-bold text-white">0</div>
+                <div id="donutValue" class="display-3 fw-bold text-primary">0</div>
                 <div class="text-muted text-uppercase tracking-widest small">Score</div>
               </div>
             </div>
-            <div id="verdictText" class="mt-4 lead text-white-50 text-center">Processing...</div>
+            <div id="verdictText" class="mt-4 lead text-secondary text-center">Processing...</div>
           </div>
         </div>
 
         <!-- Section-wise Scores -->
         <div class="col-lg-7">
           <div class="product-card h-100 p-4 p-lg-5">
-            <h4 class="text-white mb-4">Section-wise Analysis</h4>
+            <h4 class="text-primary mb-4">Section-wise Analysis</h4>
             <div class="subscore-item mb-4">
               <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">Education & Qualifications</span>
-                <span id="scoreEdu" class="text-white fw-bold">0%</span>
+                <span id="scoreEdu" class="text-primary fw-bold">0%</span>
               </div>
               <div class="premium-progress">
                 <div id="barEdu" class="progress-fill fill-cyan" style="width: 0%"></div>
@@ -92,7 +91,7 @@
             <div class="subscore-item mb-4">
               <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">Professional Experience</span>
-                <span id="scoreExp" class="text-white fw-bold">0%</span>
+                <span id="scoreExp" class="text-primary fw-bold">0%</span>
               </div>
               <div class="premium-progress">
                 <div id="barExp" class="progress-fill fill-purple" style="width: 0%"></div>
@@ -101,7 +100,7 @@
             <div class="subscore-item mb-4">
               <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">Skills & Keywords</span>
-                <span id="scoreSkills" class="text-white fw-bold">0%</span>
+                <span id="scoreSkills" class="text-primary fw-bold">0%</span>
               </div>
               <div class="premium-progress">
                 <div id="barSkills" class="progress-fill fill-green" style="width: 0%"></div>
@@ -110,7 +109,7 @@
             <div class="subscore-item">
               <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">ATS Compatibility</span>
-                <span id="scoreATS" class="text-white fw-bold">0%</span>
+                <span id="scoreATS" class="text-primary fw-bold">0%</span>
               </div>
               <div class="premium-progress">
                 <div id="barATS" class="progress-fill fill-orange" style="width: 0%"></div>
@@ -125,7 +124,7 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
               <div class="d-flex align-items-center text-primary-glow">
                 <i class="bi bi-chat-left-dots-fill fs-3 me-3"></i>
-                <h3 class="h4 mb-0 text-white">AI Feedback Summary</h3>
+                <h3 class="h4 mb-0 text-primary">AI Feedback Summary</h3>
               </div>
               <a href="{% url 'review_resume' %}" class="btn btn-outline-brand">
                 <i class="bi bi-search me-2"></i> View Detailed Review
@@ -268,12 +267,12 @@
     <div class="mx-auto" style="max-width: 1100px;">
       <div class="p-3 mb-4"
         style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
-        <h4 class="text-white fw-bold mb-2">What we analyzed</h4>
+        <h4 class="text-primary fw-bold mb-2">What we analyzed</h4>
         <ul id="analyzedList" class="text-muted mb-0"></ul>
       </div>
       <div class="p-3 mb-4"
         style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
-        <h4 class="text-white fw-bold mb-2">How we calculate your score</h4>
+        <h4 class="text-primary fw-bold mb-2">How we calculate your score</h4>
         <p class="text-muted">Your total is a weighted blend of 5 subscores (normalized 0–100).</p>
         <ul id="calcList" class="text-muted mb-2"></ul>
         <div class="small text-muted">
@@ -284,7 +283,7 @@
       <div class="p-3"
         style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:16px; color:#e5e7eb; backdrop-filter:blur(8px) saturate(130%);">
         <div class="d-flex align-items-center justify-content-between">
-          <h4 class="text-white fw-bold mb-2">How to improve</h4>
+          <h4 class="text-primary fw-bold mb-2">How to improve</h4>
           <button id="copyImprove" class="btn btn-sm btn-outline-light"><i class="bi bi-clipboard"></i> Copy
             tips</button>
         </div>

@@ -7,14 +7,13 @@
     <!-- Breadcrumb -->
     <nav class="mb-4 sa fade-up" aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}"
-            class="text-muted text-decoration-none hover-white">Home</a></li>
-        <li class="breadcrumb-item active text-white" aria-current="page">Resume Review</li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item active text-primary" aria-current="page">Resume Review</li>
       </ol>
     </nav>
 
     <div class="text-center mb-5 sa fade-up">
-      <h1 class="display-4 fw-bold text-white mb-3">Resume Review & Improvement</h1>
+      <h1 class="display-4 fw-bold text-primary mb-3">Resume Review & Improvement</h1>
       <p class="lead text-muted mx-auto" style="max-width: 700px;">
         Get a comprehensive audit of your resume with detailed feedback on detected issues and AI-powered suggestions
         for improvement.
@@ -24,10 +23,10 @@
     <!-- MAIN UPLOAD ZONE -->
     <div class="mx-auto sa fade-up mb-5" style="max-width: 800px;">
       <div class="product-card p-4 p-lg-5 text-center">
-        <h3 class="text-white mb-4">Upload Your Resume for Review</h3>
+        <h3 class="text-primary mb-4">Upload Your Resume for Review</h3>
         <input id="reviewFile" type="file" class="d-none" accept=".pdf,.docx">
         <div class="d-flex justify-content-center gap-3">
-          <button type="button" class="btn btn-outline-light btn-lg px-4"
+          <button type="button" class="btn btn-cta-secondary btn-lg px-4"
             onclick="document.getElementById('reviewFile').click()">
             <i class="bi bi-file-earmark-arrow-up me-2"></i> Choose File
           </button>
@@ -54,9 +53,10 @@
             <div class="d-flex align-items-center justify-content-between mb-4 sticky-top-header">
               <div class="d-flex align-items-center">
                 <i class="bi bi-exclamation-octagon-fill text-warning fs-3 me-3"></i>
-                <h2 class="h4 mb-0 text-white fw-bold">Detected Issues</h2>
+                <h2 class="h4 mb-0 text-primary fw-bold">Detected Issues</h2>
               </div>
-              <span id="issueCount" class="badge bg-white/10 text-muted px-3 py-2 rounded-pill">0 Issues Found</span>
+              <span id="issueCount" class="badge bg-secondary text-secondary px-3 py-2 rounded-pill">0 Issues
+                Found</span>
             </div>
 
             <div id="issuesList">
@@ -68,7 +68,7 @@
           <div id="suggestionsSection">
             <div class="d-flex align-items-center mb-4">
               <i class="bi bi-lightbulb-fill text-success fs-3 me-3"></i>
-              <h2 class="h4 mb-0 text-white fw-bold">AI Suggestions</h2>
+              <h2 class="h4 mb-0 text-primary fw-bold">AI Suggestions</h2>
             </div>
 
             <div id="suggestionsList" class="d-flex flex-column gap-3">
@@ -133,7 +133,7 @@
                 <div class="lock-shield-icon">
                   <i class="bi bi-shield-lock-fill"></i>
                 </div>
-                <h4 class="text-white mb-2 fw-bold">Detailed Results Locked</h4>
+                <h4 class="text-primary mb-2 fw-bold">Detailed Results Locked</h4>
                 <p class="text-muted small mb-4 px-3">Upgrade to Premium to unlock the full improved resume and
                   actionable fixes for every detected issue.</p>
                 <button class="btn btn-unlock-premium px-5 py-3 fs-6">
@@ -141,7 +141,7 @@
                 </button>
                 <div class="mt-5 pt-4 border-top border-white/10 w-100">
                   <button id="newReviewBtn"
-                    class="btn btn-outline-light btn-sm w-100 opacity-50 hover-opacity-100 transition-all">
+                    class="btn btn-cta-secondary btn-sm w-100 opacity-50 hover-opacity-100 transition-all">
                     <i class="bi bi-arrow-repeat me-2"></i> Start New Review
                   </button>
                 </div>
@@ -180,7 +180,7 @@
           card.className = `issue-card issue-card--${severityClass} mb-4`;
           card.innerHTML = `
             <div class="d-flex justify-content-between align-items-start mb-2">
-              <h5 class="text-white h6 mb-0">${issue.title}</h5>
+              <h5 class="text-primary h6 mb-0">${issue.title}</h5>
               <span class="badge bg-${severityClass === 'high' ? 'danger' : severityClass === 'medium' ? 'warning' : 'info'}-subtle text-${severityClass === 'high' ? 'danger' : severityClass === 'medium' ? 'warning' : 'info'}">${issue.severity} Severity</span>
             </div>
             <p class="text-muted small mb-0">${issue.desc}</p>

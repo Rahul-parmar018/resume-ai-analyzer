@@ -7,8 +7,9 @@
     <!-- HERO: Header with rotating videos -->
     <div class="row g-5 align-items-center mb-5">
       <div class="col-lg-7">
-        <h1 class="display-4 fw-bold text-white mb-3">AI Resume Improver</h1>
-        <p class="lead text-muted mb-4">Transform your resume with AI-powered rewrites, bullet upgrades, and personalized suggestions. Earn badges as you improve!</p>
+        <h1 class="display-4 fw-bold text-primary mb-3">AI Resume Improver</h1>
+        <p class="lead text-muted mb-4">Transform your resume with AI-powered rewrites, bullet upgrades, and
+          personalized suggestions. Earn badges as you improve!</p>
         <div class="badge-wall mb-3" id="improveBadgeWall"></div>
         <div class="progress progress-3d mb-4" style="height: 18px;">
           <div id="improveXPBar" class="progress-bar" role="progressbar" style="width:0%"></div>
@@ -16,7 +17,8 @@
       </div>
       <div class="col-lg-5 d-flex justify-content-center align-items-center">
         <div class="media-glass hero-video-lg">
-          <video id="heroVideo" class="improve-video" autoplay loop muted playsinline poster="{% static 'img/templates/pic1.png' %}">
+          <video id="heroVideo" class="improve-video" autoplay loop muted playsinline
+            poster="{% static 'img/templates/pic1.png' %}">
             <source src="{% static 'img/templates/V1.mp4' %}" type="video/mp4">
           </video>
         </div>
@@ -28,7 +30,8 @@
       {% for i in "1234" %}
       <div class="col-md-6 col-lg-3 d-flex flex-column align-items-center">
         <div class="gallery-img-wrap">
-          <img src="{% static 'img/templates/pic' %}{{ forloop.counter }}.png" class="gallery-img" alt="Example {{ forloop.counter }}">
+          <img src="{% static 'img/templates/pic' %}{{ forloop.counter }}.png" class="gallery-img"
+            alt="Example {{ forloop.counter }}">
           <div class="gallery-caption">Example {{ forloop.counter }}</div>
         </div>
       </div>
@@ -41,28 +44,30 @@
         <div class="improve-card-3d sa fade-up w-100 d-flex flex-column justify-content-between">
           <div>
             <div class="improve-icon"><i class="bi bi-stars"></i></div>
-            <h2 class="fw-bold text-white mb-2">Paste or upload your resume</h2>
+            <h2 class="fw-bold text-primary mb-2">Paste or upload your resume</h2>
             <form id="improveForm" enctype="multipart/form-data" class="mb-3">
-              <textarea id="improveText" class="form-control mb-2" rows="8" placeholder="Paste your resume here..."></textarea>
+              <textarea id="improveText" class="form-control mb-2" rows="8"
+                placeholder="Paste your resume here..."></textarea>
               <div id="fileUploadSection" class="d-flex align-items-center gap-2 mb-2">
                 <input id="improveFile" type="file" class="form-control" accept=".pdf,.docx">
-                <button id="improveUploadBtn" type="button" class="btn btn-outline-light btn-sm">Upload</button>
+                <button id="improveUploadBtn" type="button" class="btn btn-cta-secondary btn-sm">Upload</button>
               </div>
-              <button id="improveAnalyzeBtn" type="submit" class="btn btn-brand btn-lg btn-3d">Analyze & Improve</button>
+              <button id="improveAnalyzeBtn" type="submit" class="btn btn-brand btn-lg btn-3d">Analyze &
+                Improve</button>
               <span id="improveSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
             </form>
             <div id="improveAlert" class="alert alert-danger d-none mt-2"></div>
-            
+
             <!-- Analysis Results Section (hidden initially) -->
             <div id="analysisResultsSection" class="d-none">
-              <h3 class="fw-bold text-white mb-3">📊 Your Resume Analysis</h3>
-              
+              <h3 class="fw-bold text-primary mb-3">📊 Your Resume Analysis</h3>
+
               <!-- Health Summary Card -->
               <div class="card card-3d p-3 mb-3">
                 <div class="d-flex align-items-center gap-3 mb-2">
                   <span id="analysisHealthEmoji" class="fs-2"></span>
                   <div>
-                    <h5 class="fw-bold text-white mb-1" id="analysisHealthLabel"></h5>
+                    <h5 class="fw-bold text-primary mb-1" id="analysisHealthLabel"></h5>
                     <p class="text-muted mb-0" id="analysisSummary"></p>
                   </div>
                 </div>
@@ -70,16 +75,16 @@
                   <div id="analysisHealthBar" class="progress-bar" role="progressbar" style="width:0%"></div>
                 </div>
               </div>
-              
+
               <!-- Issues Card -->
               <div class="card card-3d p-3 mb-3">
-                <h5 class="fw-bold text-white mb-2"><i class="bi bi-exclamation-triangle me-1"></i> Issues Found</h5>
+                <h5 class="fw-bold text-primary mb-2"><i class="bi bi-exclamation-triangle me-1"></i> Issues Found</h5>
                 <ul id="analysisIssues" class="mb-0"></ul>
               </div>
-              
+
               <!-- Readability Card -->
               <div class="card card-3d p-3 mb-3">
-                <h5 class="fw-bold text-white mb-2"><i class="bi bi-bar-chart me-1"></i> Readability Score</h5>
+                <h5 class="fw-bold text-primary mb-2"><i class="bi bi-bar-chart me-1"></i> Readability Score</h5>
                 <div class="d-flex align-items-center gap-3">
                   <span id="analysisReadabilityScore" class="fs-4 fw-bold"></span>
                   <span id="analysisReadabilityLabel" class="badge"></span>
@@ -88,16 +93,16 @@
                   <div id="analysisReadabilityBar" class="progress-bar" role="progressbar" style="width:0%"></div>
                 </div>
               </div>
-              
+
               <!-- Sections Card -->
               <div class="card card-3d p-3 mb-3">
-                <h5 class="fw-bold text-white mb-2"><i class="bi bi-list-check me-1"></i> Resume Sections</h5>
+                <h5 class="fw-bold text-primary mb-2"><i class="bi bi-list-check me-1"></i> Resume Sections</h5>
                 <ul id="analysisSections" class="mb-0"></ul>
               </div>
-              
+
               <!-- AI Rewrite Example Card -->
               <div id="analysisRewriteCard" class="card card-3d p-3 mb-3 d-none">
-                <h5 class="fw-bold text-white mb-2"><i class="bi bi-magic me-1"></i> AI Rewrite Example</h5>
+                <h5 class="fw-bold text-primary mb-2"><i class="bi bi-magic me-1"></i> AI Rewrite Example</h5>
                 <div class="mb-2">
                   <span class="badge bg-secondary">Before</span>
                   <span class="text-muted ms-2" id="analysisBeforeText"></span>
@@ -107,10 +112,10 @@
                   <span class="text-success ms-2" id="analysisAfterText"></span>
                 </div>
               </div>
-              
+
               <!-- Action Buttons -->
               <div class="d-flex gap-2 mt-3">
-                <button id="analyzeAgainBtn" class="btn btn-outline-light btn-sm">Analyze Another Resume</button>
+                <button id="analyzeAgainBtn" class="btn btn-cta-secondary btn-sm">Analyze Another Resume</button>
                 <button id="downloadReportBtn" class="btn btn-brand btn-sm">Download Report</button>
               </div>
             </div>
@@ -124,7 +129,7 @@
       <div class="col-md-6 col-lg-3">
         <div class="info-card-3d sa fade-up h-100">
           <div class="info-icon"><i class="bi bi-magic"></i></div>
-          <h4 class="fw-bold text-white mb-2">What AI improves</h4>
+          <h4 class="fw-bold text-primary mb-2">What AI improves</h4>
           <ul class="info-list">
             <li>Action verbs: Replace weak verbs with "led", "delivered", "achieved".</li>
             <li>Metrics: Add quantifiable results and measurable impact.</li>
@@ -136,7 +141,7 @@
       <div class="col-md-6 col-lg-3">
         <div class="info-card-3d sa fade-up h-100" data-sa-delay="80">
           <div class="info-icon"><i class="bi bi-robot"></i></div>
-          <h4 class="fw-bold text-white mb-2">How it works</h4>
+          <h4 class="fw-bold text-primary mb-2">How it works</h4>
           <ol class="info-list">
             <li>AI parses your file and extracts all text.</li>
             <li>Detects missing/weak sections and bullets.</li>
@@ -148,7 +153,7 @@
       <div class="col-md-6 col-lg-3">
         <div class="info-card-3d sa fade-up h-100" data-sa-delay="160">
           <div class="info-icon"><i class="bi bi-emoji-smile"></i></div>
-          <h4 class="fw-bold text-white mb-2">Why it matters</h4>
+          <h4 class="fw-bold text-primary mb-2">Why it matters</h4>
           <ul class="info-list">
             <li>Beat ATS screens and avoid silent rejections.</li>
             <li>Showcase your impact with metrics and strong verbs.</li>
@@ -160,7 +165,7 @@
       <div class="col-md-6 col-lg-3">
         <div class="info-card-3d sa fade-up h-100" data-sa-delay="240">
           <div class="info-icon"><i class="bi bi-lightning-charge"></i></div>
-          <h4 class="fw-bold text-white mb-2">How to use</h4>
+          <h4 class="fw-bold text-primary mb-2">How to use</h4>
           <ul class="info-list">
             <li>Paste or upload your resume above.</li>
             <li>Try AI rewrites and suggestions.</li>

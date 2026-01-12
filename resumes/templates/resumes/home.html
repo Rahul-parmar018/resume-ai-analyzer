@@ -24,17 +24,17 @@
   <div class="hero-bg-image"></div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
-    <h1 class="fw-bold text-white mb-4 sa fade-up" data-sa-delay="0">
+    <h1 class="fw-bold mb-4 sa fade-up" data-sa-delay="0">
       Upload your resume and let AI fix it, score it, and optimize it for jobs
     </h1>
     <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="120">
       Get an ATS score, find mistakes, and improve your resume in minutes using AI.
     </p>
     <div class="d-flex flex-wrap gap-3 align-items-center mb-4 sa fade-up" data-sa-delay="180">
-      <a href="{% url 'score_checker' %}" class="btn btn-brand btn-lg">
+      <a href="{% url 'score_checker' %}" class="btn-cta-primary">
         Check My Resume Free
       </a>
-      <a href="#how-it-works" class="btn btn-outline-light btn-lg">
+      <a href="#how-it-works" class="btn-cta-secondary">
         See how it works
       </a>
     </div>
@@ -56,7 +56,7 @@
 </section>
 
 <!-- PROBLEM → SOLUTION: DETAILED MISTAKE FINDER SECTION -->
-<section id="detailed-review" class="section-light snap-section py-5 py-lg-6 saas-layout mt-0">
+<section id="detailed-review" class="section-light snap-section py-5 py-lg-6 saas-layout">
   <div class="container position-relative" style="z-index: 3;">
     <div class="row g-4 align-items-center">
       <div class="col-lg-6">
@@ -140,7 +140,7 @@
 <section id="how-it-works" class="how-it-works-section py-6">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold text-white mb-2 sa fade-up">How It Works in 4 Simple Steps</h2>
+      <h2 class="display-5 fw-bold mb-2 sa fade-up">How It Works in 4 Simple Steps</h2>
       <p class="subtitle text-muted lead sa fade-up" data-sa-delay="100">From upload to job-ready in under 60 seconds
       </p>
     </div>
@@ -189,10 +189,10 @@
 <!-- ANALYSIS FEATURES SECTION -->
 <style>
   .analysis-section {
-    background-color: var(--bg);
+    background-color: var(--bg-page);
     padding: 100px 0;
     position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .analysis-grid {
@@ -203,12 +203,11 @@
   }
 
   .analysis-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 20px;
     padding: 32px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -217,9 +216,9 @@
 
   .analysis-card:hover {
     transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(22, 163, 74, 0.3);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(22, 163, 74, 0.1);
+    background: var(--bg-surface-alt);
+    border-color: var(--green-primary);
+    box-shadow: var(--card-shadow);
   }
 
   .analysis-icon-box {
@@ -244,7 +243,7 @@
   }
 
   .analysis-card h3 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 12px;
@@ -284,7 +283,7 @@
 
   <div class="container position-relative" style="z-index: 2;">
     <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold text-white mb-3 sa fade-up">What CandidexAI Analyzes in Your Resume</h2>
+      <h2 class="display-5 fw-bold mb-3 sa fade-up">What CandidexAI Analyzes in Your Resume</h2>
       <p class="subtitle text-muted lead mx-auto sa fade-up" data-sa-delay="100" style="max-width: 700px;">
         Our AI evaluates your resume like a real recruiter and an ATS system — not just keywords.
       </p>
@@ -350,7 +349,7 @@
     <!-- RESUME ANALYSIS PREVIEW (Formerly Templates) -->
     <div class="mt-6 pt-5">
       <div class="text-center mb-5">
-        <h3 class="fw-bold text-white mb-3 sa fade-up">Upload your resume and let AI analyze everything</h3>
+        <h3 class="fw-bold mb-3 sa fade-up">Upload your resume and let AI analyze everything</h3>
         <p class="text-muted sa fade-up" data-sa-delay="100">CandidexAI scans your resume, checks ATS, finds mistakes,
           and shows exactly how to improve it.</p>
       </div>
@@ -366,8 +365,7 @@
             <div class="paper-frame">
               <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
                 decoding="async"
-                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
-            </div>
+                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg';" </div>
           </article>
           {% endfor %}
           {% for i in "123456789" %}
@@ -375,8 +373,7 @@
             <div class="paper-frame">
               <img src="{% static 'img/templates/R-' %}{{ forloop.counter }}.png" alt="Resume R-{{ forloop.counter }}"
                 decoding="async"
-                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg'">
-            </div>
+                onerror="this.onerror=null; this.src='{% static 'img/templates/R-' %}{{ forloop.counter }}.jpg';" </div>
           </article>
           {% endfor %}
         </div>
@@ -500,20 +497,20 @@
   }
 
   .breakdown-title {
-    color: #fff;
+    color: var(--text-main);
     font-weight: 600;
     font-size: 1.1rem;
   }
 
   .breakdown-percent {
-    color: #fff;
+    color: var(--text-main);
     font-weight: 700;
     font-size: 1.1rem;
   }
 
   .breakdown-bar-bg {
     height: 10px;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--border-subtle);
     border-radius: 5px;
     overflow: hidden;
   }
@@ -575,8 +572,8 @@
   }
 
   .score-info-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--btn-secondary-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: 20px;
     padding: 32px;
     transition: all 0.3s ease;
@@ -585,13 +582,13 @@
 
   .score-info-card:hover {
     transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(34, 197, 94, 0.2);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    background: var(--bg-surface-alt);
+    border-color: var(--green-primary);
+    box-shadow: var(--card-shadow);
   }
 
   .score-info-card h4 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.15rem;
     font-weight: 700;
     margin-bottom: 16px;
@@ -631,7 +628,7 @@
 
   <div class="container position-relative" style="z-index: 2;">
     <div class="text-center mb-4">
-      <h2 class="display-5 fw-bold text-white mb-3 sa fade-up">How Your Resume Score Is Calculated</h2>
+      <h2 class="display-5 fw-bold mb-3 sa fade-up">How Your Resume Score Is Calculated</h2>
       <p class="subtitle text-muted lead mx-auto sa fade-up" data-sa-delay="100" style="max-width: 700px;">
         Your overall score is a weighted combination of multiple quality checks — not just keywords.
       </p>
@@ -745,10 +742,10 @@
 <!-- WHY CANDIDEXAI SECTION -->
 <style>
   .why-section {
-    background-color: var(--bg);
+    background-color: var(--bg-page);
     padding: 100px 0;
     position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .why-header {
@@ -778,8 +775,8 @@
   }
 
   .why-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 24px;
     padding: 40px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -816,25 +813,25 @@
     width: 56px;
     height: 56px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-surface-alt);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--green-primary);
     font-size: 24px;
     margin-bottom: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-subtle);
     transition: all 0.3s ease;
   }
 
   .why-card:hover .why-icon {
-    background: #fff;
-    color: #000;
+    background: var(--green-primary);
+    color: #fff;
     transform: scale(1.1);
   }
 
   .why-card h3 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 16px;
@@ -949,10 +946,10 @@
 <!-- STUDENTS & JOB SEEKERS SECTION -->
 <style>
   .students-section {
-    background-color: var(--bg);
+    background-color: var(--bg-page);
     padding: 100px 0;
     position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .students-grid {
@@ -963,7 +960,7 @@
   }
 
   .students-content h2 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 3rem;
     font-weight: 800;
     margin-bottom: 24px;
@@ -985,8 +982,8 @@
   }
 
   .benefit-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 20px;
     padding: 28px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -995,9 +992,9 @@
 
   .benefit-card:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(34, 197, 94, 0.3);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    background: var(--bg-surface-alt);
+    border-color: var(--green-primary);
+    box-shadow: var(--card-shadow);
   }
 
   .benefit-icon {
@@ -1014,7 +1011,7 @@
   }
 
   .benefit-card h3 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 12px;
@@ -1306,7 +1303,7 @@
   <div class="container position-relative" style="z-index: 3;">
     <div class="row g-5 align-items-center">
       <div class="col-lg-7">
-        <h2 class="display-5 fw-bold text-white mb-4 sa fade-up">Visualize Results & Export Data</h2>
+        <h2 class="display-5 fw-bold text-primary mb-4 sa fade-up">Visualize Results & Export Data</h2>
         <p class="lead text-muted mb-5 sa fade-up" data-sa-delay="100">
           Get deep insights into your resume performance. See exactly where you stand and export your optimized data for
           any application system.
@@ -1355,7 +1352,7 @@
 
   <div class="container position-relative" style="z-index: 3;">
     <div class="text-center mb-5 sa fade-up">
-      <h2 class="display-5 fw-bold text-white mb-3">Everything CandidexAI Can Do For Your Resume</h2>
+      <h2 class="display-5 fw-bold text-primary mb-3">Everything CandidexAI Can Do For Your Resume</h2>
       <p class="lead text-muted mx-auto" style="max-width: 700px;">Everything you need to perfect your resume and land
         your dream job.</p>
     </div>
@@ -1370,7 +1367,7 @@
               <i class="bi bi-speedometer2 text-primary fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">Resume Score Checker</h4>
+          <h4 class="fw-bold text-primary mb-3">Resume Score Checker</h4>
           <p class="text-muted mb-4">Get an instant 0–100 score based on ATS compatibility, skills match, readability,
             and structure.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Check My Resume Free</a>
@@ -1386,7 +1383,7 @@
               <i class="bi bi-exclamation-triangle text-danger fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">Resume Mistake Finder</h4>
+          <h4 class="fw-bold text-primary mb-3">Resume Mistake Finder</h4>
           <p class="text-muted mb-4">Instantly flag vague bullets, missing metrics, grammar errors, and formatting
             issues that hurt your chances.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Scan My Resume</a>
@@ -1402,7 +1399,7 @@
               <i class="bi bi-magic text-success fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">AI Improvement Engine</h4>
+          <h4 class="fw-bold text-primary mb-3">AI Improvement Engine</h4>
           <p class="text-muted mb-4">Rewrite your bullets using professional action verbs and measurable impact to
             impress recruiters.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Improve My Resume</a>
@@ -1418,7 +1415,7 @@
               <i class="bi bi-tags text-info fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">Smart Keyword Match</h4>
+          <h4 class="fw-bold text-primary mb-3">Smart Keyword Match</h4>
           <p class="text-muted mb-4">Identify missing must-have keywords and skills required for specific job
             descriptions.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Check Keywords</a>
@@ -1434,7 +1431,7 @@
               <i class="bi bi-file-earmark-arrow-up text-warning fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">Universal Resume Import</h4>
+          <h4 class="fw-bold text-primary mb-3">Universal Resume Import</h4>
           <p class="text-muted mb-4">Upload any PDF or Word resume and we'll extract the content into a clean,
             professional structure.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Upload Resume</a>
@@ -1450,7 +1447,7 @@
               <i class="bi bi-trophy text-primary fs-3"></i>
             </div>
           </div>
-          <h4 class="fw-bold text-white mb-3">AI Candidate Ranking</h4>
+          <h4 class="fw-bold text-primary mb-3">AI Candidate Ranking</h4>
           <p class="text-muted mb-4">Batch upload dozens of resumes and rank them instantly based on your specific job
             requirements.</p>
           <a href="{% url 'score_checker' %}" class="btn btn-brand btn-sm mt-auto w-100">Rank Resumes</a>
@@ -1465,7 +1462,7 @@
 <section id="testimonials" class="section-dark py-5 py-lg-6 position-relative">
   <div class="container">
     <div class="text-center mb-4 sa fade-up">
-      <h2 class="display-6 fw-bold text-white">What our users say</h2>
+      <h2 class="display-6 fw-bold text-primary">What our users say</h2>
       <p class="text-muted mb-0">Join thousands of successful job seekers who land interviews faster.</p>
     </div>
 
@@ -1804,9 +1801,9 @@
   .final-cta-section {
     padding: 80px 0 40px;
     position: relative;
-    background: #06080f;
+    background: var(--footer-bg);
     overflow: hidden;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .final-cta-bg-glow {
@@ -1832,7 +1829,7 @@
   .final-cta-title {
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     font-weight: 850;
-    color: #fff;
+    color: var(--text-main);
     line-height: 1.1;
     margin-bottom: 24px;
     letter-spacing: -0.04em;
@@ -1840,7 +1837,7 @@
 
   .final-cta-subtitle {
     font-size: clamp(1.1rem, 2vw, 1.4rem);
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-muted);
     line-height: 1.6;
     margin-bottom: 56px;
     max-width: 800px;
@@ -1859,7 +1856,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-main);
     font-size: 1rem;
     font-weight: 500;
   }
@@ -1878,50 +1875,9 @@
     margin-bottom: 32px;
   }
 
-  .btn-cta-primary {
-    padding: 20px 48px;
-    font-size: 1.25rem;
-    font-weight: 750;
-    color: #fff;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-radius: 100px;
-    text-decoration: none;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-cta-primary:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 0 50px rgba(16, 185, 129, 0.6);
-    color: #fff;
-  }
-
-  .btn-cta-secondary {
-    padding: 20px 48px;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 100px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(12px);
-  }
-
-  .btn-cta-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
   .final-cta-footer-info {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-muted);
     font-weight: 500;
     letter-spacing: 0.05em;
   }
@@ -1930,12 +1886,6 @@
     .final-cta-btns {
       flex-direction: column;
       width: 100%;
-    }
-
-    .btn-cta-primary,
-    .btn-cta-secondary {
-      width: 100%;
-      padding: 18px 32px;
     }
 
     .final-cta-section {

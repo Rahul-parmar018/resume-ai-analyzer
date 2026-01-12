@@ -1,6 +1,5 @@
 {% load static %}
-<nav id="siteNav" class="navbar navbar-expand-lg navbar-dark fixed-top nav-floating" role="navigation"
-  aria-label="Main">
+<nav id="siteNav" class="navbar navbar-expand-lg fixed-top nav-floating" role="navigation" aria-label="Main">
   <div class="header-container container-fluid d-flex align-items-center justify-content-between">
     <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}" aria-label="CandidexAI Home">
@@ -36,9 +35,9 @@
         <i class="bi bi-moon-fill"></i>
       </button>
       <a href="{% url 'score_checker' %}" class="btn btn-brand-sm">Check Resume</a>
-      <!-- Mobile toggle -->
-      <button class="navbar-toggler border-0 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <!-- Mobile toggle (hidden on desktop) -->
+      <button class="navbar-toggler border-0 ms-2 d-lg-none" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
