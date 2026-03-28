@@ -4,6 +4,11 @@ from . import views_finder as fv
 from . import views_review as rv
 
 urlpatterns = [
+    # React Routes
+    path('login/', views.react_app, name='react_login'),
+    path('register/', views.react_app, name='react_register'),
+    path('dashboard/', views.react_app, name='react_dashboard'),
+    
     # Your existing URLs
     path('', views.home, name='home'),
     path('examples/', views.examples, name='examples'),

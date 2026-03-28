@@ -1,18 +1,24 @@
 import os, json, logging
 from django.shortcuts import render, redirect
 import io, re
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from PyPDF2 import PdfReader
 from docx import Document
 import textstat
-from django.http import JsonResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
-from django.views.decorators.csrf import csrf_exempt
 from .utils.dynamic_resume_analyzer import DynamicResumeAnalyzer
 from .utils.rate_limiter import rate_limit
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+def react_app(request):
+    try:
+        with open(os.path.join(settings.BASE_DIR, 'frontend', 'dist', 'index.html')) as f:
+            return HttpResponse(f.read())
+    except FileNotFoundError:
+        return HttpResponse("React build not found. Please run 'npm run build' in the frontend folder.", status=501)
 
 # ────────── STEP 1 Home ──────────
 def home(request):
@@ -84,18 +90,38 @@ def results_view(request):
     request.session["results"] = results
     return render(request, "resumes/results.html", {"job": job, "results": results, "avg": avg})
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .auth_utils import verify_token
 # ────────── AI API ENDPOINTS ──────────
-@csrf_exempt
-@rate_limit(max_requests=10, window=60)  # 10 requests per minute
+@api_view(['POST'])
+@rate_limit(max_requests=10, window=60)
 def analyze_resume_api(request):
-    if request.method != "POST":
-        return JsonResponse({"error":"Use POST"}, status=405)
-    text = request.POST.get("resume_text","")
-    jd = request.POST.get("job_description","")
-    title = request.POST.get("job_title","Data Analyst")
-    analyzer = DynamicResumeAnalyzer()
-    data = analyzer.analyze(text, jd, title)
-    return JsonResponse({"success": True, "data": data})
+    try:
+        # 1. Enforce Token Verification
+        user = verify_token(request)
+
+        # 2. Extract File
+        file = request.FILES.get('resume')
+        if not file:
+            return Response({"error": "No file uploaded. Please provide a PDF or DOCX."}, status=400)
+
+        # 3. Parse Document
+        text = _extract_text(file)
+        if not text.strip():
+            return Response({"error": "Failed to extract text from the document."}, status=400)
+
+        # 4. Standard AI Processing (Using existing logic)
+        jd = request.POST.get("job_description", "")
+        title = request.POST.get("job_title", "General Applicant")
+        
+        analyzer = DynamicResumeAnalyzer()
+        data = analyzer.analyze(text, jd, title)
+
+        return Response(data)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
 
 def check_api_status(request):
     usable = bool(os.getenv("OPENAI_API_KEY"))

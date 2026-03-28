@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "resumes",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     BASE_DIR / "resumes" / "static",
+    BASE_DIR / "frontend" / "dist",
 ]
 
 # Media files
@@ -67,6 +69,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Firebase Admin SDK Initialization
+import os
+import firebase_admin
+from firebase_admin import credentials
+
+firebase_cred_path = BASE_DIR / "firebase-adminsdk.json"
+if os.path.exists(firebase_cred_path) and not firebase_admin._apps:
+    cred = credentials.Certificate(str(firebase_cred_path))
+    firebase_admin.initialize_app(cred)
 
 # ---------- Add your OpenAI key ----------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

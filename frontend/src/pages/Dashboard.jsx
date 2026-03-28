@@ -1,0 +1,214 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "../components/AuthProvider";
+import { auth } from "../firebase";
+import { saveAnalysis, getAnalysisHistory } from "../db";
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [file, setFile] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [results, setResults] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      loadHistory();
+    }
+  }, [user]);
+
+  const loadHistory = async () => {
+    try {
+      const data = await getAnalysisHistory(user.uid);
+      setHistory(data);
+    } catch (err) {
+      console.error("Failed to load history", err);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setErrorMsg("");
+    }
+  };
+
+  const handleDragOver = (e) => e.preventDefault();
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFile(e.dataTransfer.files[0]);
+      setErrorMsg("");
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!file) return;
+    setAnalyzing(true);
+    setErrorMsg("");
+    
+    try {
+      const token = await auth.currentUser.getIdToken();
+      
+      const formData = new FormData();
+      formData.append("resume", file);
+      
+      const res = await fetch("/api/analyze/", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to analyze resume.");
+      }
+
+      setResults({
+        score: data.total_score || 0,
+        feedback: data.summary || "Analysis completed successfully.",
+        skills_found: data.skills_found || [],
+        missing_skills: data.missing_skills || []
+      });
+
+      // Save to real Firestore
+      await saveAnalysis({
+        user_id: user.uid,
+        name: file.name,
+        score: data.total_score || 0,
+        feedback: data.summary || "Analysis completed successfully.",
+        skills_found: data.skills_found || [],
+        missing_skills: data.missing_skills || []
+      });
+
+      // Reload history to reflect the new item
+      await loadHistory();
+
+    } catch (err) {
+      console.error("Analysis Error:", err);
+      setErrorMsg(err.message);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h1>Welcome back</h1>
+        <p>Let's get your resume ready for top recruiters.</p>
+      </div>
+
+      {errorMsg && <div className="error-msg">{errorMsg}</div>}
+
+      {/* SECTION 1: UPLOAD RESUME */}
+      <section className="dashboard-section">
+        <h2 className="section-title">Upload your resume</h2>
+        <div 
+          className="upload-box"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={() => document.getElementById("resume-upload").click()}
+        >
+          <div className="upload-icon">📄</div>
+          <h3 className="upload-title">
+            {file ? file.name : "Drag & drop your resume here"}
+          </h3>
+          <p className="upload-subtitle">
+            {file ? "Ready to analyze!" : "or click to browse (PDF, DOCX)"}
+          </p>
+          
+          <input 
+            type="file" 
+            id="resume-upload" 
+            style={{ display: "none" }} 
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+          />
+
+          <button 
+            className="btn btn-brand" 
+            style={{ padding: "14px 28px", fontSize: "16px" }}
+            onClick={(e) => {
+              if (file) {
+                e.stopPropagation();
+                handleAnalyze();
+              }
+            }}
+            disabled={!file || analyzing}
+          >
+            {analyzing ? "Analyzing Document..." : "Analyze Resume"}
+          </button>
+        </div>
+      </section>
+
+      {/* SECTION 2: RESULTS (Show only if analysis is complete) */}
+      {results && (
+        <section className="dashboard-section sa in">
+          <h2 className="section-title" style={{ color: "var(--brand)" }}>Analysis Complete</h2>
+          <div className="history-card" style={{ display: 'block', padding: '30px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+              <div className="score-badge" style={{ fontSize: '24px', padding: '12px 20px' }}>
+                {results.score}% ATS Match
+              </div>
+              <p style={{ color: "var(--heading)", fontSize: "16px", margin: 0 }}>
+                {results.feedback}
+              </p>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+              {results.skills_found && results.skills_found.length > 0 && (
+                <div>
+                  <h4 style={{ color: "var(--brand)", marginBottom: "10px" }}>Strengths (Skills Found):</h4>
+                  <ul style={{ color: "var(--muted)", margin: 0, paddingLeft: "20px" }}>
+                    {results.skills_found.map((skill, idx) => (
+                      <li key={idx} style={{ marginBottom: "6px" }}>{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {results.missing_skills && results.missing_skills.length > 0 && (
+                <div>
+                  <h4 style={{ color: "var(--accent)", marginBottom: "10px" }}>Critical Missing Skills:</h4>
+                  <ul style={{ color: "var(--muted)", margin: 0, paddingLeft: "20px" }}>
+                    {results.missing_skills.map((skill, idx) => (
+                      <li key={idx} style={{ marginBottom: "6px", color: "var(--error)" }}>{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 3: HISTORY */}
+      <section className="dashboard-section">
+        <h2 className="section-title">Previous Resumes</h2>
+        <div className="history-list">
+          {history.length === 0 ? (
+            <p style={{ color: "var(--muted)" }}>No past analyses found. Upload your first resume above!</p>
+          ) : (
+            history.map((item) => (
+              <div className="history-card" key={item.id}>
+                <div className="history-info">
+                  <h4>{item.name || "Resume Analysis"}</h4>
+                  <p>Analyzed on {item.date}</p>
+                </div>
+                <div className="history-score">
+                  <span className="score-badge">{item.score || 0}%</span>
+                  <button className="btn btn-outline" style={{ padding: "6px 14px", fontSize: "13px" }}>
+                    View
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}

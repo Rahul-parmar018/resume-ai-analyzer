@@ -26,9 +26,7 @@ class DynamicResumeAnalyzer:
 
     def analyze(self, resume_text, job_desc, job_title):
         """Compare resume and job; return structured JSON."""
-        # Use mock scoring if no API key
-        if not self.client:
-            return self._mock_analysis(resume_text, job_title)
+        return self._mock_analysis(resume_text, job_title)
 
         prompt = f"""
 Compare this resume to the {job_title} position.
