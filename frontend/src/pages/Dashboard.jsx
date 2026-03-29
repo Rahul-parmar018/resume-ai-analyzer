@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [results, setResults] = useState(null);
   const [history, setHistory] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [jobDesc, setJobDesc] = useState(""); // Dynamic JD support
 
   useEffect(() => {
     if (user) {
@@ -52,6 +53,9 @@ export default function Dashboard() {
       
       const formData = new FormData();
       formData.append("resume", file);
+      if (jobDesc.trim()) {
+        formData.append("job_description", jobDesc);
+      }
       
       // Update to full URL as requested for cross-origin communication
       const res = await fetch("http://127.0.0.1:8000/api/analyze/", {
@@ -104,9 +108,36 @@ export default function Dashboard() {
 
       {errorMsg && <div className="error-msg">{errorMsg}</div>}
 
-      {/* SECTION 1: UPLOAD RESUME */}
+      {/* STEP 1: JOB DESCRIPTION */}
       <section className="dashboard-section">
-        <h2 className="section-title">Upload your resume</h2>
+        <h2 className="section-title">Step 1: Target Job Description</h2>
+        <div style={{ backgroundColor: 'var(--card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+          <label style={{ color: 'var(--brand)', display: 'block', marginBottom: '12px', fontSize: '15px', fontWeight: '600' }}>
+            Paste the requirements for the job you are targeting:
+          </label>
+          <textarea
+            className="job-desc-input"
+            style={{ 
+              width: '100%', 
+              height: '120px', 
+              backgroundColor: 'var(--bg)', 
+              border: '1px solid var(--border)', 
+              borderRadius: '10px', 
+              padding: '14px', 
+              fontSize: '14px', 
+              color: 'var(--heading)',
+              resize: 'none'
+            }}
+            placeholder="e.g. Looking for a Python Django developer with experience in AWS, Docker, and React..."
+            value={jobDesc}
+            onChange={(e) => setJobDesc(e.target.value)}
+          />
+        </div>
+      </section>
+
+      {/* STEP 2: UPLOAD RESUME */}
+      <section className="dashboard-section">
+        <h2 className="section-title">Step 2: Upload Your Resume</h2>
         <div 
           className="upload-box"
           onDragOver={handleDragOver}
@@ -131,7 +162,7 @@ export default function Dashboard() {
 
           <button 
             className="btn btn-brand" 
-            style={{ padding: "14px 28px", fontSize: "16px" }}
+            style={{ padding: "14px 28px", fontSize: "16px", marginTop: '20px' }}
             onClick={(e) => {
               if (file) {
                 e.stopPropagation();

@@ -119,19 +119,22 @@ def analyze_resume_view(request):
         print(resume_text[:500])
         print("-" * 30)
 
-        # 🎯 Job description (Richer for MVP stable performance)
-        job_desc = """
-        Looking for a Python Django developer with experience in:
-        - REST APIs and Backend Architecture
-        - Cloud deployment with AWS
-        - Containerization using Docker
-        - React frontend integration
-        - Database systems like PostgreSQL or MySQL
-        """
-        job_skills = ["python", "django", "react", "docker", "aws"]
+        # 🎯 Job description extraction (Dynamic vs. Default)
+        user_jd = request.data.get("job_description", "").strip()
+        
+        if user_jd:
+            job_desc = user_jd
+            manual_job_skills = None  # Let the analyzer extract skills from the user's text
+        else:
+            # Exact Fallback JD as requested
+            job_desc = """
+            Looking for a Python Django developer with experience in:
+            AWS, Docker, React, REST APIs
+            """
+            manual_job_skills = ["python", "django", "react", "docker", "aws"]
 
-        # 🧠 ML Analysis (Refined 70/30 weight)
-        result = analyze_resume(resume_text, job_desc, manual_job_skills=job_skills)
+        # 🧠 ML Analysis (Refined 85/15 weight)
+        result = analyze_resume(resume_text, job_desc, manual_job_skills=manual_job_skills)
 
         return Response(result)
 
