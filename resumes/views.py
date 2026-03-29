@@ -1,4 +1,4 @@
-import os, json, logging
+import os, json, logging, fitz
 from django.shortcuts import render, redirect
 import io, re
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
@@ -94,8 +94,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from firebase_admin import auth
 from .auth_utils import verify_token
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from firebase_admin import auth
+from .utils.ml_analyzer import analyze_resume
+
 @api_view(['POST'])
-def analyze_resume(request):
+def analyze_resume_view(request):
     try:
         # 🔐 Verify token
         token = request.headers.get('Authorization').split('Bearer ')[1]
@@ -103,15 +108,30 @@ def analyze_resume(request):
 
         # 📄 Get file
         file = request.FILES.get('resume')
-
         if not file:
             return Response({"error": "No file"}, status=400)
 
-        # 🧠 TEMP (replace later with ML)
-        result = {
-            "score": 80,
-            "feedback": "Working API"
-        }
+        # 📖 Read text using our upgraded utility
+        resume_text = _extract_text(file)
+        
+        # 🔍 Debug Print (as requested)
+        print("DEBUG - Extracted Text (First 500 chars):")
+        print(resume_text[:500])
+        print("-" * 30)
+
+        # 🎯 Job description (Richer for MVP stable performance)
+        job_desc = """
+        Looking for a Python Django developer with experience in:
+        - REST APIs and Backend Architecture
+        - Cloud deployment with AWS
+        - Containerization using Docker
+        - React frontend integration
+        - Database systems like PostgreSQL or MySQL
+        """
+        job_skills = ["python", "django", "react", "docker", "aws"]
+
+        # 🧠 ML Analysis (Refined 70/30 weight)
+        result = analyze_resume(resume_text, job_desc, manual_job_skills=job_skills)
 
         return Response(result)
 
@@ -196,8 +216,12 @@ def _extract_text(upload):
     data = upload.read()
     try:
         if name.endswith(".pdf"):
-            reader = PdfReader(io.BytesIO(data))
-            return "\n".join((p.extract_text() or "") for p in reader.pages)
+            # Use PyMuPDF (fitz) for high-quality text extraction
+            text = ""
+            with fitz.open(stream=data, filetype="pdf") as doc:
+                for page in doc:
+                    text += page.get_text()
+            return text
         if name.endswith(".docx"):
             doc = Document(io.BytesIO(data))
             return "\n".join(p.text for p in doc.paragraphs)

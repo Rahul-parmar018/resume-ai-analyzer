@@ -160,11 +160,11 @@ export default function Dashboard() {
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-              {results.skills_found && results.skills_found.length > 0 && (
+              {results.matched_skills && results.matched_skills.length > 0 && (
                 <div>
-                  <h4 style={{ color: "var(--brand)", marginBottom: "10px" }}>Strengths (Skills Found):</h4>
+                  <h4 style={{ color: "var(--brand)", marginBottom: "10px" }}>Matched Requirements:</h4>
                   <ul style={{ color: "var(--muted)", margin: 0, paddingLeft: "20px" }}>
-                    {results.skills_found.map((skill, idx) => (
+                    {results.matched_skills.map((skill, idx) => (
                       <li key={idx} style={{ marginBottom: "6px" }}>{skill}</li>
                     ))}
                   </ul>
@@ -181,6 +181,17 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+
+            {results.suggestions && results.suggestions.length > 0 && (
+              <div style={{ marginTop: '30px', padding: '20px', backgroundColor: 'rgba(74, 144, 226, 0.1)', borderRadius: '12px', borderLeft: '4px solid #4A90E2' }}>
+                <h4 style={{ color: "#4A90E2", marginBottom: "12px" }}>🚀 Actionable Recommendations:</h4>
+                <ul style={{ color: "var(--muted)", margin: 0, paddingLeft: "20px" }}>
+                  {results.suggestions.map((suggestion, idx) => (
+                    <li key={idx} style={{ marginBottom: "8px" }}>{suggestion}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -196,7 +207,10 @@ export default function Dashboard() {
               <div className="history-card" key={item.id}>
                 <div className="history-info">
                   <h4>{item.name || "Resume Analysis"}</h4>
-                  <p>Analyzed on {item.date}</p>
+                  <p style={{ margin: "4px 0 8px 0", color: "var(--muted)", fontSize: "14px", lineBreak: "anywhere" }}>
+                    {item.feedback?.substring(0, 80)}...
+                  </p>
+                  <p style={{ fontSize: "12px", opacity: 0.7 }}>Analyzed on {item.date}</p>
                 </div>
                 <div className="history-score">
                   <span className="score-badge">{item.score || 0}%</span>

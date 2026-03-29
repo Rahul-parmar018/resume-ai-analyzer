@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { doc, setDoc, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { doc, setDoc, collection, addDoc, query, where, getDocs, orderBy } from "firebase/firestore";
 
 /**
  * Creates a user profile in Firestore after successful Auth registration.
@@ -44,7 +44,11 @@ export const saveAnalysis = async (data) => {
  */
 export const getAnalysisHistory = async (userId) => {
   if (!userId) return [];
-  const q = query(collection(db, "Analysis"), where("user_id", "==", userId));
+  const q = query(
+    collection(db, "Analysis"), 
+    where("user_id", "==", userId),
+    orderBy("created_at", "desc")
+  );
   const snap = await getDocs(q);
   return snap.docs.map(doc => {
     const data = doc.data();

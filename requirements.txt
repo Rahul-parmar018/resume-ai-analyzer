@@ -343,4 +343,6 @@ wordcloud==1.9.2
 wrapt==1.16.0
 yarl==1.23.0
 django-cors-headers
+pymupdf
+
 
