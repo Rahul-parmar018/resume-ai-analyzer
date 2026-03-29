@@ -53,7 +53,8 @@ export default function Dashboard() {
       const formData = new FormData();
       formData.append("resume", file);
       
-      const res = await fetch("/api/analyze/", {
+      // Update to full URL as requested for cross-origin communication
+      const res = await fetch("http://127.0.0.1:8000/api/analyze/", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -62,29 +63,28 @@ export default function Dashboard() {
       });
 
       const data = await res.json();
+      console.log(data); // As requested for testing
 
       if (!res.ok) {
         throw new Error(data.error || "Failed to analyze resume.");
       }
 
       setResults({
-        score: data.total_score || 0,
-        feedback: data.summary || "Analysis completed successfully.",
+        score: data.score || 0,
+        feedback: data.feedback || "Analysis completed successfully.",
         skills_found: data.skills_found || [],
         missing_skills: data.missing_skills || []
       });
 
-      // Save to real Firestore
+      // Save to Firestore (maintaining existing persistence logic)
       await saveAnalysis({
         user_id: user.uid,
         name: file.name,
-        score: data.total_score || 0,
-        feedback: data.summary || "Analysis completed successfully.",
-        skills_found: data.skills_found || [],
-        missing_skills: data.missing_skills || []
+        score: data.score || 0,
+        feedback: data.feedback || "Analysis completed successfully.",
+        date: new Date().toLocaleDateString()
       });
 
-      // Reload history to reflect the new item
       await loadHistory();
 
     } catch (err) {

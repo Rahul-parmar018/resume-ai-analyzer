@@ -92,7 +92,32 @@ def results_view(request):
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from firebase_admin import auth
 from .auth_utils import verify_token
+@api_view(['POST'])
+def analyze_resume(request):
+    try:
+        # 🔐 Verify token
+        token = request.headers.get('Authorization').split('Bearer ')[1]
+        decoded = auth.verify_id_token(token)
+
+        # 📄 Get file
+        file = request.FILES.get('resume')
+
+        if not file:
+            return Response({"error": "No file"}, status=400)
+
+        # 🧠 TEMP (replace later with ML)
+        result = {
+            "score": 80,
+            "feedback": "Working API"
+        }
+
+        return Response(result)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
+
 # ────────── AI API ENDPOINTS ──────────
 @api_view(['POST'])
 @rate_limit(max_requests=10, window=60)

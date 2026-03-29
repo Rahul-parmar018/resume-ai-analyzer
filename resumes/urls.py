@@ -20,7 +20,7 @@ urlpatterns = [
     # New GPT-powered URLs
     path('ai-upload/', views.upload_resume_gpt, name='upload_resume_gpt'),
     path('ai-results/', views.resume_results_gpt, name='resume_results_gpt'),
-    path('api/analyze/', views.analyze_resume_api, name='analyze_api'),
+    path('api/analyze/', views.analyze_resume, name='analyze_api'),
     path('api/status/', views.check_api_status, name='api_status'),
     path('batch/', views.batch_analyze_resumes, name='batch_analyze'),
     path('download/<str:format>/', views.download_results, name='download_results'),

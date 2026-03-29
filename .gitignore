@@ -55,3 +55,7 @@ frontend/dist/
 
 # Environment variables
 .env
+frontend/.env
+
+# Sensitive Frontend files
+frontend/src/firebase.js
