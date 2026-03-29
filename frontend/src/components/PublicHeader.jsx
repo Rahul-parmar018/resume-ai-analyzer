@@ -17,8 +17,8 @@ const PublicHeader = () => {
 
         {/* Nav links */}
         <nav className="hidden md:flex gap-8 text-sm text-secondary items-center">
-          <Link to="/#features"    className="hover:text-primary transition-colors">Features</Link>
-          <Link to="/#social-proof" className="hover:text-primary transition-colors">Customers</Link>
+          <Link to="/features"     className="hover:text-primary transition-colors">Features</Link>
+          <Link to="/customers"    className="hover:text-primary transition-colors">Customers</Link>
           <Link to="/app/analyze"  className="hover:text-primary transition-colors">Analyzer</Link>
           <Link to="/app/finder"   className="hover:text-primary transition-colors">Candidate Finder</Link>
           <Link to="/pricing"      className="hover:text-primary transition-colors">Pricing</Link>

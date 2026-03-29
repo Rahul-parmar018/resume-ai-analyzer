@@ -8,6 +8,8 @@ import Finder    from "./pages/Finder";
 import Settings  from "./pages/Settings";
 import History   from "./pages/History";
 import Pricing   from "./pages/Pricing";
+import Features  from "./pages/Features";
+import Customers from "./pages/Customers";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthProvider   from "./components/AuthProvider";
@@ -19,10 +21,12 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* PUBLIC */}
-          <Route path="/"         element={<Landing />} />
-          <Route path="/pricing"  element={<Pricing />} />
-          <Route path="/login"    element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/"          element={<Landing />} />
+          <Route path="/pricing"   element={<Pricing />} />
+          <Route path="/features"  element={<Features />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/login"     element={<Login />} />
+          <Route path="/register"  element={<Register />} />
 
           {/* PROTECTED */}
           <Route
