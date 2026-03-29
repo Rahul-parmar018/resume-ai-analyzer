@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { analyzeResume } from "../api/analyze";
-import { saveAnalysis } from "../db";
 import { useAuth } from "../components/AuthProvider";
 
 import PageHeader from "../components/ui/PageHeader";
@@ -42,13 +41,11 @@ const Analyzer = () => {
       setLoading(true); setError(""); setResult(null);
       
       const data = await analyzeResume(file, jd);
-      if (user) {
-        await saveAnalysis({
-          user_id: user.uid, file_name: file.name, score: data.score,
-          feedback: data.feedback, matched_skills: data.matched_skills,
-          missing_skills: data.missing_skills, suggestions: data.suggestions,
-        });
-      }
+      
+      // ✅ No client-side database saving required.
+      // The Django backend natively handles saving the AnalysisRecord to SQLite/PostgreSQL
+      // automatically as part of the Phase 1 SaaS lifecycle upgrade.
+      
       setResult(data);
     } catch (err) {
       setError(err.message || "Analysis failed");

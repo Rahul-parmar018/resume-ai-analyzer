@@ -4,8 +4,12 @@ from . import views_finder as fv
 from . import views_review as rv
 
 urlpatterns = [
-    # 🎯 Primary AI Analysis API
+    # 🎯 Primary AI Analysis API & History (SaaS)
     path('analyze/', views.analyze_resume_view, name='analyze_api'),
+    path('dashboard/', views.get_dashboard_analytics_view, name='dashboard_api'),
+    path('semantic-search/', views.semantic_search_view, name='semantic_search_api'),
+    path('history/', views.get_history_view, name='get_history_api'),
+    path('analysis/<int:pk>/', views.analysis_detail_view, name='analysis_detail_api'),
     path('status/', views.check_api_status, name='api_status'),
     
     # 🔍 Candidate Finder APIs (Multi-resume filtering)

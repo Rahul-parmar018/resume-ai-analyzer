@@ -226,3 +226,54 @@ class Candidate(models.Model):
 
     class Meta:
         ordering = ['-match_score','-total_score','-created_at']
+
+# ===== PHASE 1 SaaS ARCHITECTURE MIGRATION =====
+
+class FirebaseUser(models.Model):
+    """
+    1. User (linked via Firebase UID)
+    """
+    firebase_uid = models.CharField(max_length=255, unique=True, db_index=True)
+    email = models.EmailField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email or self.firebase_uid
+
+
+class AnalysisRecord(models.Model):
+    """
+    2. Analysis (CORE TABLE)
+    """
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE, related_name='analyses')
+    resume_name = models.CharField(max_length=500)
+    job_description = models.TextField(blank=True, null=True)
+    score = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.resume_name} ({self.score}%)"
+
+
+class ExtractedData(models.Model):
+    """
+    3. ExtractedData
+    """
+    analysis = models.OneToOneField(AnalysisRecord, on_delete=models.CASCADE, related_name='extracted_data')
+    skills = models.JSONField(default=list, blank=True)
+    missing_skills = models.JSONField(default=list, blank=True)
+    suggestions = models.JSONField(default=list, blank=True)  # Keeping as JSON since it returns an array
+
+    def __str__(self):
+        return f"Data for Analysis #{self.analysis.id}"
+
+
+class AnalysisEmbedding(models.Model):
+    """
+    4. Embeddings (Future AI Search)
+    """
+    analysis = models.OneToOneField(AnalysisRecord, on_delete=models.CASCADE, related_name='embedding')
+    vector = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Embedding for Analysis #{self.analysis.id}"

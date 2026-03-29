@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthProvider";
-import { getAnalysisHistory } from "../db";
+import { fetchHistory } from "../api/analyze";
 import { useNavigate } from "react-router-dom";
 
 import PageHeader from "../components/ui/PageHeader";
@@ -15,7 +15,7 @@ const History = () => {
 
   useEffect(() => {
     if (user) {
-      getAnalysisHistory(user.uid)
+      fetchHistory()
         .then(setHistory)
         .catch(console.error)
         .finally(() => setLoading(false));
@@ -33,7 +33,7 @@ const History = () => {
           <div className="w-8 h-8 rounded bg-red-50 text-red-500 flex items-center justify-center border border-red-100">
             <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
           </div>
-          <span className="font-bold text-primary">{row.file_name}</span>
+          <span className="font-bold text-primary">{row.resume_name || row.file_name}</span>
         </div>
       </td>
       <td className="px-6 py-4 text-secondary text-sm">{row.date}</td>
