@@ -9,7 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,7 +45,7 @@ ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
-    "DIRS": [BASE_DIR / "resumes" / "templates"],
+    "DIRS": [],
     "APP_DIRS": True,
     "OPTIONS": {"context_processors": [
         "django.template.context_processors.debug",
@@ -63,8 +64,6 @@ DATABASES = {
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    BASE_DIR / "resumes" / "static",
     BASE_DIR / "frontend" / "dist",
 ]
 
