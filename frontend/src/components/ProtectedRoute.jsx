@@ -1,8 +1,9 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../components/AuthProvider";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -13,7 +14,17 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Redirect to Onboarding if role is missing
+  if (!profile?.role && location.pathname !== "/onboarding") {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // If already has role and trying to go back to onboarding, send to dashboard
+  if (profile?.role && location.pathname === "/onboarding") {
+    return <Navigate to={profile.role === "candidate" ? "/app/optimize" : "/app"} replace />;
   }
 
   return children;

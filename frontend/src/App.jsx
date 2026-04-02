@@ -3,10 +3,12 @@ import Landing  from "./pages/Landing";
 import Login    from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Analyzer  from "./pages/Analyzer";
-import Finder    from "./pages/Finder";
+import Optimizer from "./pages/Optimizer";   // Candidate Mode
+import BulkScanner from "./pages/BulkScanner"; // Recruiter Mode
+import Finder    from "./pages/Finder";      // Recruiter Mode
 import Settings  from "./pages/Settings";
 import History   from "./pages/History";
+import Onboarding from "./pages/Onboarding";
 import Pricing   from "./pages/Pricing";
 import Features  from "./pages/Features";
 import Customers from "./pages/Customers";
@@ -28,6 +30,16 @@ function App() {
           <Route path="/login"     element={<Login />} />
           <Route path="/register"  element={<Register />} />
 
+          {/* ONBOARDING */}
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            }
+          />
+
           {/* PROTECTED */}
           <Route
             path="/app"
@@ -37,10 +49,11 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index         element={<Dashboard />} />
-            <Route path="analyze" element={<Analyzer />} />
-            <Route path="finder"  element={<Finder />} />
-            <Route path="history" element={<History />} />
+            <Route index          element={<Dashboard />} />
+            <Route path="optimize" element={<Optimizer />} />
+            <Route path="scanner"  element={<BulkScanner />} />
+            <Route path="finder"   element={<Finder />} />
+            <Route path="history"  element={<History />} />
             <Route path="settings" element={<Settings />} />
           </Route>
 

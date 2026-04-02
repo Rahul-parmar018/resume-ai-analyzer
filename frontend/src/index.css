@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .dropdown-animate {
+    animation: fadeSlide 0.2s ease-out forwards;
+  }
+
+  .glass-header {
+    @apply bg-white/80 backdrop-blur-md border-b border-white/20;
+  }
+
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif;

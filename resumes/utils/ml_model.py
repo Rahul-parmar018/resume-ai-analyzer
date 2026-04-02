@@ -1,4 +1,6 @@
+import os
 import logging
+os.environ["USE_TF"] = "0"
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
