@@ -60,7 +60,7 @@ const History = () => {
       
       <PageHeader 
         title="Analysis History"
-        subtitle="Review and re-evaluate past candidate reports processed by ResumeAI."
+        subtitle="Review and re-evaluate past candidate reports processed by Candidex AI."
         actionLabel="New Analysis"
         actionIcon="add"
         actionLink="/app/analyze"

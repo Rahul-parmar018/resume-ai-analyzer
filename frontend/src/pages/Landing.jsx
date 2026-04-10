@@ -8,10 +8,10 @@ const Landing = () => {
   const [openFaq, setOpenFaq] = useState(null);
 
   const faqs = [
-    { q: "How does ResumeAI compare to standard ATS keywords?", a: "Unlike standard ATS parsing that looks for exact string matches, our AI uses Large Language Models to read the resume semantically. It understands context, synonyms, and career trajectory." },
+    { q: "How does Candidex AI compare to standard ATS keywords?", a: "Unlike standard ATS parsing that looks for exact string matches, our AI uses Large Language Models to read the resume semantically. It understands context, synonyms, and career trajectory." },
     { q: "Do candidates know an AI is screening them?", a: "This operates as a backend tool for your recruiting team. It acts as an augmentation to your ATS, not a replacement for human recruiters in the interview stage." },
-    { q: "Can I use it alongside my existing ATS?", a: "Yes. ResumeAI integrates seamlessly with major platforms like Workday, Greenhouse, and Lever. You can sync candidates automatically." },
-    { q: "Is the AI biased against marginalized groups?", a: "We take bias mitigation seriously. ResumeAI is fully blind to demographic data (names, genders, ages implied by graduation years) during the core scoring process." },
+    { q: "Can I use it alongside my existing ATS?", a: "Yes. Candidex AI integrates seamlessly with major platforms like Workday, Greenhouse, and Lever. You can sync candidates automatically." },
+    { q: "Is the AI biased against marginalized groups?", a: "We take bias mitigation seriously. Candidex AI is fully blind to demographic data (names, genders, ages implied by graduation years) during the core scoring process." },
     { q: "How long does parsing thousands of resumes take?", a: "Extremely fast. A batch of 1,000 PDFs typically finishes full contextual analysis in under 3 minutes." },
     { q: "Are there limits to how many resumes I can process?", a: "Our Enterprise tier offers unlimited processing. Professional and Starter tiers have monthly limits outlined on our pricing page." }
   ];
@@ -132,7 +132,7 @@ const Landing = () => {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
         <div className="max-w-4xl mx-auto relative z-10">
           <p className="text-accent font-bold tracking-[0.2em] uppercase text-sm mb-4">The Fix</p>
-          <h2 className="font-heading text-5xl md:text-6xl font-bold mb-12 text-white">Meet ResumeAI.</h2>
+          <h2 className="font-heading text-5xl md:text-6xl font-bold mb-12 text-white">Meet Candidex AI.</h2>
           
           <div className="grid md:grid-cols-3 gap-8 text-left">
             <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-sm">
@@ -159,7 +159,7 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl font-bold mb-6 text-primary">Experience the Platform</h2>
-            <p className="text-secondary text-lg">See how ResumeAI transforms your workflow.</p>
+            <p className="text-secondary text-lg">See how Candidex AI transforms your workflow.</p>
           </div>
 
           {/* Tabs */}
@@ -370,7 +370,7 @@ const Landing = () => {
             <div className="inline-flex text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full mb-6">Transparency</div>
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6 text-primary leading-tight">See exactly why a candidate matched.</h2>
             <p className="text-secondary text-lg mb-8 leading-relaxed">
-              ResumeAI doesn't operate in a black box. Every score is backed by hard evidence extracted directly from the resume. You'll see exactly what skills were found, what's missing, and actionable hiring manager notes.
+              Candidex AI doesn't operate in a black box. Every score is backed by hard evidence extracted directly from the resume. You'll see exactly what skills were found, what's missing, and actionable hiring manager notes.
             </p>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 font-medium text-primary"><span className="material-symbols-outlined text-green-500">check_circle</span> Verified strengths</li>
@@ -456,7 +456,7 @@ const Landing = () => {
                   <th className="p-6 font-bold text-primary w-1/3">Feature Capability</th>
                   <th className="p-6 font-bold text-primary bg-primary/5 w-1/3 text-center">
                     <div className="flex items-center justify-center gap-2">
-                       <span className="material-symbols-outlined text-accent text-sm">neurology</span> ResumeAI
+                       <span className="material-symbols-outlined text-accent text-sm">neurology</span> Candidex AI
                     </div>
                   </th>
                   <th className="p-6 font-bold text-secondary w-1/3 text-center">Traditional ATS</th>
@@ -507,7 +507,7 @@ const Landing = () => {
           
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { text: "ResumeAI completely replaced our initial screening tier. We now only interview highly qualified candidates.", author: "Sarah Jenkins", role: "VP Talent", company: "TECHCORP" },
+              { text: "Candidex AI completely replaced our initial screening tier. We now only interview highly qualified candidates.", author: "Sarah Jenkins", role: "VP Talent", company: "TECHCORP" },
               { text: "It caught 3 amazing engineers that our old ATS rejected because they didn't have the exact word 'AWS' on their resume.", author: "David Chu", role: "CTO", company: "LUMINA" },
               { text: "We processed 5,000 summer internship applications in 2 hours. The ROI was immediate.", author: "Elena Rostova", role: "Lead Recruiter", company: "VANGUARD" },
             ].map((t, idx) => (

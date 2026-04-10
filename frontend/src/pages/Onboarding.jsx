@@ -39,7 +39,7 @@ const Onboarding = () => {
             <div className="max-w-4xl w-full space-y-12">
                 <div className="text-center space-y-4">
                     <h1 className="text-4xl font-headline font-bold text-slate-900 tracking-tight">
-                        Welcome to ResumeAI
+                        Welcome to Candidex AI
                     </h1>
                     <p className="text-lg text-slate-500 max-w-xl mx-auto">
                         To provide the best experience, please tell us how you'll be using the platform. 

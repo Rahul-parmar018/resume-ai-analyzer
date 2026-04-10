@@ -13,7 +13,7 @@ const Sidebar = () => {
     { name: "Candidate Ranking Engine", icon: "hub",    path: "/app/scanner",  roles: ['recruiter'] },
     
     // Candidate Only
-    { name: "Resume AI Optimizer",  icon: "analytics",     path: "/app/optimize", roles: ['candidate'] },
+    { name: "Candidex AI Optimizer",  icon: "analytics",     path: "/app/optimize", roles: ['candidate'] },
     
     // Both
     { name: "History",          icon: "history",       path: "/app/history",  roles: ['candidate', 'recruiter'] },
@@ -36,7 +36,7 @@ const Sidebar = () => {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="material-symbols-outlined text-white text-xl">architecture</span>
           </div>
-          <h1 className="font-headline text-2xl font-bold text-slate-900 tracking-tighter">ResumeAI</h1>
+          <h1 className="font-headline text-2xl font-bold text-slate-900 tracking-tighter">Candidex AI</h1>
         </div>
         <div className="flex items-center gap-2">
            <span className={`text-[10px] uppercase tracking-[0.2em] font-bold px-2 py-0.5 rounded-full ${

@@ -1,4 +1,4 @@
-# Resume AI Analyzer - Django-based AI Resume Screening Platform
+# Candidex AI - Django-based AI Resume Screening Platform
 
 A Django-only, AI-powered web application that analyzes, reviews, and scores resumes using machine learning and natural language processing. Get instant feedback on your resume's ATS compatibility, readability, and job-role matching.
 

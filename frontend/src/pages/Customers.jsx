@@ -14,7 +14,7 @@ const Customers = () => {
           <p className="text-xs font-bold text-accent uppercase tracking-[0.2em] mb-3">Customer Impact</p>
           <h1 className="font-heading text-6xl md:text-7xl font-bold mb-6 tracking-tight">Radical Efficiency.</h1>
           <p className="text-slate-400 text-xl max-w-2xl mx-auto leading-relaxed">
-            See the transformative business metrics of teams who switched from legacy screening to ResumeAI's semantic pipeline.
+            See the transformative business metrics of teams who switched from legacy screening to Candidex AI's semantic pipeline.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ const Customers = () => {
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="material-symbols-outlined text-red-500">cancel</span>
-                      <h4 className="font-bold text-slate-300">Before ResumeAI</h4>
+                      <h4 className="font-bold text-slate-300">Before Candidex AI</h4>
                     </div>
                     <div className="flex justify-between items-end bg-slate-800 p-4 rounded-xl border border-slate-700">
                       <span className="text-sm font-bold text-slate-400">Time-to-Screen Batch</span>
@@ -65,7 +65,7 @@ const Customers = () => {
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="material-symbols-outlined text-accent">check_circle</span>
-                      <h4 className="font-bold text-white">After ResumeAI</h4>
+                      <h4 className="font-bold text-white">After Candidex AI</h4>
                     </div>
                     <div className="flex justify-between items-end bg-accent/10 p-4 rounded-xl border border-accent/20">
                       <span className="text-sm font-bold text-slate-300">Time-to-Screen Batch</span>
@@ -89,7 +89,7 @@ const Customers = () => {
                     <div>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="material-symbols-outlined text-red-500">cancel</span>
-                        <h4 className="font-bold text-slate-300">Before ResumeAI</h4>
+                        <h4 className="font-bold text-slate-300">Before Candidex AI</h4>
                       </div>
                       <div className="flex justify-between items-end bg-slate-800 p-4 rounded-xl border border-slate-700">
                         <span className="text-sm font-bold text-slate-400">Candidate Diversity Ratio</span>
@@ -101,7 +101,7 @@ const Customers = () => {
                     <div>
                       <div className="flex items-center gap-2 mb-3">
                         <span className="material-symbols-outlined text-accent">check_circle</span>
-                        <h4 className="font-bold text-white">After ResumeAI</h4>
+                        <h4 className="font-bold text-white">After Candidex AI</h4>
                       </div>
                       <div className="flex justify-between items-end bg-blue-500/10 p-4 rounded-xl border border-blue-500/20">
                         <span className="text-sm font-bold text-slate-300">Candidate Diversity Ratio</span>
@@ -116,7 +116,7 @@ const Customers = () => {
               <div className="order-1 lg:order-2">
                 <p className="text-blue-400 font-bold mb-2">Financial Infrastructure</p>
                 <h3 className="font-heading text-4xl font-bold mb-6">Eliminating Human Bias in Hiring</h3>
-                <p className="text-slate-400 leading-relaxed mb-8">"ResumeAI blind-scores candidates entirely based on technical merit. By removing names, schools, and inferred ages from the initial screening layer, our diversity metrics naturally skyrocketed without lowering the technical bar."</p>
+                <p className="text-slate-400 leading-relaxed mb-8">"Candidex AI blind-scores candidates entirely based on technical merit. By removing names, schools, and inferred ages from the initial screening layer, our diversity metrics naturally skyrocketed without lowering the technical bar."</p>
                 <div className="flex items-center gap-4 border-t border-slate-700 pt-6">
                   <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center font-bold">ER</div>
                   <div>

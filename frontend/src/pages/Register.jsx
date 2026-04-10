@@ -54,7 +54,7 @@ const Register = () => {
 
         {/* Logo */}
         <div className="relative z-10">
-          <span className="font-headline font-bold text-2xl tracking-tighter text-white">ResumeAI</span>
+          <span className="font-headline font-bold text-2xl tracking-tighter text-white">Candidex AI</span>
         </div>
 
         {/* Hero Content */}
@@ -82,7 +82,7 @@ const Register = () => {
         </div>
 
         <div className="relative z-10 text-on-primary-container/60 text-xs uppercase tracking-widest font-medium">
-          © 2024 ResumeAI — The Digital Architect for Modern Careers
+          © 2024 Candidex AI — The Digital Architect for Modern Careers
         </div>
       </section>
 
@@ -93,7 +93,7 @@ const Register = () => {
           {/* Header */}
           <div className="space-y-3">
             <div className="md:hidden mb-8">
-              <span className="font-headline font-bold text-xl tracking-tighter text-primary">ResumeAI</span>
+              <span className="font-headline font-bold text-xl tracking-tighter text-primary">Candidex AI</span>
             </div>
             <h2 className="font-headline text-3xl font-bold text-primary tracking-tight">Create your account</h2>
             <p className="text-on-surface-variant">Start your journey toward a more impactful career.</p>

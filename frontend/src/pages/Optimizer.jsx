@@ -30,7 +30,7 @@ const Optimizer = () => {
   return (
     <div className="space-y-8 pb-12 font-body max-w-5xl mx-auto">
       <PageHeader 
-        title="Resume AI Optimizer"
+        title="Candidex AI Optimizer"
         subtitle="Upload your resume and the target job description to get an AI-powered ATS score and optimization tips."
       />
 

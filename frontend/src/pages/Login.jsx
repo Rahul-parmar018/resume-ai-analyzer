@@ -50,7 +50,7 @@ const Login = () => {
 
         {/* Logo */}
         <div className="relative z-10">
-          <span className="text-white font-headline text-2xl font-bold tracking-tighter">ResumeAI</span>
+          <span className="text-white font-headline text-2xl font-bold tracking-tighter">Candidex AI</span>
         </div>
 
         {/* Testimonial */}
@@ -58,7 +58,7 @@ const Login = () => {
           <div className="space-y-6">
             <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-white/90 text-xs font-medium tracking-widest uppercase">Success Story</span>
             <h2 className="text-white font-headline text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
-              "The precision of ResumeAI turned my career history into a compelling narrative."
+              "The precision of Candidex AI turned my career history into a compelling narrative."
             </h2>
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/20">
@@ -78,7 +78,7 @@ const Login = () => {
 
         {/* Mobile header */}
         <div className="md:hidden p-6 flex justify-between items-center bg-white/80 backdrop-blur-sm border-b border-outline-variant/10">
-          <span className="font-headline text-xl font-bold tracking-tighter text-primary">ResumeAI</span>
+          <span className="font-headline text-xl font-bold tracking-tighter text-primary">Candidex AI</span>
           <Link to="/register" className="text-sm font-semibold text-primary">Sign up</Link>
         </div>
 
@@ -162,7 +162,7 @@ const Login = () => {
 
           <div className="mt-auto pt-12 text-center md:text-left">
             <p className="text-on-surface-variant text-sm">
-              New to ResumeAI?
+              New to Candidex AI?
               <Link to="/register" className="text-primary font-bold hover:underline ml-1">Sign up for free</Link>
             </p>
           </div>
@@ -170,7 +170,7 @@ const Login = () => {
 
         <footer className="p-8 mt-auto border-t border-outline-variant/10">
           <div className="max-w-2xl mx-auto flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2">
-            <span className="text-[10px] uppercase tracking-widest font-bold text-outline w-full md:w-auto mb-2 md:mb-0">© 2024 ResumeAI</span>
+            <span className="text-[10px] uppercase tracking-widest font-bold text-outline w-full md:w-auto mb-2 md:mb-0">© 2024 Candidex AI</span>
             {["Privacy Policy", "Terms of Service", "Support"].map((l) => (
               <a key={l} href="#" className="text-[10px] uppercase tracking-widest font-bold text-outline hover:text-primary transition-colors">{l}</a>
             ))}

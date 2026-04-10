@@ -30,7 +30,7 @@ const Layout = () => {
           <footer className="w-full py-12 border-t border-slate-100 bg-white mt-12">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
               <p className="text-slate-400 font-label text-xs uppercase tracking-widest">
-                © 2024 ResumeAI Intelligence. All rights reserved.
+                © 2024 Candidex AI Intelligence. All rights reserved.
               </p>
               <div className="flex gap-8">
                 <a href="#" className="text-slate-400 hover:text-slate-900 text-xs uppercase tracking-widest transition-colors">Privacy Policy</a>

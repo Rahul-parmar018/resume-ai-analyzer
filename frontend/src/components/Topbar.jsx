@@ -158,7 +158,7 @@ const Topbar = ({ title }) => {
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                     >
                       <span className="material-symbols-outlined text-[18px]">ads_click</span>
-                      Resume AI Optimizer
+                      Candidex AI Optimizer
                     </Link>
                   )}
                   <Link

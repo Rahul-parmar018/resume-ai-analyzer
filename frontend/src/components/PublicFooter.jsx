@@ -14,7 +14,7 @@ const PublicFooter = () => {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-primary/20">
                 <span className="material-symbols-outlined text-accent text-sm">neurology</span>
               </div>
-              <p className="font-heading font-bold text-primary text-xl italic tracking-tight">ResumeAI</p>
+              <p className="font-heading font-bold text-primary text-xl italic tracking-tight">Candidex AI</p>
             </div>
             <p className="text-sm text-secondary mb-6 leading-relaxed">
               Premium AI-powered resume intelligence for modern talent acquisition teams. Build world-class teams faster.
@@ -68,7 +68,7 @@ const PublicFooter = () => {
 
         {/* Bottom row */}
         <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-secondary">
-          <p>© 2026 ResumeAI Intelligence. All rights reserved.</p>
+          <p>© 2026 Candidex AI Intelligence. All rights reserved.</p>
           <div className="flex items-center gap-2 text-secondary font-medium">
             <span className="material-symbols-outlined text-accent">neurology</span>
             <span>Powered by Advanced AI</span>

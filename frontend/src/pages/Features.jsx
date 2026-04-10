@@ -13,7 +13,7 @@ const Features = () => {
           <p className="text-xs font-bold text-accent uppercase tracking-[0.2em] mb-3">Enterprise Capabilities</p>
           <h1 className="font-heading text-5xl md:text-6xl font-bold mb-6 text-primary tracking-tight">Intelligence at Scale</h1>
           <p className="text-secondary text-lg max-w-2xl mx-auto leading-relaxed">
-            Stop relying on legacy keyword filters. ResumeAI provides deep semantic understanding to drastically reduce time-to-hire while uncovering hidden talent.
+            Stop relying on legacy keyword filters. Candidex AI provides deep semantic understanding to drastically reduce time-to-hire while uncovering hidden talent.
           </p>
         </div>
       </section>
@@ -41,7 +41,7 @@ const Features = () => {
               <div className="bg-green-50 p-5 rounded-2xl border border-green-100 flex gap-4 items-start">
                 <span className="material-symbols-outlined text-green-500 mt-0.5">check_circle</span>
                 <div>
-                  <h4 className="font-bold text-green-700 mb-1">The ResumeAI Way (Solution)</h4>
+                  <h4 className="font-bold text-green-700 mb-1">The Candidex AI Way (Solution)</h4>
                   <p className="text-sm text-green-700/80 leading-relaxed">Our AI Engine understands context. It knows that building large-scale Next.js arrays implies React mastery, scoring the candidate perfectly without matching the exact string.</p>
                 </div>
               </div>
@@ -119,7 +119,7 @@ const Features = () => {
               <div className="bg-green-50 p-5 rounded-2xl border border-green-100 flex gap-4 items-start">
                 <span className="material-symbols-outlined text-green-500 mt-0.5">check_circle</span>
                 <div>
-                  <h4 className="font-bold text-green-700 mb-1">The ResumeAI Way (Solution)</h4>
+                  <h4 className="font-bold text-green-700 mb-1">The Candidex AI Way (Solution)</h4>
                   <p className="text-sm text-green-700/80 leading-relaxed">Chat with your database. Simply ask the engine what you are looking for in natural English, and it instantly ranks historic candidates by relevance.</p>
                 </div>
               </div>
@@ -152,7 +152,7 @@ const Features = () => {
               <div className="bg-green-50 p-5 rounded-2xl border border-green-100 flex gap-4 items-start">
                 <span className="material-symbols-outlined text-green-500 mt-0.5">check_circle</span>
                 <div>
-                  <h4 className="font-bold text-green-700 mb-1">The ResumeAI Way (Solution)</h4>
+                  <h4 className="font-bold text-green-700 mb-1">The Candidex AI Way (Solution)</h4>
                   <p className="text-sm text-green-700/80 leading-relaxed">Upload a raw `.zip` of 1,000 resumes. Our cloud architecture processes the batch asynchronously in under 3 minutes, emitting a perfectly ranked spreadsheet.</p>
                 </div>
               </div>

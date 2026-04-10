@@ -62,7 +62,7 @@ const PublicHeader = () => {
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:shadow-slate-900/40 transition-shadow">
             <span className="material-symbols-outlined text-emerald-400 text-base">neurology</span>
           </div>
-          <h1 className="font-heading text-xl font-bold tracking-tight">ResumeAI</h1>
+          <h1 className="font-heading text-xl font-bold tracking-tight">Candidex AI</h1>
         </Link>
 
         {/* Nav links */}
@@ -148,7 +148,7 @@ const PublicHeader = () => {
                         className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                       >
                         <span className="material-symbols-outlined text-[18px]">ads_click</span>
-                        Resume AI Optimizer
+                        Candidex AI Optimizer
                       </Link>
                     )}
                   </div>
