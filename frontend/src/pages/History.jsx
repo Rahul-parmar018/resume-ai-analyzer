@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthProvider";
 import { fetchHistory } from "../api/analyze";
 import { useNavigate } from "react-router-dom";
+import { getScoreColorClass } from "../utils/scoring";
 
 import PageHeader from "../components/ui/PageHeader";
 import DataTable from "../components/ui/DataTable";
@@ -39,7 +40,9 @@ const History = () => {
       <td className="px-6 py-4 text-secondary text-sm">{row.date}</td>
       <td className="px-6 py-4">
         {row.score ? (
-          <span className={`font-heading font-bold ${row.score >= 80 ? 'text-accent' : 'text-primary'}`}>{row.score}%</span>
+          <span className={`font-heading font-black px-2 py-1 rounded-lg border text-sm ${getScoreColorClass(row.score)}`}>
+            {row.score}%
+          </span>
         ) : (
           <span className="text-slate-300">-</span>
         )}

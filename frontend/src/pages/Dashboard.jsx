@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../components/AuthProvider";
 import { fetchDashboardAnalytics, fetchHistory } from "../api/analyze";
+import { getScoreColorClass } from "../utils/scoring";
 import { useNavigate } from "react-router-dom";
 
 import PageHeader from "../components/ui/PageHeader";
@@ -131,15 +132,13 @@ const Dashboard = () => {
                     onClick={() => navigate(`/app/history`)}
                     className="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-all border border-slate-100 cursor-pointer group"
                   >
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-sm
-                      ${rec.score >= 70 ? 'bg-emerald-50 text-emerald-600' : rec.score >= 40 ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}
-                    `}>
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-sm border ${getScoreColorClass(rec.score)}`}>
                       {rec.score}%
                     </div>
                     <div className="flex-1">
                       <p className="font-bold text-slate-900 group-hover:text-primary transition-colors">{rec.resume}</p>
                       <p className="text-slate-400 text-xs mt-0.5">
-                        {rec.date} • {rec.score >= 70 ? 'Strong Match' : rec.score >= 40 ? 'Potential Gap' : 'Weak Alignment'}
+                        {rec.date} • {rec.score > 75 ? 'Strong Match' : rec.score >= 50 ? 'Potential Gap' : 'Weak Alignment'}
                       </p>
                     </div>
                     <span className="material-symbols-outlined text-slate-300 group-hover:translate-x-1 transition-transform">chevron_right</span>

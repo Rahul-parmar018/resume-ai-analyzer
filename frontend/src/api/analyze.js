@@ -147,3 +147,22 @@ export const deleteAnalysis = async (id) => {
 
   return res.json();
 };
+
+export const rewriteResume = async (resumeText) => {
+  const token = await auth.currentUser.getIdToken();
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/rewrite-resume/`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ resume_text: resumeText })
+  });
+  
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Rewrite failed");
+  }
+  
+  return res.json();
+};

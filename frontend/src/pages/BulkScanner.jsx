@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { bulkAnalyzeResumes } from "../api/analyze";
 import PageHeader from "../components/ui/PageHeader";
+import { getScoreColorClass } from "../utils/scoring";
 
 const EXPERIENCE_LEVELS = [
   { value: "intern", label: "Intern" },
@@ -22,7 +23,7 @@ const PRESETS = [
       required_skills: ["JavaScript", "React", "TypeScript"],
       optional_skills: ["Next.js", "CSS", "Testing"],
       tools: ["Docker", "AWS"],
-      weights: { skills: 50, experience: 30, semantic: 20 },
+      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
       notes: "Startup experience preferred",
     },
   },
@@ -36,7 +37,7 @@ const PRESETS = [
       required_skills: ["Python", "Django", "SQL"],
       optional_skills: ["Redis", "Celery", "REST APIs"],
       tools: ["Docker", "AWS", "Kubernetes"],
-      weights: { skills: 55, experience: 25, semantic: 20 },
+      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
       notes: "Experience scaling APIs preferred",
     },
   },
@@ -50,7 +51,7 @@ const PRESETS = [
       required_skills: ["Python", "Machine Learning", "Statistics"],
       optional_skills: ["NLP", "Deep Learning", "Data Visualization"],
       tools: ["AWS", "TensorFlow"],
-      weights: { skills: 45, experience: 25, semantic: 30 },
+      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
       notes: "Prior experimentation and model deployment preferred",
     },
   },
@@ -143,7 +144,7 @@ const BulkAnalyzer = () => {
   const [optionalSkills, setOptionalSkills] = useState([]);
   const [tools, setTools] = useState([]);
   const [notes, setNotes] = useState("");
-  const [weights, setWeights] = useState({ skills: 50, experience: 30, semantic: 20 });
+  const [weights, setWeights] = useState({ skills: 40, experience: 30, education: 15, ats: 15 });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -154,27 +155,28 @@ const BulkAnalyzer = () => {
     const clamped = Math.max(0, Math.min(100, Math.round(nextVal)));
     const otherKeys = Object.keys(weights).filter((k) => k !== key);
     const remaining = 100 - clamped;
+    const curOtherSum = otherKeys.reduce((acc, k) => acc + weights[k], 0);
 
-    const a = otherKeys[0];
-    const b = otherKeys[1];
-    const curA = weights[a];
-    const curB = weights[b];
-    const curSum = curA + curB;
+    const newWeights = { ...weights, [key]: clamped };
 
-    if (remaining <= 0) {
-      setWeights({ ...weights, [key]: 100, [a]: 0, [b]: 0 });
-      return;
+    if (curOtherSum === 0) {
+      const share = Math.floor(remaining / otherKeys.length);
+      otherKeys.forEach((k, i) => {
+        newWeights[k] = i === otherKeys.length - 1 ? remaining - share * (otherKeys.length - 1) : share;
+      });
+    } else {
+      let allocated = 0;
+      otherKeys.forEach((k, i) => {
+        if (i === otherKeys.length - 1) {
+          newWeights[k] = remaining - allocated;
+        } else {
+          const share = Math.round((weights[k] / curOtherSum) * remaining);
+          newWeights[k] = share;
+          allocated += share;
+        }
+      });
     }
-
-    if (curSum === 0) {
-      const half = Math.floor(remaining / 2);
-      setWeights({ ...weights, [key]: clamped, [a]: half, [b]: remaining - half });
-      return;
-    }
-
-    const nextA = Math.round((curA / curSum) * remaining);
-    const nextB = remaining - nextA;
-    setWeights({ ...weights, [key]: clamped, [a]: nextA, [b]: nextB });
+    setWeights(newWeights);
   };
 
   const applyPreset = (preset) => {
@@ -203,7 +205,8 @@ const BulkAnalyzer = () => {
       weights: {
         skills: weights.skills / safeTotal,
         experience: weights.experience / safeTotal,
-        semantic: weights.semantic / safeTotal,
+        education: weights.education / safeTotal,
+        ats: weights.ats / safeTotal,
       },
       notes: notes.trim(),
     };
@@ -419,19 +422,20 @@ const BulkAnalyzer = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setWeights({ skills: 50, experience: 30, semantic: 20 })}
+                    onClick={() => setWeights({ skills: 40, experience: 30, education: 15, ats: 15 })}
                     className="text-xs font-black text-slate-500 hover:text-primary transition-colors"
                   >
-                    Reset 50/30/20
+                    Reset 40/30/15/15
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <WeightSlider label="Skills" value={weights.skills} onChange={(v) => setWeightKeepingTotal("skills", v)} />
                   <WeightSlider label="Experience" value={weights.experience} onChange={(v) => setWeightKeepingTotal("experience", v)} />
-                  <WeightSlider label="Semantic" value={weights.semantic} onChange={(v) => setWeightKeepingTotal("semantic", v)} />
+                  <WeightSlider label="Education" value={weights.education} onChange={(v) => setWeightKeepingTotal("education", v)} />
+                  <WeightSlider label="ATS Format" value={weights.ats} onChange={(v) => setWeightKeepingTotal("ats", v)} />
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  Total: {weights.skills + weights.experience + weights.semantic}%. We auto-balance sliders to always equal 100%.
+                  Total: {weights.skills + weights.experience + weights.education + weights.ats}%. We auto-balance sliders to always equal 100%.
                 </div>
               </div>
 
@@ -508,20 +512,51 @@ const BulkAnalyzer = () => {
                   <p className="text-2xl font-black text-primary">{result.auto_shortlist?.length || 0}</p>
                 </div>
              </div>
-             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
+             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3">
                 {selectedForCompare.length > 0 ? (
                   <button 
                     onClick={() => setShowCompare(true)}
-                    className="w-full h-full bg-accent text-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all shadow-md shadow-accent/20"
+                    className="w-full py-3 bg-accent text-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all shadow-md shadow-accent/20"
                   >
                     <span className="material-symbols-outlined">compare_arrows</span>
-                    Launch Compare ({selectedForCompare.length})
+                    Compare ({selectedForCompare.length})
                   </button>
                 ) : (
-                  <div className="w-full text-center text-slate-400 text-sm font-medium">
-                    Select candidates to compare
-                  </div>
+                  <div className="text-center text-slate-400 text-xs font-bold py-1">Select to Compare</div>
                 )}
+                <div className="flex gap-2 w-full pt-1 border-t border-slate-50">
+                  <button 
+                    onClick={() => {
+                      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(result, null, 2));
+                      const downloadAnchorNode = document.createElement('a');
+                      downloadAnchorNode.setAttribute("href", dataStr);
+                      downloadAnchorNode.setAttribute("download", `batch_report_${result.session_id}.json`);
+                      document.body.appendChild(downloadAnchorNode);
+                      downloadAnchorNode.click();
+                      downloadAnchorNode.remove();
+                    }}
+                    className="flex-1 py-1.5 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[10px] font-black hover:bg-slate-100 transition-all"
+                  >
+                    JSON
+                  </button>
+                  <button 
+                    onClick={() => {
+                        const headers = ["Rank", "Name", "Score", "Skills"];
+                        const rows = result.top_candidates.map(c => [c.rank, c.name, c.score, c.skills.join("; ")]);
+                        const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement("a");
+                        link.setAttribute("href", URL.createObjectURL(blob));
+                        link.setAttribute("download", `candidates_ranking_${result.session_id}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }}
+                    className="flex-1 py-1.5 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[10px] font-black hover:bg-slate-100 transition-all"
+                  >
+                    CSV
+                  </button>
+                </div>
              </div>
           </div>
 
@@ -642,11 +677,17 @@ const BulkAnalyzer = () => {
                       <div className="flex items-center gap-3 mt-3">
                         <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
                           <div 
-                            className={`h-full rounded-full ${c.score >= 80 ? 'bg-green-500' : c.score >= 60 ? 'bg-blue-500' : 'bg-slate-400'}`} 
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              c.score > 75 ? 'bg-green-500' : 
+                              c.score >= 50 ? 'bg-amber-500' : 
+                              'bg-red-500'
+                            }`} 
                             style={{ width: `${c.score}%` }}
                           ></div>
                         </div>
-                        <span className="text-sm font-black text-primary w-12 text-right">{c.score}%</span>
+                        <span className={`text-xs font-black px-2 py-0.5 rounded-lg border ${getScoreColorClass(c.score)}`}>
+                          {c.score}%
+                        </span>
                       </div>
                     </div>
 

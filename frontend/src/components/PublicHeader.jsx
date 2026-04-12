@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
@@ -10,7 +10,28 @@ const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Scroll Progress Logic
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / totalScroll) * 100;
+      setScrollProgress(progress);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const role = profile?.role || 'candidate';
+
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Features", path: "/features" },
+    { name: "Customers", path: "/customers" },
+    { name: "Pricing", path: "/pricing" },
+  ];
 
   // Usage Logic
   const limit = role === 'candidate' ? 20 : 500;
@@ -56,25 +77,53 @@ const PublicHeader = () => {
 
   return (
     <header className="fixed top-0 w-full glass-header z-50">
+      {/* Scroll Progress Bar */}
+      <div 
+        className="absolute top-0 left-0 h-[2px] bg-emerald-400 transition-all duration-150 z-[60]" 
+        style={{ width: `${scrollProgress}%` }}
+      />
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
         <Link to="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:shadow-slate-900/40 transition-shadow">
-            <span className="material-symbols-outlined text-emerald-400 text-base">neurology</span>
+            <span className="material-symbols-outlined text-emerald-400 text-base animate-pulse">neurology</span>
           </div>
           <h1 className="font-heading text-xl font-bold tracking-tight">Candidex AI</h1>
         </Link>
 
-        {/* Nav links */}
-        <nav className="hidden md:flex gap-8 text-sm text-slate-500 items-center">
-          <Link to="/features" className="hover:text-slate-900 transition-colors font-bold">Features</Link>
-          <Link to="/pricing" className="hover:text-slate-900 transition-colors font-bold">Pricing</Link>
-          <Link to="/app" className="hover:text-slate-900 transition-colors font-bold flex items-center gap-1">
-            Product <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
+        {/* Nav links (Desktop) */}
+        <nav className="hidden md:flex gap-8 text-sm items-center">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link 
+                key={item.path}
+                to={item.path} 
+                className={`transition-all font-bold relative py-1 ${
+                  isActive ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+                }`}
+              >
+                {item.name}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-400 rounded-full" />
+                )}
+              </Link>
+            );
+          })}
+          <Link to="/app" className="hover:text-slate-900 transition-all font-bold flex items-center gap-1.5 text-slate-500 group/prod">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Product 
+            <span className="material-symbols-outlined text-[16px] group-hover/prod:translate-x-0.5 group-hover/prod:-translate-y-0.5 transition-transform">arrow_outward</span>
           </Link>
         </nav>
 
         <div className="flex gap-4 items-center">
+          {/* Search Hint */}
+          <button className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-400 hover:bg-slate-100 transition-all group">
+            <span className="material-symbols-outlined text-[18px]">search</span>
+            <span className="text-xs font-bold">Search intelligence...</span>
+            <span className="ml-4 text-[10px] font-black opacity-40 group-hover:opacity-100 transition-opacity bg-slate-200 px-1.5 py-0.5 rounded-md">⌘K</span>
+          </button>
           {user ? (
             <div className="relative" ref={menuRef}>
               <button
@@ -178,9 +227,61 @@ const PublicHeader = () => {
               </Link>
             </>
           )}
+          
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            <span className="material-symbols-outlined">
+              {isMobileMenuOpen ? 'close' : 'menu'}
+            </span>
+          </button>
         </div>
-
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-lg font-bold ${
+                location.pathname === item.path ? "text-slate-900" : "text-slate-500"
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+          <Link
+            to="/app"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-lg font-bold text-slate-500 flex items-center gap-1"
+          >
+            Product <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
+          </Link>
+          {!user && (
+            <div className="flex flex-col gap-3 pt-4 border-t border-slate-50">
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full text-center py-3 rounded-xl font-bold text-slate-600 hover:bg-slate-50"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full text-center py-3 rounded-xl font-bold bg-primary text-white shadow-lg shadow-primary/20"
+              >
+                Get Started
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 };

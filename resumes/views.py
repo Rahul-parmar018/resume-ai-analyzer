@@ -10,7 +10,14 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from firebase_admin import auth
 from .auth_utils import verify_token
-from .utils.ml_analyzer import analyze_resume
+from .utils.ml_analyzer import analyze_resume, compute_similarity, extract_skills
+from .utils.gap_analysis import run_gap_analysis
+from .utils.scoring import (
+    calculate_education_score, 
+    calculate_ats_score, 
+    _normalize_weights
+)
+from .utils.text_extract import extract_contacts
 from .utils.dynamic_resume_analyzer import DynamicResumeAnalyzer
 from .models import FirebaseUser, AnalysisRecord, ExtractedData, AnalysisEmbedding, JobSession
 from django.db.models import Avg, Count, F
@@ -156,24 +163,6 @@ def _build_query_text(job_profile):
     return "\n".join([p for p in parts if p])
 
 
-def _normalize_weights(weights):
-    default = {"skills": 0.5, "experience": 0.3, "semantic": 0.2}
-    if not isinstance(weights, dict):
-        return default
-    try:
-        s = float(weights.get("skills", default["skills"]))
-        e = float(weights.get("experience", default["experience"]))
-        m = float(weights.get("semantic", default["semantic"]))
-    except Exception:
-        return default
-
-    s = max(0.0, min(1.0, s))
-    e = max(0.0, min(1.0, e))
-    m = max(0.0, min(1.0, m))
-    total = s + e + m
-    if total <= 0:
-        return default
-    return {"skills": s / total, "experience": e / total, "semantic": m / total}
 
 
 def _normalize_text_for_match(text):
@@ -302,37 +291,46 @@ def optimize_resume_view(request):
             """
             manual_job_skills = ["python", "django", "react", "docker", "aws"]
 
-        # 🧠 ML Analysis (Refined 85/15 weight)
-        result = analyze_resume(resume_text, job_desc, manual_job_skills=manual_job_skills)
+        # 🧠 DEEP JD GAP ANALYSIS (PHASE 2)
+        gap_report = run_gap_analysis(resume_text, job_desc)
+        
+        # Determine Fit Label based on Spec v1
+        score = gap_report['match_score']
+        if score > 80:
+            fit_label = "🔥 Strong Fit"
+        elif score > 60:
+            fit_label = "⚡ Moderate Fit"
+        else:
+            fit_label = "⚠ Needs Improvement"
 
-        # Structured Scoring Override (HR-controlled weights)
-        if job_profile:
-            required = _normalize_list(job_profile.get("required_skills"))
-            optional = _normalize_list(job_profile.get("optional_skills"))
-            tools = _normalize_list(job_profile.get("tools"))
+        # 📊 Trend Analysis (PHASE 4)
+        last_analysis = AnalysisRecord.objects.filter(user=user).order_by('-created_at').first()
+        previous_score = last_analysis.score if last_analysis else None
+        improvement = (score - previous_score) if previous_score is not None else 0
 
-            matched_required = _match_terms(resume_text, required)
-            matched_optional = _match_terms(resume_text, optional + tools)
-
-            req_ratio = (len(matched_required) / max(1, len(required))) if required else 0.0
-            opt_ratio = (len(matched_optional) / max(1, len(optional + tools))) if (optional or tools) else 0.0
-            skills_component = (0.8 * req_ratio) + (0.2 * opt_ratio)
-
-            years = _extract_years_of_experience(resume_text)
-            exp_component = _experience_component(years, job_profile.get("experience_level"))
-
-            query_vec = semantic_model.encode(job_desc).tolist()
-            matched_all = sorted(list(set(list(matched_required) + list(matched_optional))))
-            dense_context = f"Capabilities: {', '.join(matched_all)}. Profile context: {resume_text[:500]}"
-            cand_vec = semantic_model.encode(dense_context).tolist()
-            sem = _cosine(query_vec, cand_vec)
-            semantic_component = max(0.0, min(1.0, (sem + 1.0) / 2.0))
-
-            w = _normalize_weights(job_profile.get("weights"))
-            final = (w["skills"] * skills_component) + (w["experience"] * exp_component) + (w["semantic"] * semantic_component)
-            result["score"] = int(round(max(0.0, min(1.0, final)) * 100))
-            result["skills_found"] = matched_all
-            result["missing_skills"] = [s for s in required if s not in matched_required]
+        result = {
+            "score": score,
+            "fit_label": fit_label,
+            "semantic": gap_report['semantic'],
+            "skills_found": gap_report['skills']['matched'],
+            "missing_skills": gap_report['skills']['missing_required'],
+            "missing_preferred": gap_report['skills']['missing_preferred'],
+            "experience": gap_report['experience'],
+            "suggestions": gap_report['recommendations'],
+            "insight": gap_report['insight'],
+            "reasoning": gap_report.get('reasoning', []),
+            "confidence": gap_report.get('confidence', 0.85),
+            "trend": {
+                "previous_score": previous_score,
+                "improvement": improvement
+            },
+            "section_scores": {
+                "skills": gap_report['match_score'],
+                "semantic": gap_report['semantic']['score'] * 100,
+                "experience": gap_report['experience']['match_percentage']
+            },
+            "extracted_text": resume_text
+        }
 
         # 🗄️ ORM Save: SaaS Data Lifecycle
         # 1. Atomic Usage Increment (Elite Logic)
@@ -345,7 +343,7 @@ def optimize_resume_view(request):
         
         # 2. Save Analysis
         analysis_record = AnalysisRecord.objects.create(
-            user=firebase_user,
+            user=user,
             resume_name=file.name,
             job_description=job_desc,
             job_profile=job_profile,
@@ -357,7 +355,9 @@ def optimize_resume_view(request):
             analysis=analysis_record,
             skills=result['skills_found'],
             missing_skills=result['missing_skills'],
-            suggestions=result['suggestions']
+            suggestions=result['suggestions'],
+            section_scores=result.get('section_scores', {}),
+            rewrites=result.get('rewrites', [])
         )
         
         # 4. Phase 3: High-Dimension Semantic Embedding Generation
@@ -467,11 +467,26 @@ def bulk_analyze_view(request):
 
                     years = _extract_years_of_experience(resume_text)
                     exp_component = _experience_component(years, job_profile.get("experience_level"))
+
+                    # Education Component
+                    edu_score = calculate_education_score(resume_text)
+                    edu_component = edu_score / 100.0
+                    
+                    # ATS Component
+                    contacts = extract_contacts(resume_text)
+                    ats_score = calculate_ats_score(
+                        resume_text, 
+                        has_email=bool(contacts.get("email")), 
+                        has_phone=bool(contacts.get("phone"))
+                    )
+                    ats_component = ats_score / 100.0
                 else:
                     matched_all = result['skills_found']
                     missing_required = result['missing_skills']
                     skills_component = None
                     exp_component = None
+                    edu_component = None
+                    ats_component = None
 
                 # Format our structured text for Embedding
                 skills_str = ", ".join(matched_all)
@@ -485,6 +500,8 @@ def bulk_analyze_view(request):
                     "suggestions": result['suggestions'],
                     "_skills_component": skills_component,
                     "_exp_component": exp_component,
+                    "_edu_component": edu_component,
+                    "_ats_component": ats_component,
                 })
                 clean_texts.append(dense_context)
                 
@@ -495,22 +512,30 @@ def bulk_analyze_view(request):
         if not parsed_batch:
             return Response({"error": "Failed to parse content from the uploaded documents."}, status=400)
 
-        # 5. 🔥 BATCH ENCODE (The Key 3-5x Performance Speedup)
-        # SentenceTransformers fundamentally processes array batches magnitudes faster than loops
+        # 5. 🔥 BATCH ENCODE & Weighted Scoring
         embeddings_matrix = semantic_model.encode(clean_texts).tolist()
 
-        # Structured semantic + weighted scoring
         if job_profile:
             for i in range(len(parsed_batch)):
+                # Semantic/Context Component
                 sem = _cosine(query_vec, embeddings_matrix[i])
                 semantic_component = max(0.0, min(1.0, (sem + 1.0) / 2.0))
-                skills_component = float(parsed_batch[i].get("_skills_component") or 0.0)
-                exp_component = float(parsed_batch[i].get("_exp_component") or 0.5)
+                
+                # Fetch pre-calculated components
+                skills_comp = float(parsed_batch[i].get("_skills_component") or 0.0)
+                exp_comp = float(parsed_batch[i].get("_exp_component") or 0.5)
+                edu_comp = float(parsed_batch[i].get("_edu_component") or 0.5)
+                ats_comp = float(parsed_batch[i].get("_ats_component") or 0.5)
+                
+                # Normalize based on spec categories
+                # Note: 'weights' from _normalize_weights ensures sum is 1.0
                 final = (
-                    (weights["skills"] * skills_component)
-                    + (weights["experience"] * exp_component)
-                    + (weights["semantic"] * semantic_component)
+                    (weights["skills"] * skills_comp) +
+                    (weights["experience"] * exp_comp) +
+                    (weights["education"] * edu_comp) +
+                    (weights["ats"] * ats_comp)
                 )
+                
                 parsed_batch[i]["score"] = int(round(max(0.0, min(1.0, final)) * 100))
 
         # 6. 🏆 Ranking & Data Commits
@@ -857,6 +882,41 @@ def api_score(request):
 
 def check_api_status(request):
     return JsonResponse({"status": "online"})
+
+from .utils.rewrite_engine import ResumeRewriteEngine
+
+@api_view(['POST'])
+def rewrite_resume_view(request):
+    """
+    PHASE 3: Resume Rewrite Engine.
+    Converts weak bullets to high-impact, quantified bullets.
+    """
+    try:
+        user = _get_firebase_user(request)
+        if not user:
+            return Response({"error": "Unauthorized"}, status=401)
+            
+        # Optional: check if from file or raw text
+        resume_text = request.data.get('resume_text', '').strip()
+        
+        if not resume_text:
+            # Fallback for when frontend sends the file directly if needed, 
+            # but usually it sends text for this specific feature.
+            return Response({"error": "Resume text is required"}, status=400)
+            
+        engine = ResumeRewriteEngine()
+        result = engine.run_rewrite_engine(resume_text)
+        
+        # Track usage (SaaS metrics)
+        FirebaseUser.objects.filter(id=user.id).update(
+            optimization_count=F('optimization_count') + 1
+        )
+        
+        return Response(result, status=200)
+    except Exception as e:
+        logger.error(f"Rewrite error: {str(e)}")
+        return Response({"error": str(e)}, status=400)
+
 
 # ────────── UTILITIES ──────────
 

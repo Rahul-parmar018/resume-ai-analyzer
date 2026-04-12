@@ -30,4 +30,5 @@ urlpatterns = [
     
     # 🎨 Resume Review & Improvement APIs
     path('review-resume/', rv.api_review_resume, name='api_review_resume'),
+    path('rewrite-resume/', views.rewrite_resume_view, name='rewrite_resume_api'),
 ]

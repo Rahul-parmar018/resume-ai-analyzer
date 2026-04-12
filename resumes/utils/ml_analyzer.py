@@ -42,70 +42,83 @@ def compute_similarity(resume, job_desc):
     except Exception:
         return 0.1
 
-def calculate_score(matched_skills, job_skills, similarity):
-    """Hybrid scoring logic based on matching relevant skills and text similarity."""
-    if not job_skills:
-        skill_match = 0
-    else:
-        # Only count skills matched against the job description for scoring (Unique sets)
-        skill_match = len(list(set(matched_skills))) / max(1, len(list(set(job_skills))))
+from .scoring import (
+    calculate_skills_score, 
+    calculate_experience_score, 
+    calculate_education_score, 
+    calculate_ats_score,
+    get_final_score
+)
+from .text_extract import extract_contacts
 
-    # Final Weights: 85% skills, 15% text similarity (Skill-heavy ATS model)
-    score = (0.85 * skill_match) + (0.15 * similarity)
-
-    # Core Skill Bonuses (Extra boost for critical technologies)
-    bonus = 0
-    matched_set = set([s.lower() for s in matched_skills])
-    if "python" in matched_set:
-        bonus += 0.05
-    if "django" in matched_set:
-        bonus += 0.05
-
-    final_score = min(1.0, score + bonus)
-    return int(final_score * 100)
+def calculate_score_details(resume_text, matched_skills, job_skills):
+    """Hybrid scoring using the centralized scoring engine."""
+    
+    # 1. Skills (40%)
+    skills_score = calculate_skills_score(matched_skills, job_skills)
+    
+    # 2. Experience (30%)
+    # Using a default of 3 years if not specified in JD for now
+    exp_score = calculate_experience_score(resume_text, target_years=3)
+    
+    # 3. Education (15%)
+    edu_score = calculate_education_score(resume_text)
+    
+    # 4. ATS Format (15%)
+    contacts = extract_contacts(resume_text)
+    ats_score = calculate_ats_score(
+        resume_text, 
+        has_email=bool(contacts.get("email")), 
+        has_phone=bool(contacts.get("phone"))
+    )
+    
+    final_score = get_final_score(skills_score, exp_score, edu_score, ats_score)
+    
+    return {
+        "final": final_score,
+        "sections": {
+            "skills": int(skills_score),
+            "experience": int(exp_score),
+            "education": int(edu_score),
+            "ats": int(ats_score)
+        }
+    }
 
 def analyze_resume(resume_text, job_desc, manual_job_skills=None):
-    """The final orchestration function for ATS-like scoring and analysis."""
-    # 1. Normalize and Extract Skills (Using improved extraction)
+    """Upgraded orchestration with AI rewrites and section scoring."""
     skills_found = extract_skills(resume_text)
     
-    # 2. Key Analysis: Use manual job skills if provided, else extract from JD
     if manual_job_skills:
         job_skills = list(set([s.lower() for s in manual_job_skills]))
     else:
         job_skills = extract_skills(job_desc)
 
-    # 3. Intersection and Difference (Ensuring uniqueness)
     matched_skills = list(set([s for s in skills_found if s in job_skills]))
     missing_skills = list(set([s for s in job_skills if s not in skills_found]))
 
-    # 4. Calculate Similarity Score (Enhanced with n-grams)
-    similarity = compute_similarity(resume_text, job_desc)
-    
-    # 5. Final Hybrid Score
-    score = calculate_score(matched_skills, job_skills, similarity)
+    score_details = calculate_score_details(resume_text, matched_skills, job_skills)
+    score = score_details["final"]
 
-    # 6. Actionable Suggestions (New logic for value-add)
+    # Actionable Suggestions
     suggestions = []
-    if "react" in missing_skills:
-        suggestions.append("Add a frontend project using React to showcase UI/UX expertise.")
-    if "docker" in missing_skills:
-        suggestions.append("Mention experience with Docker and containerization for better ranking.")
-    if "aws" in missing_skills:
-        suggestions.append("Detail your hands-on cloud experience or certifications in AWS.")
-
-    # 7. Dynamic Feedback (Refined)
-    if score > 80:
-        feedback = "Excellent match! Your profile aligns perfectly with the technical requirements."
-    elif score > 60:
-        feedback = "Good match, some minor improvements needed in highlighting key skills."
-    elif score > 40:
-        feedback = "Moderate match, missing key technical skills needed for this role."
+    if len(missing_skills) > 3:
+        suggestions.append({
+            "type": "missing_skill",
+            "message": f"Critical skills missing: Consider adding {', '.join(missing_skills[:3])}.",
+            "priority": "high"
+        })
+    
+    # AI Feedback based on standardized scoring
+    if score > 75:
+        feedback = "Elite Profile: Your background is a top match for this role."
+    elif score >= 50:
+        feedback = "Strong Professional: Core foundation is solid, but surface missing skills."
     else:
-        feedback = "Low match, significant improvement required to meet core requirements."
+        feedback = "Foundation Needed: Focus on acquiring missing technical keywords."
 
     return {
         "score": score,
+        "section_scores": score_details["sections"],
         "skills_found": list(set(skills_found)), 
         "matched_skills": matched_skills, 
         "missing_skills": missing_skills, 

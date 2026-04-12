@@ -29,8 +29,8 @@ class JobPosting(models.Model):
 class Resume(models.Model):
     file = models.FileField(upload_to='resumes/%Y/%m/%d/', validators=[FileExtensionValidator(allowed_extensions=['pdf', 'docx', 'doc', 'txt'])])
     original_filename = models.CharField(max_length=255)
-    file_size = models.IntegerField()
-    file_type = models.CharField(max_length=10)
+    file_size = models.IntegerField(default=0)
+    file_type = models.CharField(max_length=10, default='pdf')
     extracted_text = models.TextField(blank=True)
     candidate_name = models.CharField(max_length=200, blank=True)
     candidate_email = models.EmailField(blank=True)
@@ -224,14 +224,14 @@ class Candidate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    file_size = models.IntegerField()
-    file_type = models.CharField(max_length=10)
+    file_size = models.IntegerField(default=0)
+    file_type = models.CharField(max_length=10, default='pdf')
     extracted_text = models.TextField(blank=True)
     candidate_name = models.CharField(max_length=200, blank=True)
     candidate_email = models.EmailField(blank=True)
     candidate_phone = models.CharField(max_length=50, blank=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_candidates')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     is_analyzed = models.BooleanField(default=False)
     analysis_count = models.IntegerField(default=0)
     
@@ -253,7 +253,7 @@ class FirebaseUser(models.Model):
     optimization_count = models.IntegerField(default=0)
     scan_count = models.IntegerField(default=0)
     role_locked = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return self.email or self.firebase_uid
@@ -266,7 +266,7 @@ class JobSession(models.Model):
     user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE, related_name='job_sessions')
     job_description = models.TextField()
     job_profile = models.JSONField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"JobSession #{self.id} for {self.user.email}"
@@ -283,7 +283,7 @@ class AnalysisRecord(models.Model):
     job_profile = models.JSONField(null=True, blank=True)
     score = models.IntegerField(default=0)
     rank = models.IntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.email} - {self.resume_name} ({self.score}%)"
@@ -296,7 +296,9 @@ class ExtractedData(models.Model):
     analysis = models.OneToOneField(AnalysisRecord, on_delete=models.CASCADE, related_name='extracted_data')
     skills = models.JSONField(default=list, blank=True)
     missing_skills = models.JSONField(default=list, blank=True)
-    suggestions = models.JSONField(default=list, blank=True)  # Keeping as JSON since it returns an array
+    suggestions = models.JSONField(default=list, blank=True)
+    section_scores = models.JSONField(default=dict, blank=True)
+    rewrites = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return f"Data for Analysis #{self.analysis.id}"

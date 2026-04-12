@@ -2,10 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
+import TrustedEcosystem from "../components/TrustedEcosystem";
+import { useEffect } from "react";
 
 const Landing = () => {
   const [activeTab, setActiveTab] = useState("analyzer");
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    document.title = "Candidex AI | Smart Hiring Decisions";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "AI-powered resume analyzer and hiring intelligence platform. Analyze resumes, detect skill gaps, and optimize candidates for job success.");
+    }
+  }, []);
 
   const faqs = [
     { q: "How does Candidex AI compare to standard ATS keywords?", a: "Unlike standard ATS parsing that looks for exact string matches, our AI uses Large Language Models to read the resume semantically. It understands context, synonyms, and career trajectory." },
@@ -494,37 +504,11 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* 11. SOCIAL PROOF (UPGRADE) */}
-      <section className="py-24 px-6 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="flex justify-center gap-1 text-yellow-400 mb-4 text-xl">
-              ★★★★★
-            </div>
-            <h2 className="font-heading text-4xl font-bold mb-4 text-primary">Trusted by 400+ Teams</h2>
-            <p className="text-secondary text-lg">Don't just take our word for it.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { text: "Candidex AI completely replaced our initial screening tier. We now only interview highly qualified candidates.", author: "Sarah Jenkins", role: "VP Talent", company: "TECHCORP" },
-              { text: "It caught 3 amazing engineers that our old ATS rejected because they didn't have the exact word 'AWS' on their resume.", author: "David Chu", role: "CTO", company: "LUMINA" },
-              { text: "We processed 5,000 summer internship applications in 2 hours. The ROI was immediate.", author: "Elena Rostova", role: "Lead Recruiter", company: "VANGUARD" },
-            ].map((t, idx) => (
-              <div key={idx} className="bg-neutral-50 p-8 rounded-2xl border border-gray-100">
-                <p className="text-primary font-medium mb-8 leading-relaxed">"{t.text}"</p>
-                <div className="flex justify-between items-end border-t border-gray-200 pt-4">
-                  <div>
-                    <p className="font-bold text-sm text-primary">{t.author}</p>
-                    <p className="text-xs text-secondary">{t.role}</p>
-                  </div>
-                  <p className="text-[10px] font-bold tracking-widest text-slate-400">{t.company}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Transition Divider (Hero -> Trusted) */}
+      <div className="h-24 bg-gradient-to-b from-neutral-50 to-white"></div>
+
+      {/* 11. PREMIUM SOCIAL PROOF & STATS (PHASE 4) */}
+      <TrustedEcosystem />
 
       {/* 12. FAQ (Collapsible) */}
       <section className="py-24 px-6 bg-neutral-50 border-b border-gray-100">
