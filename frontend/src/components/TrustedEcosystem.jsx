@@ -32,12 +32,12 @@ const TrustedEcosystem = () => {
   }, []);
 
   return (
-    <section className="py-32 px-6 bg-white relative overflow-hidden">
+    <section className="py-16 px-6 bg-white relative overflow-hidden">
       {/* Background Animated Motion */}
       <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-50/50 via-transparent to-transparent animate-pulse pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-16">
           
           {/* LEFT SIDE: Animated Stats Grid */}
           <div className="grid grid-cols-2 gap-4 md:gap-6 order-2 lg:order-1">
@@ -98,8 +98,8 @@ const TrustedEcosystem = () => {
         </div>
 
         {/* Visible SEO Paragraph */}
-        <div className="mt-24 pt-12 border-t border-slate-100 text-center">
-           <p className="text-[10px] text-slate-400 leading-relaxed font-bold uppercase tracking-[0.3em] opacity-50 max-w-4xl mx-auto">
+        <div className="mt-12 pt-8 border-t border-slate-100 text-center">
+           <p className="text-[10px] text-slate-400 leading-relaxed font-bold uppercase tracking-[0.3em] opacity-40 max-w-4xl mx-auto">
              Candidex AI is a production-grade <strong>AI resume analyzer</strong> designed to automate candidate screening, optimize resume scores, and enable data-driven hiring decisions through neural semantic alignment. 
            </p>
         </div>
