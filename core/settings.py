@@ -9,7 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -19,9 +20,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "resumes",
+    "rest_framework",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -29,6 +33,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True # Allow React development server to communicate with Django
 
 # Rate limiting settings
 RATE_LIMIT_ENABLED = True
@@ -39,7 +45,7 @@ ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
-    "DIRS": [BASE_DIR / "resumes" / "templates"],
+    "DIRS": [],
     "APP_DIRS": True,
     "OPTIONS": {"context_processors": [
         "django.template.context_processors.debug",
@@ -58,8 +64,7 @@ DATABASES = {
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    BASE_DIR / "resumes" / "static",
+    BASE_DIR / "frontend" / "dist",
 ]
 
 # Media files
@@ -67,6 +72,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Firebase Admin SDK Initialization
+import os
+import firebase_admin
+from firebase_admin import credentials
+
+firebase_cred_path = BASE_DIR / "firebase-adminsdk.json"
+if os.path.exists(firebase_cred_path) and not firebase_admin._apps:
+    cred = credentials.Certificate(str(firebase_cred_path))
+    firebase_admin.initialize_app(cred)
 
 # ---------- Add your OpenAI key ----------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

@@ -29,8 +29,8 @@ class JobPosting(models.Model):
 class Resume(models.Model):
     file = models.FileField(upload_to='resumes/%Y/%m/%d/', validators=[FileExtensionValidator(allowed_extensions=['pdf', 'docx', 'doc', 'txt'])])
     original_filename = models.CharField(max_length=255)
-    file_size = models.IntegerField()
-    file_type = models.CharField(max_length=10)
+    file_size = models.IntegerField(default=0)
+    file_type = models.CharField(max_length=10, default='pdf')
     extracted_text = models.TextField(blank=True)
     candidate_name = models.CharField(max_length=200, blank=True)
     candidate_email = models.EmailField(blank=True)
@@ -224,5 +224,92 @@ class Candidate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    file_size = models.IntegerField(default=0)
+    file_type = models.CharField(max_length=10, default='pdf')
+    extracted_text = models.TextField(blank=True)
+    candidate_name = models.CharField(max_length=200, blank=True)
+    candidate_email = models.EmailField(blank=True)
+    candidate_phone = models.CharField(max_length=50, blank=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_candidates')
+    uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    is_analyzed = models.BooleanField(default=False)
+    analysis_count = models.IntegerField(default=0)
+    
     class Meta:
-        ordering = ['-match_score','-total_score','-created_at']
+        ordering = ['-uploaded_at']
+    
+    def __str__(self):
+        return f"{self.candidate_name or 'Unknown'} - {self.file_name or 'No File'}"
+
+# ===== PHASE 1 SaaS ARCHITECTURE MIGRATION =====
+
+class FirebaseUser(models.Model):
+    """
+    1. User (linked via Firebase UID)
+    """
+    firebase_uid = models.CharField(max_length=255, unique=True, db_index=True)
+    email = models.EmailField(blank=True, null=True)
+    role = models.CharField(max_length=20, choices=[('candidate', 'Candidate'), ('recruiter', 'Recruiter')], null=True, blank=True)
+    optimization_count = models.IntegerField(default=0)
+    scan_count = models.IntegerField(default=0)
+    role_locked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.email or self.firebase_uid
+
+
+class JobSession(models.Model):
+    """
+    Groups a batch of resumes analyzed against a single Job Description master prompt.
+    """
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE, related_name='job_sessions')
+    job_description = models.TextField()
+    job_profile = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"JobSession #{self.id} for {self.user.email}"
+
+
+class AnalysisRecord(models.Model):
+    """
+    2. Analysis (CORE TABLE)
+    """
+    user = models.ForeignKey(FirebaseUser, on_delete=models.CASCADE, related_name='analyses')
+    job_session = models.ForeignKey(JobSession, on_delete=models.CASCADE, related_name='records', null=True, blank=True)
+    resume_name = models.CharField(max_length=500)
+    job_description = models.TextField(blank=True, null=True)
+    job_profile = models.JSONField(null=True, blank=True)
+    score = models.IntegerField(default=0)
+    rank = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.resume_name} ({self.score}%)"
+
+
+class ExtractedData(models.Model):
+    """
+    3. ExtractedData
+    """
+    analysis = models.OneToOneField(AnalysisRecord, on_delete=models.CASCADE, related_name='extracted_data')
+    skills = models.JSONField(default=list, blank=True)
+    missing_skills = models.JSONField(default=list, blank=True)
+    suggestions = models.JSONField(default=list, blank=True)
+    section_scores = models.JSONField(default=dict, blank=True)
+    rewrites = models.JSONField(default=list, blank=True)
+
+    def __str__(self):
+        return f"Data for Analysis #{self.analysis.id}"
+
+
+class AnalysisEmbedding(models.Model):
+    """
+    4. Embeddings (Future AI Search)
+    """
+    analysis = models.OneToOneField(AnalysisRecord, on_delete=models.CASCADE, related_name='embedding')
+    vector = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Embedding for Analysis #{self.analysis.id}"
