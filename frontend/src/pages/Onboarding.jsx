@@ -108,7 +108,10 @@ const Onboarding = () => {
                             <span className="material-symbols-outlined text-3xl">hub</span>
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 mb-2">Hiring Team</h3>
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] mb-6 whitespace-nowrap">Neural Mode: Recruiter</p>
+                        <div className="flex items-center gap-2 mb-6">
+                            <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap">Neural Mode: Recruiter</p>
+                            <span className="text-[8px] bg-amber-500 text-black px-1.5 py-0.5 rounded-md font-black tracking-widest leading-none">SOON</span>
+                        </div>
                         
                         <ul className="space-y-4 text-slate-600 text-sm font-medium">
                             {[

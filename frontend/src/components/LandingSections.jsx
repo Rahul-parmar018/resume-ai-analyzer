@@ -33,9 +33,10 @@ export const RecruiterShowcase = () => (
         </div>
 
         <div className="pt-4">
-           <Link to="/register">
-             <button className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 hover:-translate-y-1">
-               Explore Hiring Tools
+           <Link to="/recruiter-tools">
+             <button className="px-10 py-5 bg-slate-900 text-white rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:-translate-y-1 flex items-center gap-3 group">
+               Join Recruiter Waitlist
+               <span className="text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">PHASE 2</span>
              </button>
            </Link>
         </div>

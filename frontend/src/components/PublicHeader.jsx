@@ -100,11 +100,13 @@ const PublicHeader = () => {
       />
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:shadow-slate-900/40 transition-shadow">
-            <span className="material-symbols-outlined text-emerald-400 text-base animate-pulse">neurology</span>
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-14 h-14 flex items-center justify-center transition-all group-hover:scale-110">
+            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="font-heading text-xl font-bold tracking-tight text-slate-900">Candidex AI</h1>
+          <h1 className="font-heading text-2xl font-black tracking-tighter text-slate-950">
+            Candidex <span className="inline-block bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent italic px-1">AI</span>
+          </h1>
         </Link>
 
         {/* Nav links (Desktop) */}
@@ -183,65 +185,14 @@ const PublicHeader = () => {
               return (
                 <div key="recruiter-tools-dropdown" className="relative group/rec" ref={recruiterToolsRef}>
                   <button 
-                    onClick={() => setIsRecruiterToolsOpen(!isRecruiterToolsOpen)}
-                    onMouseEnter={() => {
-                      setIsRecruiterToolsOpen(true);
-                      setIsAIResumeOpen(false);
-                    }}
-                    className={`transition-all font-bold flex items-center gap-1 py-1 ${
-                      isActive || isRecruiterToolsOpen ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
-                    }`}
+                    className="transition-all font-bold flex items-center gap-2 py-1 text-slate-400 cursor-not-allowed opacity-70"
                   >
                     {item.name}
-                    <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isRecruiterToolsOpen ? "rotate-180" : ""}`}>expand_more</span>
+                    <span className="text-[8px] bg-amber-500 text-black px-1.5 py-0.5 rounded-full font-black tracking-widest leading-none">SOON</span>
+                    <span className="material-symbols-outlined text-[18px]">expand_more</span>
                   </button>
                   
-                  {isRecruiterToolsOpen && (
-                    <div 
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl py-3 dropdown-animate overflow-hidden"
-                      onMouseLeave={() => setIsRecruiterToolsOpen(false)}
-                    >
-                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-slate-50 rotate-45 z-0" />
-                      <div className="relative z-10">
-                        <div className="px-4 py-2 border-b border-slate-50 mb-1 bg-slate-50/50">
-                          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Hiring Intelligence</p>
-                        </div>
-                        <Link 
-                          to="/bulk-scanner" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">stacks</span>
-                          <div>
-                            <p className="font-bold text-sm">Bulk Scanner</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Scan 150+ resumes instantly</p>
-                          </div>
-                        </Link>
-                        <Link 
-                          to="/ai-ranking" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">leaderboard</span>
-                          <div>
-                            <p className="font-bold text-sm">AI Candidate Ranking</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Rank by semantic fit</p>
-                          </div>
-                        </Link>
-                        <Link 
-                          to="/semantic-search" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">saved_search</span>
-                          <div>
-                            <p className="font-bold text-sm">Semantic Search</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Natural language talent search</p>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
+                  {/* Tooltip or small message on hover could go here, but keeping it simple as requested */}
                 </div>
               );
             }
