@@ -256,7 +256,8 @@ class FirebaseUser(models.Model):
     location = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     
-    # System State
+    # Business Logic
+    tier = models.CharField(max_length=20, default='free', choices=[('free','Free'), ('pro', 'Professional'), ('enterprise', 'Enterprise')])
     optimization_count = models.IntegerField(default=0)
     scan_count = models.IntegerField(default=0)
     role_locked = models.BooleanField(default=False)
@@ -302,6 +303,7 @@ class AnalysisRecord(models.Model):
     score = models.IntegerField(default=0)
     rank = models.IntegerField(null=True, blank=True)
     text_hash = models.CharField(max_length=64, blank=True, null=True, db_index=True)
+    is_heuristic = models.BooleanField(default=False)  # Track if ML engine succeeded
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):

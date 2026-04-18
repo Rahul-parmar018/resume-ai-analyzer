@@ -36,13 +36,23 @@ logger = logging.getLogger(__name__)
 
 
 def _check_usage_limit(user, count_to_add=1):
-    """Enforces SaaS usage limits based on role"""
+    """Enforces SaaS usage limits based on role and tier"""
+    tier_caps = {
+        'free': 5,
+        'pro': 50,
+        'enterprise': 999999
+    }
+    
+    current_tier = getattr(user, 'tier', 'free')
+    max_limit = tier_caps.get(current_tier, 5)
+
     if user.role == 'candidate':
-        if user.optimization_count + count_to_add > 20:
-            return False, "Optimization limit reached (20/20). Upgrade to Pro to continue.", "LIMIT_EXCEEDED"
+        if user.optimization_count + count_to_add > max_limit:
+            return False, f"Optimization limit reached ({user.optimization_count}/{max_limit}). Upgrade to Pro for 50+ monthly scans.", "LIMIT_EXCEEDED"
     elif user.role == 'recruiter':
-        if user.scan_count + count_to_add > 500:
-            return False, "Scan limit reached (500/500). Upgrade to Enterprise for unlimited scanning.", "LIMIT_EXCEEDED"
+        # Recruiters always Enterprise for now or higher limit
+        if user.scan_count + count_to_add > 1000:
+            return False, "Scan limit reached (1000/1000). Please contact sales for enterprise volume.", "LIMIT_EXCEEDED"
     else:
         return False, "No role assigned. Please complete onboarding.", "ROLE_REQUIRED"
     
