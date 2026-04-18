@@ -100,36 +100,38 @@ const Settings = () => {
     }, [resetCooldown]);
 
   return (
-    <div className="flex min-h-screen bg-white font-body">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white font-body">
       
       {/* Settings Navigation Sidebar */}
-      <aside className="w-64 bg-slate-50 border-r border-slate-100 p-6 flex flex-col gap-y-2 lg:sticky lg:top-0 h-screen">
+      <aside className="w-full lg:w-64 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 p-3 lg:p-6 flex flex-row lg:flex-col items-center lg:items-stretch gap-2 overflow-x-auto lg:overflow-visible lg:sticky lg:top-0 lg:h-screen shrink-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
          <button 
            onClick={() => navigate("/")}
-           className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-900 transition-all font-bold mb-6"
+           className="flex items-center gap-2 px-3 lg:px-4 py-2 lg:py-3 text-slate-500 hover:text-slate-900 transition-all font-bold lg:mb-6 shrink-0"
          >
            <ChevronLeft className="w-4 h-4" />
-           Back
+           <span className="hidden lg:inline">Back</span>
          </button>
+
+         <div className="w-px h-6 bg-slate-200 mx-1 lg:hidden shrink-0"></div>
 
          {sidebarItems.map((item) => (
            <button
              key={item.name}
              onClick={() => setActiveTab(item.name)}
-             className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${
+             className={`flex items-center gap-2 px-4 py-2 lg:py-3 rounded-xl lg:rounded-2xl font-bold transition-all shrink-0 ${
                activeTab === item.name 
-                 ? "bg-white text-primary shadow-sm border border-slate-100" 
-                 : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                 ? "bg-white text-slate-900 shadow-sm border border-slate-200 shadow-slate-200/50" 
+                 : "text-slate-500 hover:bg-slate-200/50 hover:text-slate-900 border border-transparent"
              }`}
            >
-             <item.icon className={`w-4 h-4 ${activeTab === item.name ? "text-primary" : ""}`} />
+             <item.icon className={`w-4 h-4 ${activeTab === item.name ? "text-slate-900" : ""}`} />
              <span className="text-sm">{item.name}</span>
            </button>
          ))}
       </aside>
 
       {/* Main Settings Content */}
-      <main className="flex-1 p-8 max-w-7xl">
+      <main className="flex-1 p-5 lg:p-8 max-w-7xl min-w-0">
         
         {activeTab === "Your Profile" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in slide-in-from-right-4 duration-500">
