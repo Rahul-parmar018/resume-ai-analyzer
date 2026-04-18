@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const PublicFooter = () => {
   return (
-    <footer className="py-16 border-t border-gray-200 bg-white">
+    <footer className="py-16 border-t border-slate-100 bg-white">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Top row */}
@@ -14,15 +14,15 @@ const PublicFooter = () => {
               <div className="w-10 h-10">
                 <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
               </div>
-              <p className="font-heading font-black text-slate-950 text-xl tracking-tighter">Candidex <span className="text-blue-500 italic">AI</span></p>
+              <p className="font-heading font-black text-slate-900 text-2xl italic tracking-tighter">Candidex AI</p>
             </div>
-            <p className="text-sm text-secondary mb-6 leading-relaxed">
-              Premium AI-powered resume intelligence for modern talent acquisition teams. Build world-class teams faster.
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed font-medium">
+              An advanced AI resume analyzer designed to help candidates decode recruiter intent, identify critical gaps, and get shortlisted faster.
             </p>
-            <div className="flex items-center gap-4 text-secondary">
-              <a href="#" className="hover:text-primary transition-colors"><span className="material-symbols-outlined">language</span></a>
-              <a href="#" className="hover:text-primary transition-colors"><span className="material-symbols-outlined">share</span></a>
-              <a href="#" className="hover:text-primary transition-colors"><span className="material-symbols-outlined">mail</span></a>
+            <div className="flex items-center gap-4 text-slate-400">
+              <a href="#" className="hover:text-slate-900 transition-colors"><span className="material-symbols-outlined">language</span></a>
+              <a href="#" className="hover:text-slate-900 transition-colors"><span className="material-symbols-outlined">share</span></a>
+              <a href="#" className="hover:text-slate-900 transition-colors"><span className="material-symbols-outlined">mail</span></a>
             </div>
           </div>
 
@@ -30,48 +30,45 @@ const PublicFooter = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 text-sm">
 
             <div className="space-y-4">
-              <p className="font-bold text-primary uppercase tracking-widest text-xs mb-2">Product</p>
-              <Link to="/app"          className="block text-secondary hover:text-accent font-medium transition-colors">Dashboard</Link>
-              <Link to="/app/analyze"  className="block text-secondary hover:text-accent font-medium transition-colors">Resume Analyzer</Link>
-              <Link to="/app/finder"   className="block text-secondary hover:text-accent font-medium transition-colors">Candidate Finder</Link>
-              <Link to="/pricing"      className="block text-secondary hover:text-accent font-medium transition-colors">Pricing</Link>
-              <a href="#features"      className="block text-secondary hover:text-accent font-medium transition-colors">Features</a>
+              <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-2">Product</p>
+              <Link to="/resume-scanner" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Resume Scanner</Link>
+              <Link to="/resume-gap-analysis" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Gap Analyzer</Link>
+              <Link to="/resume-optimizer" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">AI Optimizer</Link>
+              <Link to="/pricing" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Pricing</Link>
             </div>
 
             <div className="space-y-4">
-              <p className="font-bold text-primary uppercase tracking-widest text-xs mb-2">Resources</p>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Documentation</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">API Reference</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Help Center</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Blog</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Case Studies</a>
+              <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-2">Resources</p>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">ATS Guidelines</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Cover Letter AI</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Help Center</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Career Blog</a>
             </div>
 
             <div className="space-y-4">
-              <p className="font-bold text-primary uppercase tracking-widest text-xs mb-2">Company</p>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">About Us</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Careers</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Security</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Contact Sales</a>
+              <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-2">Company</p>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">About Us</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Careers</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Security Validation</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Contact Support</a>
             </div>
 
             <div className="space-y-4">
-              <p className="font-bold text-primary uppercase tracking-widest text-xs mb-2">Legal</p>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Privacy Policy</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Terms of Service</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">Cookie Policy</a>
-              <a href="#" className="block text-secondary hover:text-accent font-medium transition-colors">GDPR</a>
+              <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-2">Legal</p>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Privacy Policy</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Terms of Service</a>
+              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Cookie Policy</a>
             </div>
 
           </div>
         </div>
 
         {/* Bottom row */}
-        <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-secondary">
-          <p>© 2026 Candidex AI Intelligence. All rights reserved.</p>
-          <div className="flex items-center gap-2 text-secondary font-medium">
-            <span className="material-symbols-outlined text-accent">neurology</span>
-            <span>Powered by Advanced AI</span>
+        <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-slate-400 font-black uppercase tracking-widest">
+          <p>© 2026 Candidex AI. All rights reserved.</p>
+          <div className="flex items-center gap-2 text-slate-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Powered by Neural Matching v4.0</span>
           </div>
         </div>
 
