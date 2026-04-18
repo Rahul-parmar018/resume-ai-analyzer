@@ -35,7 +35,23 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True # Allow React development server to communicate with Django
+# CORS Hardening for Production & Cross-Origin Auth
+CORS_ALLOW_ALL_ORIGINS = True  # Fallback
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://localhost:5173$",
+    r"^http://127.0.0.1:5173$",
+    r"https://.*\.onrender\.com$",
+    r"https://.*\.vercel\.app$",
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 # Rate limiting settings
 RATE_LIMIT_ENABLED = True
