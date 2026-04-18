@@ -58,4 +58,3 @@ frontend/dist/
 frontend/.env
 
 # Sensitive Frontend files
-frontend/src/firebase.js
