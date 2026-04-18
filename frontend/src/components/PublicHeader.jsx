@@ -12,6 +12,7 @@ const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
+  const [isMobileAIExpanded, setIsMobileAIExpanded] = useState(false);
   const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const menuRef = useRef(null);
@@ -71,7 +72,6 @@ const PublicHeader = () => {
     { name: "Recruiter Tools", path: "/recruiter-tools" },
     { name: "Support", path: "/contact" }
   ];
-
 
   return (
     <header className="fixed top-0 w-full glass-header z-50">
@@ -279,8 +279,37 @@ const PublicHeader = () => {
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+        <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300 h-screen overflow-y-auto pb-20">
           {navItems.map((item) => {
+            if (item.name === "AI Resume") {
+              return (
+                <div key="mobile-ai-suite" className="flex flex-col gap-2">
+                  <button 
+                    onClick={() => setIsMobileAIExpanded(!isMobileAIExpanded)}
+                    className="flex items-center justify-between text-lg font-bold text-slate-900"
+                  >
+                    AI Resume
+                    <span className={`material-symbols-outlined transition-transform ${isMobileAIExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+                  </button>
+                  {isMobileAIExpanded && (
+                    <div className="pl-4 flex flex-col gap-4 py-2 animate-in fade-in slide-in-from-left duration-300 border-l-2 border-slate-100 ml-1">
+                      <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
+                        <span className="material-symbols-outlined text-emerald-500 text-xl">qr_code_scanner</span>
+                        <span className="font-bold">Resume Scanner</span>
+                      </Link>
+                      <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
+                        <span className="material-symbols-outlined text-emerald-500 text-xl">query_stats</span>
+                        <span className="font-bold">Skill Gap Analyzer</span>
+                      </Link>
+                      <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
+                        <span className="material-symbols-outlined text-emerald-500 text-xl">auto_fix_high</span>
+                        <span className="font-bold">Resume Optimizer</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            }
             if (item.name === "Recruiter Tools") {
               return (
                 <div key="mobile-rec" className="flex items-center gap-3 opacity-50">
