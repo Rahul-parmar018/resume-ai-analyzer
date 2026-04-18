@@ -256,15 +256,15 @@ const ResumeScanner = () => {
             </section>
 
             {/* 07. FINAL CTA - URGENCY TRIGGER */}
-            <section className="pb-40 px-6">
-                <div className="max-w-5xl mx-auto bg-slate-50 border border-slate-100 rounded-[6rem] p-32 text-center shadow-xl relative overflow-hidden group">
+            <section className="pb-40 px-4 md:px-6">
+                <div className="max-w-5xl mx-auto bg-slate-50 border border-slate-100 rounded-[3rem] md:rounded-[6rem] p-8 sm:p-12 md:p-32 text-center shadow-xl relative overflow-hidden group">
                      <div className="absolute top-0 right-0 w-1/2 h-full bg-white opacity-40 -skew-x-12 translate-x-1/2 pointer-events-none group-hover:translate-x-1/3 transition-transform duration-1000"></div>
-                     <div className="space-y-12 relative z-10">
-                         <div className="space-y-6">
-                             <h2 className="text-6xl md:text-8xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Start <br /> <span className="text-blue-600 italic leading-none">shortlisting.</span></h2>
-                             <p className="text-2xl text-slate-500 font-medium max-w-xl mx-auto italic leading-relaxed">Stop guessing why you aren't hearing back. Your free scan takes less than 10 seconds.</p>
+                     <div className="space-y-8 md:space-y-12 relative z-10">
+                         <div className="space-y-4 md:space-y-6">
+                             <h2 className="text-5xl md:text-8xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Start <br /> <span className="text-blue-600 italic leading-none">shortlisting.</span></h2>
+                             <p className="text-lg sm:text-xl md:text-2xl text-slate-500 font-medium max-w-xl mx-auto italic leading-relaxed">Stop guessing why you aren't hearing back. Your free scan takes less than 10 seconds.</p>
                          </div>
-                         <button onClick={() => {window.scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => fileInputRef.current.click(), 500);}} className="bg-slate-900 text-white px-20 py-7 rounded-3xl font-black text-3xl hover:bg-slate-800 transition-all shadow-2xl active:scale-95 group">
+                         <button onClick={() => {window.scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => fileInputRef.current.click(), 500);}} className="bg-slate-900 text-white w-full sm:w-auto px-8 md:px-20 py-5 md:py-7 rounded-2xl md:rounded-3xl font-black text-xl md:text-3xl hover:bg-slate-800 transition-all shadow-2xl active:scale-95 group">
                              Get Results in 10s
                          </button>
                      </div>

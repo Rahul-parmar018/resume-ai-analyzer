@@ -150,7 +150,7 @@ const HowItWorks = () => {
                     </aside>
 
                     {/* CENTER: NARRATIVE ENGINE (64%) */}
-                    <main className="flex-1 flex flex-col justify-center px-8 md:px-24 relative z-10">
+                    <main className="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-24 relative z-10 w-full overflow-hidden">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeIndex}
@@ -158,17 +158,17 @@ const HowItWorks = () => {
                                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                                 exit={{ opacity: 0, x: 20, filter: "blur(10px)" }}
                                 transition={{ duration: 0.5, ease: "circOut" }}
-                                className="space-y-10 max-w-3xl"
+                                className="space-y-6 md:space-y-10 max-w-3xl"
                             >
-                                <div className="space-y-6">
+                                <div className="space-y-4 md:space-y-6">
                                     <div className={`inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full ${currentStep.colorClass}`}>
                                         {currentStep.icon}
                                         <span className="text-[10px] font-black uppercase tracking-widest">{currentStep.phase}</span>
                                     </div>
-                                    <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-[0.85] uppercase italic">
+                                    <h1 className="text-5xl md:text-7xl lg:text-9xl font-black text-white tracking-tighter leading-[0.85] uppercase italic break-words">
                                         {currentStep.title.split('.')[0]}<span className="text-indigo-600">.</span>
                                     </h1>
-                                    <p className="text-xl md:text-3xl text-slate-400 font-medium italic leading-tight max-w-2xl">
+                                    <p className="text-lg md:text-xl lg:text-3xl text-slate-400 font-medium italic leading-tight max-w-2xl">
                                         {currentStep.desc}
                                     </p>
                                 </div>
@@ -176,15 +176,15 @@ const HowItWorks = () => {
                                 <motion.div 
                                     animate={{ y: [0, -10, 0] }}
                                     transition={{ repeat: Infinity, duration: 4 }}
-                                    className="p-8 bg-white/[0.02] border border-white/5 rounded-[3rem] backdrop-blur-xl group relative overflow-hidden"
+                                    className="p-6 md:p-8 bg-white/[0.02] border border-white/5 rounded-3xl md:rounded-[3rem] backdrop-blur-xl group relative overflow-hidden"
                                 >
-                                     <div className="flex items-center gap-6">
-                                          <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-slate-500">
-                                              <Terminal className="w-6 h-6" />
+                                     <div className="flex items-center gap-4 md:gap-6">
+                                          <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center text-slate-500">
+                                              <Terminal className="w-5 h-5 md:w-6 md:h-6" />
                                           </div>
-                                          <div>
-                                              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Live_Processing_Log</p>
-                                              <p className="text-sm font-mono text-indigo-400 italic">Executing {currentStep.phase.toLowerCase().replace(' ', '_')}...</p>
+                                          <div className="min-w-0">
+                                              <p className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">Live_Processing_Log</p>
+                                              <p className="text-xs md:text-sm font-mono text-indigo-400 italic truncate">Executing {currentStep.phase.toLowerCase().replace(' ', '_')}...</p>
                                           </div>
                                      </div>
                                 </motion.div>
