@@ -33,7 +33,7 @@ function App() {
 
     const wakeBackend = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_API_URL + "/warmup/");
+        const response = await fetch(import.meta.env.VITE_API_URL + "/warmup/?engine=audit");
         if (!response.ok) throw new Error("Warming failed");
         console.log("Neural engine warmed and ready.");
       } catch (err) {
