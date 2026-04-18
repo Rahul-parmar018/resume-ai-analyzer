@@ -253,7 +253,7 @@ const PublicHeader = () => {
               )}
             </div>
           ) : (
-            <>
+            <div className="hidden md:flex items-center gap-2">
               <Link to="/login" className="text-slate-500 text-sm hover:text-slate-900 transition-colors font-bold px-2">
                 Login
               </Link>
@@ -263,7 +263,7 @@ const PublicHeader = () => {
               >
                 Get Started
               </Link>
-            </>
+            </div>
           )}
           
           {/* Mobile Menu Toggle */}
