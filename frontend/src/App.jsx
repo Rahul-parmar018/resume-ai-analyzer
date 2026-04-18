@@ -22,9 +22,23 @@ import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthProvider   from "./components/AuthProvider";
+import { useEffect } from "react";
 import "./App.css";
 
 function App() {
+  // ⚡ Early Wake-up: Ping backend on app load to reduce cold-start delay
+  useEffect(() => {
+    const wakeBackend = async () => {
+      try {
+        await fetch(import.meta.env.VITE_API_URL + "/");
+        console.log("Neural engine pinged. Waking up...");
+      } catch (err) {
+        console.warn("Backend still sleeping or unreachable.");
+      }
+    };
+    wakeBackend();
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
