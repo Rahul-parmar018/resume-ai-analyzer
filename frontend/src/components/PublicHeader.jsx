@@ -72,7 +72,6 @@ const PublicHeader = () => {
     { name: "Support", path: "/contact" }
   ];
 
-  if (loading) return null;
 
   return (
     <header className="fixed top-0 w-full glass-header z-50">
