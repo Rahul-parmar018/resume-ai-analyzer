@@ -130,7 +130,53 @@ const PublicHeader = () => {
                       {item.name}
                       <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isAIResumeOpen ? "rotate-180" : ""}`}>expand_more</span>
                     </button>
-...
+                    
+                    {isAIResumeOpen && (
+                      <div 
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl py-3 dropdown-animate overflow-hidden"
+                        onMouseLeave={() => setIsAIResumeOpen(false)}
+                      >
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-slate-50 rotate-45 z-0" />
+                        <div className="relative z-10">
+                          <div className="px-4 py-2 border-b border-slate-50 mb-1 bg-slate-50/50">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Neural Suite</p>
+                          </div>
+                          <Link 
+                            to="/resume-scanner" 
+                            onClick={() => setIsAIResumeOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                          >
+                            <span className="material-symbols-outlined text-emerald-500">qr_code_scanner</span>
+                            <div>
+                              <p className="font-bold text-sm">Resume Scanner</p>
+                              <p className="text-[10px] text-slate-400 font-medium">Instant ATS Detection</p>
+                            </div>
+                          </Link>
+                          <Link 
+                            to="/resume-gap-analysis" 
+                            onClick={() => setIsAIResumeOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                          >
+                            <span className="material-symbols-outlined text-emerald-500">query_stats</span>
+                            <div>
+                              <p className="font-bold text-sm">Skill Gap Analyzer</p>
+                              <p className="text-[10px] text-slate-400 font-medium">Neural JD Comparison</p>
+                            </div>
+                          </Link>
+                          <Link 
+                            to="/resume-optimizer" 
+                            onClick={() => setIsAIResumeOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                          >
+                            <span className="material-symbols-outlined text-emerald-500">auto_fix_high</span>
+                            <div>
+                              <p className="font-bold text-sm">Resume Optimizer</p>
+                              <p className="text-[10px] text-slate-400 font-medium">Smart AI Rewriting</p>
+                            </div>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               }
