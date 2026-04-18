@@ -16,10 +16,7 @@ import CandidateTools from "./pages/CandidateTools";
 import ResumeScanner from "./pages/ResumeScanner";
 import ResumeGap from "./pages/ResumeGap";
 import ResumeFixer from "./pages/ResumeFixer";
-import RecruiterTools from "./pages/RecruiterTools";
-import BulkScannerLanding from "./pages/BulkScannerLanding";
-import AIRankingLanding from "./pages/AIRankingLanding";
-import SemanticSearchLanding from "./pages/SemanticSearchLanding";
+import RecruiterComingSoon from "./pages/RecruiterComingSoon";
 import HowItWorks from "./pages/HowItWorks";
 import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Layout    from "./components/Layout";
@@ -45,10 +42,10 @@ function App() {
           <Route path="/resume-gap-analysis" element={<ResumeGap />} />
           <Route path="/resume-fixer" element={<ResumeFixer />} />
           <Route path="/resume-optimizer" element={<ResumeFixer />} />
-          <Route path="/recruiter-tools" element={<RecruiterTools />} />
-          <Route path="/bulk-scanner" element={<BulkScannerLanding />} />
-          <Route path="/ai-ranking" element={<AIRankingLanding />} />
-          <Route path="/semantic-search" element={<SemanticSearchLanding />} />
+          <Route path="/recruiter-tools" element={<RecruiterComingSoon />} />
+          <Route path="/bulk-scanner" element={<RecruiterComingSoon />} />
+          <Route path="/ai-ranking" element={<RecruiterComingSoon />} />
+          <Route path="/semantic-search" element={<RecruiterComingSoon />} />
           <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
 
           {/* ONBOARDING */}
@@ -72,8 +69,8 @@ function App() {
           >
             <Route index          element={<Dashboard />} />
             <Route path="optimize" element={<Optimizer />} />
-            <Route path="scanner"  element={<BulkScanner />} />
-            <Route path="finder"   element={<Finder />} />
+            <Route path="scanner"  element={<RecruiterComingSoon />} />
+            <Route path="finder"   element={<RecruiterComingSoon />} />
             <Route path="history"  element={<History />} />
             <Route path="settings" element={<Settings />} />
           </Route>

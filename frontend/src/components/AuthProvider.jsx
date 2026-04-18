@@ -50,7 +50,7 @@ export default function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, profile, setProfile, refreshProfile, loading }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

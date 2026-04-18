@@ -6,7 +6,7 @@ import { auth as firebaseAuth } from "../firebase";
 import { 
   User, 
   CreditCard, 
-  History, 
+  History as HistoryIcon, 
   ChevronLeft, 
   Plus, 
   CheckCircle2, 
@@ -20,6 +20,7 @@ import {
   Trash2
 } from "lucide-react";
 import api from "../api-client";
+import HistoryView from "./History";
 
 const Settings = () => {
     const { user, profile, refreshProfile } = useAuth();
@@ -41,7 +42,7 @@ const Settings = () => {
 
     const sidebarItems = [
         { name: "Your Profile", icon: User },
-        { name: "Evolution History", icon: History },
+        { name: "Evolution History", icon: HistoryIcon },
         { name: "Billing", icon: CreditCard },
     ];
 
@@ -307,6 +308,12 @@ const Settings = () => {
                 </div>
              </div>
           </div>
+        )}
+        
+        {activeTab === "Evolution History" && (
+           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+              <HistoryView />
+           </div>
         )}
 
         {activeTab === "Billing" && (

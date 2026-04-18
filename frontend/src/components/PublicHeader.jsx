@@ -3,57 +3,40 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { motion } from "framer-motion";
 
 const PublicHeader = () => {
   const { user, profile, loading } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
+  const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const menuRef = useRef(null);
+  const aiResumeRef = useRef(null);
+  const recruiterToolsRef = useRef(null);
 
-  // Scroll Progress Logic
+  const role = profile?.role || 'candidate';
+
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalScroll) * 100;
-      setScrollProgress(progress);
+      const currentScroll = window.scrollY;
+      setScrollProgress((currentScroll / totalScroll) * 100);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
-  const role = profile?.role || 'candidate';
 
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "How It Works", path: "/how-it-works" },
-    { name: "Features", path: "/features" },
-    { name: "AI Resume", path: "/ai-resume" },
-    { name: "Recruiter Tools", path: "/recruiter-tools" },
-    { name: "Pricing", path: "/pricing" },
-  ];
-
-  // Helper: Initials for avatar
-  const getInitials = (name, email) => {
-    if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-    return email ? email.substring(0, 2).toUpperCase() : "U";
-  };
-
-  // Helper: Secure Email Truncation
-  const truncateEmail = (email) => {
-    if (!email) return "";
-    const [userStr, domain] = email.split("@");
-    if (userStr.length <= 4) return `${userStr}****@${domain}`;
-    return `${userStr.substring(0, 4)}****@${domain}`;
-  };
-
-  // Click outside to close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
+      }
+      if (aiResumeRef.current && !aiResumeRef.current.contains(event.target)) {
+        setIsAIResumeOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -63,31 +46,31 @@ const PublicHeader = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      setIsMenuOpen(false);
       navigate("/");
     } catch (error) {
       console.error("Sign out error", error);
     }
   };
 
-  const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
-  const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
-  const aiResumeRef = useRef(null);
-  const recruiterToolsRef = useRef(null);
+  const getInitials = (name, email) => {
+    if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+    if (email) return email[0].toUpperCase();
+    return "U";
+  };
 
-  // Close dropdowns on click outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (aiResumeRef.current && !aiResumeRef.current.contains(event.target)) {
-        setIsAIResumeOpen(false);
-      }
-      if (recruiterToolsRef.current && !recruiterToolsRef.current.contains(event.target)) {
-        setIsRecruiterToolsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const truncateEmail = (email) => {
+    if (!email) return "";
+    const [user, domain] = email.split("@");
+    if (user.length > 12) return user.substring(0, 10) + "..." + "@" + domain;
+    return email;
+  };
+
+  const navItems = [
+    { name: "AI Resume", path: "#" }, 
+    { name: "How it Works", path: "/how-it-works" },
+    { name: "Recruiter Tools", path: "/recruiter-tools" },
+    { name: "Support", path: "/contact" }
+  ];
 
   if (loading) return null;
 
@@ -98,13 +81,19 @@ const PublicHeader = () => {
         className="absolute top-0 left-0 h-[2px] bg-emerald-400 transition-all duration-150 z-[60]" 
         style={{ width: `${scrollProgress}%` }}
       />
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shadow-lg shadow-slate-900/20 group-hover:shadow-slate-900/40 transition-shadow">
-            <span className="material-symbols-outlined text-emerald-400 text-base animate-pulse">neurology</span>
+      <motion.div 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4"
+      >
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-14 h-14 flex items-center justify-center transition-all group-hover:scale-110">
+            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="font-heading text-xl font-bold tracking-tight text-slate-900">Candidex AI</h1>
+          <h1 className="font-heading text-2xl font-black tracking-tighter text-slate-950">
+            Candidex <span className="inline-block bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent italic px-1">AI</span>
+          </h1>
         </Link>
 
         {/* Nav links (Desktop) */}
@@ -116,11 +105,7 @@ const PublicHeader = () => {
               return (
                 <div key="ai-resume-dropdown" className="relative group/ai" ref={aiResumeRef}>
                   <button 
-                    onClick={() => setIsAIResumeOpen(!isAIResumeOpen)}
-                    onMouseEnter={() => {
-                      setIsAIResumeOpen(true);
-                      setIsRecruiterToolsOpen(false);
-                    }}
+                    onMouseEnter={() => setIsAIResumeOpen(true)}
                     className={`transition-all font-bold flex items-center gap-1 py-1 ${
                       isActive || isAIResumeOpen ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
                     }`}
@@ -183,65 +168,14 @@ const PublicHeader = () => {
               return (
                 <div key="recruiter-tools-dropdown" className="relative group/rec" ref={recruiterToolsRef}>
                   <button 
-                    onClick={() => setIsRecruiterToolsOpen(!isRecruiterToolsOpen)}
-                    onMouseEnter={() => {
-                      setIsRecruiterToolsOpen(true);
-                      setIsAIResumeOpen(false);
-                    }}
-                    className={`transition-all font-bold flex items-center gap-1 py-1 ${
-                      isActive || isRecruiterToolsOpen ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
-                    }`}
+                    disabled
+                    className="opacity-50 cursor-not-allowed relative transition-all font-bold flex items-center gap-2 py-1 text-slate-500"
                   >
                     {item.name}
-                    <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isRecruiterToolsOpen ? "rotate-180" : ""}`}>expand_more</span>
+                    <span className="ml-1 text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
+                      COMING SOON
+                    </span>
                   </button>
-                  
-                  {isRecruiterToolsOpen && (
-                    <div 
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl py-3 dropdown-animate overflow-hidden"
-                      onMouseLeave={() => setIsRecruiterToolsOpen(false)}
-                    >
-                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-slate-50 rotate-45 z-0" />
-                      <div className="relative z-10">
-                        <div className="px-4 py-2 border-b border-slate-50 mb-1 bg-slate-50/50">
-                          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Hiring Intelligence</p>
-                        </div>
-                        <Link 
-                          to="/bulk-scanner" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">stacks</span>
-                          <div>
-                            <p className="font-bold text-sm">Bulk Scanner</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Scan 150+ resumes instantly</p>
-                          </div>
-                        </Link>
-                        <Link 
-                          to="/ai-ranking" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">leaderboard</span>
-                          <div>
-                            <p className="font-bold text-sm">AI Candidate Ranking</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Rank by semantic fit</p>
-                          </div>
-                        </Link>
-                        <Link 
-                          to="/semantic-search" 
-                          onClick={() => setIsRecruiterToolsOpen(false)}
-                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-indigo-500">saved_search</span>
-                          <div>
-                            <p className="font-bold text-sm">Semantic Search</p>
-                            <p className="text-[10px] text-slate-400 font-medium">Natural language talent search</p>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             }
@@ -352,23 +286,35 @@ const PublicHeader = () => {
             </span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`text-lg font-bold ${
-                location.pathname === item.path ? "text-slate-900" : "text-slate-500"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            if (item.name === "Recruiter Tools") {
+              return (
+                <div key="mobile-rec" className="flex items-center gap-3 opacity-50">
+                  <span className="text-lg font-bold text-slate-500">{item.name}</span>
+                  <span className="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
+                    COMING SOON
+                  </span>
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-lg font-bold ${
+                  location.pathname === item.path ? "text-slate-900" : "text-slate-500"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
           <Link
             to="/app"
             onClick={() => setIsMobileMenuOpen(false)}

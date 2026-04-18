@@ -1,11 +1,20 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-const ReviewCard = ({ text, name, delay }) => (
-  <div 
-    className="bg-white p-8 rounded-[1.5rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-300 hover:-translate-y-2 group animate-fade-in"
-    style={{ animationDelay: `${delay}s`, opacity: 0, animationFillMode: 'forwards' }}
+const ReviewCard = ({ text, name, ix }) => (
+  <motion.div 
+    variants={{
+      hidden: { opacity: 0, y: 20 },
+      visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" }
+      }
+    }}
+    whileHover={{ y: -10, scale: 1.02, rotate: 1 }}
+    className="bg-white p-8 rounded-[1.5rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-300 group cursor-default"
   >
-    <div className="flex gap-1 text-emerald-400 mb-4 group-hover:scale-105 transition-transform origin-left">
+    <div className="flex gap-1 text-emerald-400 mb-4 group-hover:scale-110 transition-transform origin-left">
       {[1,2,3,4,5].map(i => <span key={i} className="material-symbols-outlined text-[18px]">star</span>)}
     </div>
     <p className="text-slate-700 font-bold leading-relaxed mb-6 italic">"{text}"</p>
@@ -18,7 +27,7 @@ const ReviewCard = ({ text, name, delay }) => (
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Verified Candidate</p>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 const ReviewSection = () => {
@@ -43,11 +52,25 @@ const ReviewSection = () => {
         </div>
 
         {/* REVIEW GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {reviews.map((r, i) => (
-            <ReviewCard key={i} {...r} delay={i * 0.1} />
+            <ReviewCard key={i} {...r} ix={i} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

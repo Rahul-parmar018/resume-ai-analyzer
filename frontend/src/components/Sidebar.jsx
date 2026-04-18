@@ -34,11 +34,13 @@ const Sidebar = () => {
 
       {/* Brand */}
       <Link to="/" className="group px-3 py-6 mb-4 block">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/20">
-            <span className="material-symbols-outlined text-white text-xl">architecture</span>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-16 h-16 flex items-center justify-center transition-all group-hover:scale-110">
+            <img src="/images/logo.png" alt="Candidex AI" className="w-full h-full object-contain" />
           </div>
-          <h1 className="font-headline text-2xl font-bold text-slate-900 tracking-tighter group-hover:text-emerald-500 transition-colors">Candidex AI</h1>
+          <h1 className="font-headline text-2xl font-black text-slate-950 tracking-tighter group-hover:text-emerald-500 transition-colors">
+            Candidex <span className="inline-block bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent italic px-1">AI</span>
+          </h1>
         </div>
         <div className="flex items-center gap-2 text-[10px] uppercase font-bold text-slate-400 tracking-widest">
            {role === 'recruiter' ? 'Recruiter' : 'Candidate'}

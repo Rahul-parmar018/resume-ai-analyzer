@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export const RecruiterShowcase = () => (
   <section className="py-20 px-6 bg-white border-b border-slate-100">
@@ -33,9 +34,10 @@ export const RecruiterShowcase = () => (
         </div>
 
         <div className="pt-4">
-           <Link to="/register">
-             <button className="px-10 py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 hover:-translate-y-1">
-               Explore Hiring Tools
+           <Link to="/recruiter-tools">
+             <button className="px-10 py-5 bg-slate-900 text-white rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:-translate-y-1 flex items-center gap-3 group">
+               Join Recruiter Waitlist
+               <span className="text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">PHASE 2</span>
              </button>
            </Link>
         </div>
@@ -81,7 +83,13 @@ export const FinalCTA = () => (
     <div className="absolute bottom-24 right-[10%] w-20 h-20 bg-white/10 backdrop-blur-3xl rounded-full border border-white/20 animate-orbit opacity-60 hidden lg:block" style={{ animationDirection: 'reverse', animationDuration: '25s' }}></div>
     <div className="absolute top-1/2 right-[15%] w-10 h-10 bg-emerald-400/20 backdrop-blur-2xl rounded-full animate-float-up opacity-40"></div>
 
-    <div className="max-w-4xl mx-auto space-y-12 relative z-10">
+    <motion.div 
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1 }}
+      className="max-w-4xl mx-auto space-y-12 relative z-10"
+    >
       <div className="space-y-4">
         <h2 className="text-emerald-400 font-black text-xs uppercase tracking-[0.5em] mb-4">Final Step</h2>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.95]">
@@ -91,14 +99,18 @@ export const FinalCTA = () => (
       
       <div className="flex flex-col items-center gap-8">
         <Link to="/register">
-          <button className="group relative bg-white text-slate-900 px-16 py-7 rounded-[2rem] font-black text-2xl hover:bg-slate-50 transition-all shadow-[0_20px_60px_rgba(255,255,255,0.15)] hover:-translate-y-2 flex items-center gap-4 overflow-hidden">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="group relative bg-white text-slate-900 px-16 py-7 rounded-[2rem] font-black text-2xl hover:bg-slate-50 transition-all shadow-[0_20px_60px_rgba(255,255,255,0.15)] flex items-center gap-4 overflow-hidden"
+          >
              <div className="absolute inset-x-0 bottom-0 h-1.5 bg-gradient-to-r from-emerald-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
              Upload Resume Now
              <span className="material-symbols-outlined text-emerald-500 group-hover:translate-x-3 transition-transform">arrow_forward</span>
-          </button>
+          </motion.button>
         </Link>
         <p className="text-slate-400 font-bold text-sm uppercase tracking-[0.4em] opacity-60">No credit card required • Instant Results</p>
       </div>
-    </div>
+    </motion.div>
   </section>
 );

@@ -3,6 +3,7 @@ import { useAuth } from "../components/AuthProvider";
 import { fetchDashboardAnalytics, fetchHistory } from "../api/analyze";
 import { getScoreColorClass } from "../utils/scoring";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { 
   Home, 
@@ -109,7 +110,12 @@ const Dashboard = () => {
     : "Review high-precision pipeline metrics and automated candidate shortlists.";
 
   return (
-    <div className="space-y-8 pb-12 font-body animate-in fade-in duration-500">
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="space-y-8 pb-12 font-body"
+    >
       
       {/* Dynamic Breadcrumbs */}
       <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 font-headline">
@@ -337,7 +343,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
