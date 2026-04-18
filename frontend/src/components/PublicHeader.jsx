@@ -28,6 +28,7 @@ const PublicHeader = () => {
 
   const navItems = [
     { name: "Home", path: "/" },
+    { name: "How It Works", path: "/how-it-works" },
     { name: "Features", path: "/features" },
     { name: "AI Resume", path: "/ai-resume" },
     { name: "Recruiter Tools", path: "/recruiter-tools" },

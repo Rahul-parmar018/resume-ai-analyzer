@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthProvider";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 import TrustedEcosystem from "../components/TrustedEcosystem";
@@ -12,6 +13,8 @@ import { RecruiterShowcase, FinalCTA } from "../components/LandingSections";
 import FAQSection from "../components/FAQSection";
 
 const Landing = () => {
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Candidex AI | Get Shortlisted Faster with Smart AI";
@@ -20,6 +23,15 @@ const Landing = () => {
       metaDesc.setAttribute("content", "Candidex AI is an advanced AI resume analyzer designed to optimize resumes, improve ATS scores, and help candidates match job descriptions using semantic intelligence.");
     }
   }, []);
+
+  const handleUploadClick = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      // Direct redirect to the standalone scanner page as requested
+      navigate("/resume-scanner");
+    }
+  };
 
 
   return (
@@ -54,11 +66,12 @@ const Landing = () => {
 
           <div className="flex flex-col items-center gap-6 pt-6 relative z-20">
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link to="/register">
-                <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/10 hover:-translate-y-1">
-                  Upload Resume
-                </button>
-              </Link>
+              <button 
+                onClick={handleUploadClick}
+                className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/10 hover:-translate-y-1"
+              >
+                Upload Resume
+              </button>
               <Link to="/login">
                 <button className="bg-white border border-slate-200 px-10 py-5 rounded-2xl text-slate-900 hover:border-slate-900 transition-all font-black text-xl hover:-translate-y-1 flex items-center gap-3 group shadow-lg">
                   <span className="material-symbols-outlined font-black group-hover:translate-x-1 transition-transform">arrow_forward</span>

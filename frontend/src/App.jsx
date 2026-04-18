@@ -20,6 +20,7 @@ import RecruiterTools from "./pages/RecruiterTools";
 import BulkScannerLanding from "./pages/BulkScannerLanding";
 import AIRankingLanding from "./pages/AIRankingLanding";
 import SemanticSearchLanding from "./pages/SemanticSearchLanding";
+import HowItWorks from "./pages/HowItWorks";
 import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -33,6 +34,7 @@ function App() {
         <Routes>
           {/* PUBLIC */}
           <Route path="/"          element={<Landing />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/pricing"   element={<Pricing />} />
           <Route path="/features"  element={<Features />} />
           <Route path="/customers" element={<Customers />} />

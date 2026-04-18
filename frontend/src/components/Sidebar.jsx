@@ -10,8 +10,8 @@ const Sidebar = () => {
   const navItems = [
     // Candidate Specific Tools (Public/Direct Flow)
     { name: "Resume Scanner",    icon: "qr_code_scanner", path: "/resume-scanner",      roles: ['candidate'] },
-    { name: "Gap Analyzer",      icon: "query_stats",     path: "/resume-gap-analysis", roles: ['candidate'] },
-    { name: "Resume Optimizer",  icon: "auto_fix_high",   path: "/resume-optimizer",    roles: ['candidate'] },
+    { name: "AI Optimizer",      icon: "auto_fix_high",   path: "/app/optimize",        roles: ['candidate'] },
+    { name: "Gap Analysis",      icon: "query_stats",     path: "/resume-gap-analysis", roles: ['candidate'] },
 
     // Recruiter Hub
     { name: "IntellHub",         icon: "dashboard",       path: "/app",                 roles: ['recruiter'] },

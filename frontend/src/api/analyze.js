@@ -18,10 +18,11 @@ const buildQueryTextFromProfile = (profile) => {
   ].filter(Boolean).join("\n");
 };
 
-export const analyzeResume = async (file, jdOrProfile) => {
+export const analyzeResume = async (file, jdOrProfile, resumeText = "") => {
   const token = await auth.currentUser.getIdToken();
   const formData = new FormData();
-  formData.append("file", file);
+  if (file) formData.append("file", file);
+  if (resumeText) formData.append("resume_text", resumeText);
 
   if (typeof jdOrProfile === "string") {
     if (jdOrProfile.trim()) formData.append("job_description", jdOrProfile);

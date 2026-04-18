@@ -302,13 +302,18 @@ def optimize_resume_view(request):
                 "upgrade": True
             }, status=403)
 
-        # 📄 Get file
+        # 📄 Get input (File or Text)
         file = request.FILES.get('file')
-        if not file:
-            return Response({"error": "No file Provided"}, status=400)
+        resume_text = request.data.get('resume_text', '').strip()
+        
+        if not file and not resume_text:
+            return Response({"error": "Please provide a resume file or paste your resume text."}, status=400)
 
-        # 📖 Read text using our upgraded utility
-        resume_text, _ = _extract_text(file)
+        resume_name = "Pasted Resume"
+        if file:
+            resume_name = file.name
+            # 📖 Read text using our upgraded utility
+            resume_text, _ = _extract_text(file)
         
         # 🎯 Job description extraction (Dynamic vs. Default)
         job_profile = _parse_job_profile(request)
@@ -387,35 +392,30 @@ def optimize_resume_view(request):
         # 3. Save Analysis
         analysis_record = AnalysisRecord.objects.create(
             user=user,
-            resume_name=file.name,
+            resume_name=resume_name,
             job_description=job_desc,
             job_profile=job_profile,
-            score=result['score'],
+            score=result['match_score'],
             text_hash=t_hash
         )
         
         # 4. Save Extracted Data Details
         ExtractedData.objects.create(
             analysis=analysis_record,
-            skills=result['skills_found'],
-            missing_skills=result['missing_skills'],
-            suggestions=result['suggestions'],
-            section_scores=result.get('section_scores', {}),
-            rewrites=result.get('rewrites', [])
+            skills=result['skills']['matched'],
+            missing_skills=result['skills']['missing_required'],
+            suggestions=result.get('recommendations', []),
+            section_scores=result.get('metrics', {}),
+            rewrites=[]
         )
         
-        # 5. Semantic Vector Persistence (with smart engine hashing)
+        # 5. Semantic Vector Persistence
         vector = semantic_ranking_engine.get_embedding(resume_text).tolist()
-        
         AnalysisEmbedding.objects.create(
             analysis=analysis_record,
             vector=vector
         )
         
-        # Hydrate result with internal DB ID so frontend can ref it
-        result['id'] = analysis_record.id
-        result['action_plan'] = _generate_action_plan(score, result['missing_skills'], result['suggestions'])
-
         return Response(result)
 
     except Exception as e:
@@ -702,7 +702,7 @@ def semantic_search_view(request):
     Allows recruiters to search through their candidate pool using plain English.
     """
     try:
-        user = _get_firebase_user(request)
+        user = request.user
         if not user:
             return Response({"error": "Unauthorized", "code": "AUTH_REQUIRED"}, status=401)
             
@@ -849,7 +849,7 @@ def rewrite_resume_view(request):
     Converts weak bullets to high-impact, quantified bullets.
     """
     try:
-        user = _get_firebase_user(request)
+        user = request.user
         if not user:
             return Response({"error": "Unauthorized"}, status=401)
             
