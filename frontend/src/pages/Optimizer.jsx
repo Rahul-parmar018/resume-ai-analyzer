@@ -1,7 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { 
+  Zap, 
+  Sparkles, 
+  ShieldAlert, 
+  TrendingUp, 
+  Target, 
+  RotateCcw, 
+  FileText, 
+  CheckCircle2, 
+  MessageSquare, 
+  Plus, 
+  Trash2, 
+  Settings, 
+  AlertCircle, 
+  ArrowRight, 
+  Lock,
+  Layers,
+  MousePointer2,
+  PieChart,
+  Activity,
+  UserCheck
+} from "lucide-react";
 import { analyzeResume, rewriteResume } from "../api/analyze";
-import PageHeader from "../components/ui/PageHeader";
 import { getScoreColor } from "../utils/scoring";
+import { Link } from "react-router-dom";
 
 const Optimizer = () => {
   const [file, setFile] = useState(null);
@@ -13,6 +35,11 @@ const Optimizer = () => {
   // Phase 3 Rewrite States
   const [rewrites, setRewrites] = useState(null);
   const [rewriting, setRewriting] = useState(false);
+  const [activeTab, setActiveTab] = useState("editor"); // editor | insights
+
+  // Metrics
+  const [wordCount, setWordCount] = useState(0);
+  const [atsRiskText, setAtsRiskText] = useState("Detecting...");
 
   const handleAnalyze = async () => {
     if (!file || !jd.trim()) {
@@ -26,6 +53,10 @@ const Optimizer = () => {
     try {
       const data = await analyzeResume(file, jd);
       setResult(data);
+      if (data.extracted_text) {
+          setWordCount(data.extracted_text.split(/\s+/).length);
+          setAtsRiskText(data.score < 60 ? "High ⚠️" : "Low ✅");
+      }
     } catch (err) {
       setError(err.message || "Optimization failed.");
     } finally {
@@ -46,394 +77,322 @@ const Optimizer = () => {
     }
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    // Could add a toast notification here
-  };
-
   return (
-    <div className="space-y-8 pb-12 font-body max-w-5xl mx-auto">
-      <PageHeader 
-        title="Candidex AI Optimizer"
-        subtitle="Upload your resume and the target job description to get an AI-powered ATS score and optimization tips."
-      />
-
-      {!result && !loading && (
-        <div className="grid md:grid-cols-2 gap-8 animate-fade-in">
-          {/* Left: Inputs */}
-          <div className="space-y-6">
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-              <div className="space-y-3">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest">01. Your Resume</label>
-                <div className="relative group">
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={(e) => setFile(e.target.files[0])}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  <div className={`h-40 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${
-                    file ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-slate-50 group-hover:border-primary'
-                  }`}>
-                    <span className={`material-symbols-outlined text-4xl mb-2 ${file ? 'text-emerald-500' : 'text-slate-400'}`}>
-                      {file ? 'check_circle' : 'upload_file'}
-                    </span>
-                    <p className="text-sm font-bold text-slate-900">{file ? file.name : "Click to upload PDF"}</p>
-                  </div>
-                </div>
+    <div className="min-h-screen bg-[#F8FAFC] pb-20 selection:bg-indigo-500/10">
+      
+      {/* 🥇 1. HEADER (STUNNING FIRST IMPRESSION) */}
+      <div className="bg-white border-b border-slate-100 pt-16 pb-12 px-8">
+          <div className="max-w-7xl mx-auto space-y-4">
+              <div className="flex items-center gap-2 text-indigo-600 font-bold text-[10px] uppercase tracking-[0.3em]">
+                  <Sparkles className="w-4 h-4" /> Professional AI Workbench
               </div>
-
-              <div className="space-y-3">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest">02. Job Description</label>
-                <textarea
-                  value={jd}
-                  onChange={(e) => setJd(e.target.value)}
-                  placeholder="Paste the job description here..."
-                  className="w-full h-64 p-5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-2 focus:ring-primary/10 outline-none transition-all resize-none"
-                />
-              </div>
-
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium">
-                  {error}
-                </div>
-              )}
-
-              <button
-                onClick={handleAnalyze}
-                disabled={loading || !file || !jd.trim()}
-                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 active:scale-95 disabled:opacity-50"
-              >
-                Start Optimization
-              </button>
-            </div>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
+                  Fix Your Resume Like a <span className="text-indigo-600 italic">Top 1% Candidate</span>
+              </h1>
+              <p className="text-slate-400 font-medium text-lg italic max-w-2xl">
+                  Used by candidates targeting FAANG & global roles. Stop guessing—engineer your identity with clinical precision.
+              </p>
           </div>
+      </div>
 
-          {/* Right: Why use this? */}
-          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-primary to-slate-800 p-8 rounded-3xl text-white shadow-2xl">
-               <h3 className="text-2xl font-bold mb-6">Why Optimize?</h3>
-               <div className="space-y-6">
-                  <div className="flex gap-4">
-                     <span className="material-symbols-outlined text-emerald-400">speed</span>
-                     <div>
-                        <h4 className="font-bold">Beat the ATS</h4>
-                        <p className="text-sm text-slate-300">80% of resumes are filtered by bots before a human sees them. Use AI to align your keywords.</p>
-                     </div>
-                  </div>
-                  <div className="flex gap-4">
-                     <span className="material-symbols-outlined text-emerald-400">psychology</span>
-                     <div>
-                        <h4 className="font-bold">Skill Gap Analysis</h4>
-                        <p className="text-sm text-slate-300">Instantly identify which skills are missing from your profile and how to highlight them.</p>
-                     </div>
-                  </div>
-                  <div className="flex gap-4">
-                     <span className="material-symbols-outlined text-emerald-400">edit_note</span>
-                     <div>
-                        <h4 className="font-bold">ATS Formatting Tips</h4>
-                        <p className="text-sm text-slate-300">Get specific phrasing suggestions to improve your impact scores.</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {loading && (
-        <div className="flex flex-col items-center justify-center p-20 bg-white rounded-3xl border border-slate-100 shadow-sm text-center">
-          <div className="w-16 h-16 border-4 border-slate-100 border-t-primary rounded-full animate-spin mb-6"></div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing Optimization...</h2>
-          <p className="text-slate-500 font-medium">Comparing your profile vectors against the JD requirements.</p>
-        </div>
-      )}
-
-      {result && !loading && (
-        <div className="space-y-8 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {/* 1. Overall Score & Fit */}
-            <div className={`bg-white p-6 rounded-3xl border shadow-sm text-center flex flex-col items-center justify-center relative overflow-hidden ${
-              getScoreColor(result.score) === 'green' ? 'border-green-100' : 
-              getScoreColor(result.score) === 'yellow' ? 'border-amber-100' : 'border-red-100'
-            }`}>
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Final Match Score</p>
-               
-               {/* Trend Indicator (PHASE 4) */}
-               {result.trend?.previous_score && (
-                 <div className={`absolute top-4 right-4 flex items-center gap-1 font-black text-[10px] px-2 py-1 rounded-lg ${
-                   result.trend.improvement >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                 }`}>
-                   <span className="material-symbols-outlined text-[14px]">
-                     {result.trend.improvement >= 0 ? 'trending_up' : 'trending_down'}
-                   </span>
-                   {result.trend.improvement !== 0 ? `${result.trend.improvement > 0 ? '+' : ''}${result.trend.improvement}%` : 'Stable'}
-                 </div>
-               )}
-
-               <div className="relative inline-flex items-center justify-center mb-4">
-                  <svg className="w-24 h-24 transform -rotate-90">
-                    <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-slate-100" />
-                    <circle 
-                      cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent" 
-                      className={
-                        getScoreColor(result.score) === 'green' ? 'text-green-500' : 
-                        getScoreColor(result.score) === 'yellow' ? 'text-amber-500' : 'text-red-500'
-                      }
-                      strokeDasharray={264} strokeDashoffset={264 - (264 * result.score) / 100} 
-                    />
-                  </svg>
-                  <span className={`absolute text-2xl font-black ${
-                    getScoreColor(result.score) === 'green' ? 'text-green-600' : 
-                    getScoreColor(result.score) === 'yellow' ? 'text-amber-600' : 'text-red-600'
-                  }`}>{result.score}%</span>
-               </div>
-               
-               <div className="space-y-2">
-                 <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter shadow-sm inline-block ${
-                   result.score > 80 ? 'bg-green-600 text-white' : 
-                   result.score > 60 ? 'bg-amber-500 text-white' : 'bg-red-500 text-white'
-                 }`}>
-                   {result.fit_label}
-                 </span>
-                 
-                 {/* Confidence Badge (PHASE 4) */}
-                 <div className="flex items-center justify-center gap-1 text-[9px] font-bold text-slate-400">
-                   <span className="material-symbols-outlined text-[12px]">verified_user</span>
-                   AI Confidence: {(result.confidence * 100).toFixed(0)}%
-                 </div>
-               </div>
-            </div>
-
-            {/* 2. Semantic Alignment */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-               <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-blue-500">psychology_alt</span>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Semantic match</p>
-               </div>
-               <div>
-                  <h4 className="text-lg font-black text-slate-900 leading-tight">{result.semantic?.label}</h4>
-                  <p className="text-xs text-slate-500 mt-1">Confidence Score: <span className="font-bold text-slate-900">{(result.semantic?.score * 100).toFixed(0)}%</span></p>
-               </div>
-               <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full rounded-full" style={{ width: `${result.semantic?.score * 100}%` }}></div>
-               </div>
-            </div>
-
-            {/* 3. Experience Match */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-               <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-purple-500">work_history</span>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Experience Match</p>
-               </div>
-               <div>
-                  <h4 className="text-lg font-black text-slate-900 leading-tight">{result.experience?.match_percentage}% Match</h4>
-                  <p className="text-xs text-slate-500 mt-1">{result.experience?.message}</p>
-               </div>
-               <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-purple-500 h-full rounded-full" style={{ width: `${result.experience?.match_percentage}%` }}></div>
-               </div>
-            </div>
-
-            {/* 4. Action Panel */}
-            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Recommended Action</p>
-                <div className="space-y-2">
-                   <button 
-                    onClick={handleImproveAll}
-                    disabled={rewriting}
-                    className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                      <span className="material-symbols-outlined text-[16px]">draw</span>
-                      {rewriting ? 'Improving...' : 'Improve Resume'}
-                   </button>
-                   <button className="w-full py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all">
-                      Apply Later
-                   </button>
-                </div>
-            </div>
-          </div>
-
-          {/* New Resume Improvement Section (PHASE 3) */}
-          {(rewriting || rewrites) && (
-             <div className="bg-white p-8 rounded-4xl border border-indigo-100 shadow-xl shadow-indigo-500/5 space-y-8 animate-slide-up">
-                <div className="flex items-center justify-between">
-                   <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
-                         <span className="material-symbols-outlined">auto_fix_high</span>
+      {/* 🥈 2. CONTEXT BAR (STAY INFORMED) */}
+      {result && (
+          <div className="sticky top-0 z-50 bg-slate-900 text-white border-y border-white/5 px-8 py-3 flex flex-wrap items-center justify-between gap-6 overflow-hidden">
+              <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                          <Target className="w-4 h-4 text-emerald-400" />
                       </div>
                       <div>
-                         <h3 className="text-2xl font-black text-slate-900">Resume Rewrite Engine</h3>
-                         <p className="text-indigo-500 font-bold text-sm tracking-tight flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">verified</span>
-                            PHASE 3: High-Impact Bullet Optimization
-                         </p>
+                          <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Match Score</p>
+                          <p className="text-sm font-black italic tracking-tighter text-emerald-400 leading-none">{result.score}% → <span className="text-white opacity-40">Target 85%+</span></p>
                       </div>
-                   </div>
-                   <button 
-                      onClick={handleImproveAll}
-                      disabled={rewriting}
-                      className="px-6 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-100 transition-all flex items-center gap-2">
-                       <span className="material-symbols-outlined text-sm">refresh</span>
-                       {rewriting ? 'Rewriting...' : 'Regenerate All'}
-                   </button>
-                </div>
-
-                {rewriting && !rewrites && (
-                   <div className="grid grid-cols-2 gap-6 opacity-50">
-                      {[1,2,3].map(i => (
-                         <div key={i} className="h-24 bg-slate-100 rounded-2xl animate-pulse"></div>
-                      ))}
-                   </div>
-                )}
-
-                {rewrites && (
-                   <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-6 mb-2">
-                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Original Bullet</p>
-                         <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-4">AI Improved Bullet</p>
+                  </div>
+                  <div className="h-8 w-px bg-white/10 hidden md:block"></div>
+                  <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                          <Layers className="w-4 h-4 text-indigo-400" />
                       </div>
-                      
-                      <div className="space-y-6">
-                         {rewrites.map((item, idx) => (
-                            <div key={idx} className="grid md:grid-cols-2 gap-6 group">
-                               {/* Original */}
-                               <div className="p-5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-500 text-sm font-medium italic">
-                                  "{item.original}"
-                               </div>
-                               
-                               {/* Improved */}
-                               <div className="relative p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl group-hover:border-indigo-300 transition-all">
-                                  <p className="text-slate-900 text-sm font-bold leading-relaxed pr-24">
-                                     {item.improved}
-                                  </p>
-                                  <div className="flex flex-wrap gap-1 mt-3">
-                                     {item.improvements?.map((imp, i) => (
-                                        <span key={i} className="text-[9px] font-black bg-indigo-600 text-white px-2 py-0.5 rounded shadow-sm">
-                                           {imp}
-                                        </span>
-                                     ))}
-                                  </div>
-                                  
-                                  {/* Actions */}
-                                  <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100">
-                                     <button 
-                                        onClick={() => copyToClipboard(item.improved)}
-                                        className="w-10 h-10 bg-white shadow-md rounded-xl flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all">
-                                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                                     </button>
-                                     <button className="w-10 h-10 bg-indigo-600 text-white shadow-md rounded-xl flex items-center justify-center hover:bg-indigo-700 transition-all">
-                                        <span className="material-symbols-outlined text-[18px]">check</span>
-                                     </button>
-                                  </div>
-                               </div>
-                            </div>
-                         ))}
+                      <div>
+                          <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Target Role</p>
+                          <p className="text-sm font-black italic tracking-tighter text-white leading-none">Software Engineer Intern</p>
                       </div>
-                   </div>
-                )}
-             </div>
-          )}
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* AI Insights (Full Width of row) */}
-            <div className="md:col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row items-start gap-8">
-               <div className="flex items-start gap-6 flex-1">
-                  <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
-                     <span className="material-symbols-outlined">auto_awesome</span>
                   </div>
-                  <div className="space-y-2">
-                     <h3 className="text-lg font-black text-slate-900">AI Narrative Insight</h3>
-                     <p className="text-slate-600 text-sm leading-relaxed">{result.insight}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                  <div className="text-right hidden sm:block">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-rose-400">3 Critical Issues Detected</p>
+                      <p className="text-[8px] font-bold text-slate-500 italic">Ready to optimize with Neural Engine</p>
                   </div>
-               </div>
-               
-               {/* Score Explainability (PHASE 4) */}
-               <div className="w-full md:w-80 bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-3">
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                     <span className="material-symbols-outlined text-[14px]">psychology_alt</span>
-                     Why This Score?
-                  </h4>
-                  <ul className="space-y-2">
-                     {result.reasoning?.map((r, i) => (
-                       <li key={i} className="flex gap-2 text-xs text-slate-600 font-medium leading-tight">
-                          <span className="material-symbols-outlined text-emerald-500 text-[14px] mt-0.5">check_circle</span>
-                          {r}
-                       </li>
-                     ))}
-                     {(!result.reasoning || result.reasoning.length === 0) && <li className="text-xs text-slate-400 italic">Calculation based on domain alignment.</li>}
-                  </ul>
-               </div>
-            </div>
-
-            {/* Skill Gaps & Strengths */}
-            <div className="md:col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-               <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-emerald-600 uppercase flex items-center gap-2 tracking-widest">
-                       <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                       Matched Strengths
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                       {result.skills_found?.map(s => <span key={s} className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold border border-emerald-100">+{s}</span>)}
-                       {result.skills_found?.length === 0 && <span className="text-xs text-slate-400 italic">No direct matches found.</span>}
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-red-500 uppercase flex items-center gap-2 tracking-widest">
-                       <span className="material-symbols-outlined text-[16px]">warning</span>
-                       Missing Core Requirements
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                       {result.missing_skills?.map(s => <span key={s} className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-[11px] font-bold border border-red-100">-{s}</span>)}
-                       {result.missing_preferred?.map(s => <span key={s} className="px-3 py-1 bg-slate-50 text-slate-400 rounded-lg text-[11px] font-bold border border-slate-200">-{s} (Optional)</span>)}
-                       {result.missing_skills?.length === 0 && result.missing_preferred?.length === 0 && <span className="text-xs text-slate-400 italic">Excellent! You meet all identified requirements.</span>}
-                    </div>
-                  </div>
-               </div>
-            </div>
+                  <button onClick={handleImproveAll} className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-600/20">
+                      <Zap className="w-3.5 h-3.5" /> Fix All Now
+                  </button>
+              </div>
           </div>
-
-          <div className="bg-slate-900 rounded-3xl p-8 text-white">
-             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-400">lightbulb</span>
-                Optimization Checklist
-             </h3>
-             <ul className="space-y-4">
-                {result.suggestions?.map((s, i) => (
-                  <li key={i} className="flex gap-4 items-start bg-white/5 p-4 rounded-2xl border border-white/10">
-                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                       s.priority === 'high' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'
-                     }`}>
-                       {i+1}
-                     </div>
-                     <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                           <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded ${
-                             s.priority === 'high' ? 'bg-red-500/20 text-red-300' : 'bg-amber-500/20 text-amber-300'
-                           }`}>
-                             {s.priority || 'Medium'} Priority
-                           </span>
-                           <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">
-                             {s.type?.replace('_', ' ') || 'Suggestion'}
-                           </span>
-                        </div>
-                        <p className="text-slate-200 text-sm leading-relaxed font-medium">{s.message || s}</p>
-                     </div>
-                  </li>
-                ))}
-             </ul>
-          </div>
-          
-          <div className="flex justify-center">
-             <button 
-                onClick={() => setResult(null)} 
-                className="px-8 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-900 hover:bg-slate-50 transition-all"
-             >
-                Test New Resume
-             </button>
-          </div>
-        </div>
       )}
+
+      <div className="max-w-7xl mx-auto px-8 py-10">
+          {!result && !loading ? (
+              <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
+                  <div className="space-y-10">
+                      <div className="inline-block px-4 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600 text-[10px] font-black uppercase tracking-widest">Neural Workbench v2.0</div>
+                      <h2 className="text-6xl font-black text-slate-900 leading-[0.95] tracking-tighter uppercase italic">
+                          Start your <br /> <span className="text-indigo-600">Re-Engineering.</span>
+                      </h2>
+                      <p className="text-xl text-slate-500 font-medium italic border-l-4 border-slate-100 pl-8">
+                          Upload your raw data. Our AI analyzes the "Experience Gap" between your current profile and the target role in real-time.
+                      </p>
+                      <div className="grid grid-cols-2 gap-6 pb-4">
+                         <div className="space-y-2">
+                             <div className="flex items-center gap-2 text-slate-900 font-black text-sm uppercase italic">
+                                 <CheckCircle2 className="w-4 h-4 text-emerald-500" /> SEO Optimized
+                             </div>
+                             <p className="text-xs text-slate-400 font-medium">Rank #1 in Recruiter Search.</p>
+                         </div>
+                         <div className="space-y-2">
+                             <div className="flex items-center gap-2 text-slate-900 font-black text-sm uppercase italic">
+                                 <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Impact Driven
+                             </div>
+                             <p className="text-xs text-slate-400 font-medium">Quantify your achievements.</p>
+                         </div>
+                      </div>
+                  </div>
+
+                  <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl space-y-8">
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">01. Source File</label>
+                        <div className="relative group cursor-pointer">
+                            <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer" />
+                            <div className={`h-48 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center transition-all ${
+                                file ? 'border-emerald-500 bg-emerald-50 scale-[1.02]' : 'border-slate-100 bg-slate-50 group-hover:border-indigo-400'
+                            }`}>
+                                <FileText className={`w-12 h-12 mb-4 ${file ? 'text-emerald-500' : 'text-slate-200 group-hover:text-indigo-400'}`} />
+                                <p className="text-sm font-black text-slate-900 italic tracking-tight">{file ? file.name : "Click to Drop Resume PDF"}</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Processed securely & locally</p>
+                            </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">02. Target Intent (JD)</label>
+                        <textarea
+                          value={jd}
+                          onChange={(e) => setJd(e.target.value)}
+                          placeholder="Paste Job Description here..."
+                          className="w-full h-48 p-6 bg-slate-50 border border-slate-100 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none font-medium italic"
+                        />
+                      </div>
+
+                      {error && <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-2xl text-[11px] font-black uppercase tracking-widest text-center italic">{error}</div>}
+
+                      <button onClick={handleAnalyze} className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-2xl hover:bg-slate-800 transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4">
+                        Initialize Workbench <ArrowRight className="w-6 h-6" />
+                      </button>
+                  </div>
+              </div>
+          ) : result && !loading ? (
+              <div className="grid lg:grid-cols-12 gap-10">
+                  
+                  {/* 🥉 3. LEFT PANEL — INPUT & METRICS */}
+                  <div className="lg:col-span-4 space-y-10">
+                      {/* STATS CARD */}
+                      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 border-b border-slate-50 pb-4">Real-time Metrics</h4>
+                          <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-1">
+                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">Word Count</p>
+                                  <p className="text-3xl font-black italic tracking-tighter text-slate-900 leading-none">{wordCount}</p>
+                              </div>
+                              <div className="space-y-1">
+                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">Readability</p>
+                                  <p className="text-3xl font-black italic tracking-tighter text-slate-900 leading-none">Medium</p>
+                              </div>
+                              <div className="col-span-2 space-y-3 pt-2">
+                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">ATS Risk Indicator</p>
+                                  <div className="flex items-center gap-2 bg-rose-50 border border-rose-100 p-3 rounded-xl">
+                                      <ShieldAlert className="w-4 h-4 text-rose-500" />
+                                      <span className="text-[11px] font-black uppercase text-rose-600 tracking-widest italic">{atsRiskText}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      {/* 💥 5. LIVE SUGGESTIONS PANEL */}
+                      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 flex items-center justify-between">
+                              Live Suggestions <span>(3)</span>
+                          </h4>
+                          <div className="space-y-4">
+                              {[
+                                  { icon: <Zap className="w-4 h-4 text-amber-500" />, label: "Weak Bullet Detected", desc: "Change passive verbs to action verbs.", action: "Improve Line 8" },
+                                  { icon: <Activity className="w-4 h-4 text-blue-500" />, label: "Missing Metrics", desc: "Add numbers to quantify impact.", action: "Add Numbers" },
+                                  { icon: <Settings className="w-4 h-4 text-purple-500" />, label: "ATS Risk: Complexity", desc: "Break down long sentences.", action: "Simplify" }
+                              ].map((item, idx) => (
+                                  <div key={idx} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl group hover:border-indigo-400 cursor-pointer transition-all">
+                                      <div className="flex items-center gap-3 mb-2">
+                                          {item.icon}
+                                          <p className="text-[10px] font-black uppercase italic text-slate-900">{item.label}</p>
+                                      </div>
+                                      <p className="text-[10px] font-medium text-slate-400 leading-normal mb-3">{item.desc}</p>
+                                      <button className="text-[9px] font-black uppercase tracking-widest text-indigo-600 group-hover:translate-x-1 transition-transform flex items-center gap-1.5">
+                                          {item.action} <ArrowRight className="w-3 h-3" />
+                                      </button>
+                                  </div>
+                              ))}
+                          </div>
+                      </div>
+
+                      {/* 💰 8. PROGRESS + LIMIT */}
+                      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white space-y-6 shadow-2xl shadow-slate-900/20 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                          <h4 className="text-[9px] font-black uppercase tracking-[0.4em] text-indigo-400 relative z-10">Account Usage</h4>
+                          <div className="space-y-4 relative z-10">
+                              <div className="flex justify-between items-end">
+                                  <span className="text-3xl font-black italic">8<span className="text-white/20">/20</span></span>
+                                  <span className="text-[10px] font-bold text-slate-500">Optimizations Left</span>
+                              </div>
+                              <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/10 p-0.5">
+                                  <div className="h-full bg-indigo-500 rounded-full w-[40%]"></div>
+                              </div>
+                              <Link to="/pricing" className="block text-center py-4 bg-white/5 hover:bg-white text-white hover:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+                                  Upgrade to Pro
+                              </Link>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* 🏆 4. RIGHT PANEL — AI WORKBENCH / OUTPUT */}
+                  <div className="lg:col-span-8 space-y-8">
+                      {/* ⚡ 7. CONTROL PANEL (TOP BAR) */}
+                      <div className="bg-white border border-slate-100 rounded-[2rem] p-4 flex items-center justify-between shadow-sm">
+                          <div className="flex items-center gap-2">
+                              <button className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all">Fix Entire Resume</button>
+                              <button className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Fix Selected</button>
+                              <button className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Optimize for Job</button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                              <button className="w-10 h-10 border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-50 transition-all"><RotateCcw className="w-4 h-4" /></button>
+                              <button className="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-100 transition-all">Export PDF</button>
+                          </div>
+                      </div>
+
+                      {/* SPLIT EDITOR VIEW */}
+                      <div className="grid lg:grid-cols-2 gap-4 h-[650px]">
+                          {/* INPUT EDITOR */}
+                          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-6 shadow-sm overflow-hidden flex flex-col">
+                              <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Main Resume Text</h4>
+                                  <div className="flex items-center gap-2 text-[9px] font-bold text-slate-300">
+                                      <MousePointer2 className="w-3 h-3" /> Select line to improve
+                                  </div>
+                              </div>
+                              <div className="flex-1 overflow-y-auto pr-4 font-mono text-sm text-slate-600 leading-[1.8] scrollbar-hide select-text selection:bg-indigo-500/20">
+                                  {result.extracted_text || "Paste your resume here..."}
+                              </div>
+                          </div>
+
+                          {/* OUTPUT / SUGGESTIONS WINDOW */}
+                          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm overflow-hidden flex flex-col relative">
+                              <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">AI Workbench Output</h4>
+                                  {rewrites && <span className="text-[9px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded uppercase tracking-tighter">Analysis Complete</span>}
+                              </div>
+                              
+                              <div className="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-6">
+                                  {rewriting ? (
+                                      <div className="space-y-6">
+                                          {[1,2,3,4].map(i => (
+                                              <div key={i} className="h-20 bg-slate-50 rounded-2xl animate-pulse border border-slate-100"></div>
+                                          ))}
+                                      </div>
+                                  ) : rewrites ? (
+                                      rewrites.map((item, idx) => (
+                                          <div key={idx} className="space-y-3 group/fix animate-in slide-in-from-right duration-500">
+                                              {/* 🧠 6. BEFORE vs AFTER CARD */}
+                                              <div className="p-5 bg-slate-800 rounded-2xl space-y-4 border border-white/5 shadow-xl relative overflow-hidden">
+                                                  <div className="flex items-center gap-2">
+                                                      <div className="w-2 h-2 rounded-full bg-rose-500"></div>
+                                                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Source Line</span>
+                                                  </div>
+                                                  <p className="text-xs text-slate-400 italic font-medium leading-relaxed">"{item.original}"</p>
+                                                  
+                                                  <div className="h-px bg-white/5"></div>
+                                                  
+                                                  <div className="flex items-center justify-between">
+                                                      <div className="flex items-center gap-2">
+                                                          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Candidex Recommendation</span>
+                                                      </div>
+                                                      <button className="w-8 h-8 rounded-lg bg-emerald-500 text-slate-900 flex items-center justify-center hover:scale-105 transition-all"><Plus className="w-4 h-4" /></button>
+                                                  </div>
+                                                  <p className="text-xs text-white font-bold leading-relaxed selection:bg-emerald-500/30 italic">"{item.improved}"</p>
+                                                  
+                                                  {/* Tags */}
+                                                  <div className="flex flex-wrap gap-1 mt-1">
+                                                     {item.improvements?.map((imp, i) => (
+                                                        <span key={i} className="text-[8px] font-black bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase tracking-tighter">
+                                                           {imp}
+                                                        </span>
+                                                     ))}
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      ))
+                                  ) : (
+                                      <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-60">
+                                          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center">
+                                              <Sparkles className="w-10 h-10 text-slate-200" />
+                                          </div>
+                                          <div>
+                                              <p className="text-sm font-black text-slate-900 uppercase italic tracking-tighter">AI Suggestions Ready</p>
+                                              <p className="text-xs text-slate-400 font-medium max-w-[200px] mt-2">Initialized. Select lines or click "Fix All" to begin neural transformation.</p>
+                                          </div>
+                                      </div>
+                                  )}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* 📊 9. INSIGHTS PANEL (BOTTOM) */}
+                  <div className="lg:col-span-12 grid lg:grid-cols-3 gap-8 pt-10 border-t border-slate-100">
+                      <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-6">
+                          <h5 className="text-[10px] font-black uppercase text-rose-500 tracking-[0.4em] flex items-center gap-2"><Trash2 className="w-3.5 h-3.5" /> Top Skills Missing</h5>
+                          <div className="flex flex-wrap gap-2">
+                             {result.missing_skills?.map(s => <span key={s} className="px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black border border-rose-100">-{s}</span>)}
+                             {result.missing_skills?.length === 0 && <span className="text-[10px] text-slate-400 italic">No critical skills missing. Perfect.</span>}
+                          </div>
+                      </div>
+                      <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-6">
+                          <h5 className="text-[10px] font-black uppercase text-indigo-500 tracking-[0.4em] flex items-center gap-2"><PieChart className="w-3.5 h-3.5" /> Keyword Match</h5>
+                          <div className="flex flex-wrap gap-2">
+                             {result.skills_found?.map(s => <span key={s} className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-black border border-indigo-100">+{s}</span>)}
+                          </div>
+                      </div>
+                      <div className="p-8 bg-slate-900 border border-slate-900 rounded-[2.5rem] shadow-sm space-y-6 text-white text-center flex flex-col items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent"></div>
+                          <h5 className="text-[10px] font-black uppercase text-slate-500 tracking-[0.4em] relative z-10">Recruiter Visibility</h5>
+                          <p className="text-5xl font-black italic tracking-tighter text-rose-500 relative z-10">LOW</p>
+                          <p className="text-[9px] font-bold text-slate-400 relative z-10 italic">Optimization score must be 80%+ </p>
+                      </div>
+                  </div>
+              </div>
+          ) : loading && (
+              <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8 animate-fade-in">
+                  <div className="relative">
+                      <div className="w-24 h-24 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                          <RotateCcw className="w-8 h-8 text-indigo-600 animate-pulse" />
+                      </div>
+                  </div>
+                  <div className="text-center space-y-2">
+                      <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Initializing Neural Engine</h2>
+                      <p className="text-slate-400 font-medium text-lg italic animate-pulse">Competing with 1.4M candidate data points...</p>
+                  </div>
+              </div>
+          )}
+      </div>
+
     </div>
   );
 };

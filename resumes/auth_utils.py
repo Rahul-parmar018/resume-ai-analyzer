@@ -18,6 +18,6 @@ def verify_token(request):
         raise Exception("Invalid Authorization header format. Expected 'Bearer <token>'")
 
     # Firebase Admin SDK verifies the token signature over the network/cache
-    decoded_token = auth.verify_id_token(token)
+    decoded_token = auth.verify_id_token(token, clock_skew_seconds=60)
 
     return decoded_token

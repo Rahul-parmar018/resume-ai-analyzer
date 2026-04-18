@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
-import axios from "axios";
+import api from "../api-client";
 
 const AuthContext = createContext();
 
@@ -12,26 +12,34 @@ export default function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (currentUser) => {
+  const refreshProfile = async () => {
     try {
-      const token = await currentUser.getIdToken();
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/profile/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/user/profile/');
       setProfile(res.data);
     } catch (err) {
-      console.error("Profile sync failed:", err);
-      setProfile(null);
-    } finally {
-      setLoading(false);
+      console.error("Profile refresh failed:", err);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        fetchProfile(currentUser);
+        try {
+          // Explicitly get token from the currentUser object received in onAuthStateChanged.
+          // This avoids the race condition where auth.currentUser is still null
+          // when the axios interceptor fires on the very first request.
+          const token = await currentUser.getIdToken();
+          const res = await api.get('/user/profile/', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setProfile(res.data);
+        } catch (err) {
+          console.error("Initial profile sync failed:", err);
+          setProfile(null);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setProfile(null);
         setLoading(false);
@@ -41,7 +49,7 @@ export default function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, profile, setProfile, loading }}>
+    <AuthContext.Provider value={{ user, profile, setProfile, refreshProfile, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

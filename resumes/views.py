@@ -5,9 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from docx import Document
 import textstat
 from .utils.rate_limiter import rate_limit
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from firebase_admin import auth
 from .auth_utils import verify_token
 from .utils.ml_analyzer import analyze_resume, compute_similarity, extract_skills
@@ -23,32 +24,15 @@ from .models import FirebaseUser, AnalysisRecord, ExtractedData, AnalysisEmbeddi
 from django.db.models import Avg, Count, F
 from collections import Counter
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-from .utils.ml_model import model as semantic_model
+from .utils.semantic_matcher import engine as semantic_ranking_engine
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
-
-def _get_firebase_user(request):
-    """Helper to verify token and return Django FirebaseUser model"""
-    auth_header = request.headers.get('Authorization')
-    if not auth_header or 'Bearer ' not in auth_header:
-        return None
-    
-    try:
-        token = auth_header.split('Bearer ')[1]
-        decoded = auth.verify_id_token(token)
-        uid = decoded['uid']
-        email = decoded.get('email')
-        
-        user, created = FirebaseUser.objects.get_or_create(
-            firebase_uid=uid,
-            defaults={'email': email}
-        )
-        return user
-    except Exception as e:
-        logger.error(f"Auth verification failed: {str(e)}")
-        return None
 
 
 def _check_usage_limit(user, count_to_add=1):
@@ -66,19 +50,23 @@ def _check_usage_limit(user, count_to_add=1):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_profile_view(request):
     """Fetch the source-of-truth user profile from Django"""
-    user = _get_firebase_user(request)
-    if not user:
-        return Response({"error": "Unauthorized"}, status=401)
+    user = request.user
     
     return Response({
         "uid": user.firebase_uid,
         "email": user.email,
         "role": user.role,
         "role_locked": user.role_locked,
+        "display_name": user.display_name or (user.email.split('@')[0] if user.email else "User"),
+        "profile_image": user.profile_image,
+        "location": user.location,
+        "bio": user.bio,
         "optimization_count": user.optimization_count,
         "scan_count": user.scan_count,
+        "status": user.account_status,
         "limits": {
             "candidate": 20,
             "recruiter": 500
@@ -86,12 +74,67 @@ def get_user_profile_view(request):
     })
 
 
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_user_profile_view(request):
+    """Update professional metadata for the account"""
+    user = request.user
+    
+    data = request.data
+    
+    # Surgical updates
+    if 'display_name' in data:
+        user.display_name = data.get('display_name')
+    if 'location' in data:
+        user.location = data.get('location')
+    if 'bio' in data:
+        user.bio = data.get('bio')
+    if 'profile_image' in data:
+        # Note: In Phase 2, this will be handled by a file upload view
+        user.profile_image = data.get('profile_image')
+        
+    user.save()
+    
+    return Response({
+        "message": "Profile synchronized successfully.",
+        "user": {
+            "display_name": user.display_name,
+            "location": user.location,
+            "bio": user.bio
+        }
+    })
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_user_account_view(request):
+    """The Danger Zone: Wipe user data and mark record as deleted"""
+    user = request.user
+    
+    # We don't actually delete from Firebase here (client handles that side)
+    # But we wipe local Candidex data
+    user.account_status = 'deleted'
+    user.display_name = "[Deleted User]"
+    user.bio = None
+    user.location = None
+    user.save()
+    
+    # Optionally: Cleanup related analysis records
+    # user.analyses.all().delete()
+    
+    logger.warning(f"[DANGER ZONE] User {user.firebase_uid} initiated account deletion.")
+    
+    return Response({
+        "message": "Account scheduled for deletion. Access revoked.",
+        "code": "ACCOUNT_DELETED"
+    })
+
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def update_user_role_view(request):
     """SaaS Role Onboarding with Locking Logic"""
-    user = _get_firebase_user(request)
-    if not user:
-        return Response({"error": "Unauthorized"}, status=401)
+    user = request.user  # Automatically populated by FirebaseAuthentication bridge
     
     if user.role_locked:
         return Response({
@@ -106,8 +149,6 @@ def update_user_role_view(request):
     user.role = new_role
     user.role_locked = True
     user.save()
-    
-    logger.info(f"[AUTH] User {user.firebase_uid} locked role as {new_role}")
     
     return Response({
         "message": f"Account successfully set to {new_role} mode.",
@@ -235,6 +276,7 @@ def _cosine(a, b):
 # ────────── MODERN API ENDPOINTS ──────────
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser])
 def optimize_resume_view(request):
     """
@@ -242,9 +284,7 @@ def optimize_resume_view(request):
     Handles personal resume optimization against a target JD.
     """
     try:
-        user = _get_firebase_user(request)
-        if not user:
-            return Response({"error": "Unauthorized", "code": "AUTH_REQUIRED"}, status=401)
+        user = request.user
         
         # 🛡️ RBAC: Candidate Only
         if user.role != 'candidate':
@@ -262,13 +302,18 @@ def optimize_resume_view(request):
                 "upgrade": True
             }, status=403)
 
-        # 📄 Get file
+        # 📄 Get input (File or Text)
         file = request.FILES.get('file')
-        if not file:
-            return Response({"error": "No file Provided"}, status=400)
+        resume_text = request.data.get('resume_text', '').strip()
+        
+        if not file and not resume_text:
+            return Response({"error": "Please provide a resume file or paste your resume text."}, status=400)
 
-        # 📖 Read text using our upgraded utility
-        resume_text = _extract_text(file)
+        resume_name = "Pasted Resume"
+        if file:
+            resume_name = file.name
+            # 📖 Read text using our upgraded utility
+            resume_text, _ = _extract_text(file)
         
         # 🎯 Job description extraction (Dynamic vs. Default)
         job_profile = _parse_job_profile(request)
@@ -339,51 +384,55 @@ def optimize_resume_view(request):
         )
         user.refresh_from_db()
         
-        logger.info(f"[USAGE] Candidate {user.firebase_uid} performed Resume AI Optimization ({user.optimization_count}/20)")
+        logger.info(f"[USAGE] Candidate {user.firebase_uid} performed Resume AI Optimization")
         
-        # 2. Save Analysis
+        # 2. 🔍 Generate/Check Hash
+        t_hash = semantic_ranking_engine.get_text_hash(resume_text)
+        
+        # 3. Save Analysis
         analysis_record = AnalysisRecord.objects.create(
             user=user,
-            resume_name=file.name,
+            resume_name=resume_name,
             job_description=job_desc,
             job_profile=job_profile,
-            score=result['score']
+            score=result['match_score'],
+            text_hash=t_hash
         )
         
-        # 3. Save Extracted Data Details
+        # 4. Save Extracted Data Details
         ExtractedData.objects.create(
             analysis=analysis_record,
-            skills=result['skills_found'],
-            missing_skills=result['missing_skills'],
-            suggestions=result['suggestions'],
-            section_scores=result.get('section_scores', {}),
-            rewrites=result.get('rewrites', [])
+            skills=result['skills']['matched'],
+            missing_skills=result['skills']['missing_required'],
+            suggestions=result.get('recommendations', []),
+            section_scores=result.get('metrics', {}),
+            rewrites=[]
         )
         
-        # 4. Phase 3: High-Dimension Semantic Embedding Generation
-        # Construct a dense, token-efficient string 
-        skills_str = ", ".join(result['skills_found'])
-        clean_text = f"Capabilities: {skills_str}. Profile context: {resume_text[:500]}"
-        
-        # Encode to vector (Runs locally and instantly via our pre-loaded MiniLM Singleton)
-        vector = semantic_model.encode(clean_text).tolist()
-        
+        # 5. Semantic Vector Persistence
+        vector = semantic_ranking_engine.get_embedding(resume_text).tolist()
         AnalysisEmbedding.objects.create(
             analysis=analysis_record,
             vector=vector
         )
         
-        # Hydrate result with internal DB ID so frontend can ref it
-        result['id'] = analysis_record.id
-
         return Response(result)
 
     except Exception as e:
-        logger.error(f"Analysis error: {str(e)}")
-        return Response({"error": str(e)}, status=401)
+        import traceback
+        error_msg = str(e)
+        stack_trace = traceback.format_exc()
+        print(f"DEBUG: [Analysis Error] {error_msg}")
+        print(stack_trace)
+        logger.error(f"Analysis error: {error_msg}")
+        return Response({
+            "error": f"Logic Error: {error_msg}",
+            "stack": stack_trace if os.getenv('DEBUG') == 'True' else None
+        }, status=500)
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser])
 def bulk_analyze_view(request):
     """
@@ -391,9 +440,7 @@ def bulk_analyze_view(request):
     Processes batches and performs structured ranking for HR.
     """
     try:
-        user = _get_firebase_user(request)
-        if not user:
-            return Response({"error": "Unauthorized", "code": "AUTH_REQUIRED"}, status=401)
+        user = request.user
         
         # 🛡️ RBAC: Recruiter Only
         if user.role != 'recruiter':
@@ -438,170 +485,95 @@ def bulk_analyze_view(request):
             job_profile=job_profile
         )
         
-        parsed_batch = []
-        clean_texts = []
-
-        required = _normalize_list(job_profile.get("required_skills")) if job_profile else []
-        optional = _normalize_list(job_profile.get("optional_skills")) if job_profile else []
-        tools = _normalize_list(job_profile.get("tools")) if job_profile else []
-        weights = _normalize_weights(job_profile.get("weights")) if job_profile else None
-        query_vec = semantic_model.encode(job_desc).tolist() if job_profile else None
+        candidate_resumes = []
+        hashes = []
         
-        # 4. 🧠 Parsing & Extraction Loop
+        # 4. 🧠 Parsing & Hash Generation
         for file in files:
             try:
-                resume_text = _extract_text(file)
-
-                manual_job_skills = (required + optional + tools) if job_profile else None
-                result = analyze_resume(resume_text, job_desc, manual_job_skills=manual_job_skills)
-
-                if job_profile:
-                    matched_required = _match_terms(resume_text, required)
-                    matched_optional = _match_terms(resume_text, optional + tools)
-                    matched_all = sorted(list(set(list(matched_required) + list(matched_optional))))
-                    missing_required = [s for s in required if s not in matched_required]
-
-                    req_ratio = (len(matched_required) / max(1, len(required))) if required else 0.0
-                    opt_ratio = (len(matched_optional) / max(1, len(optional + tools))) if (optional or tools) else 0.0
-                    skills_component = (0.8 * req_ratio) + (0.2 * opt_ratio)
-
-                    years = _extract_years_of_experience(resume_text)
-                    exp_component = _experience_component(years, job_profile.get("experience_level"))
-
-                    # Education Component
-                    edu_score = calculate_education_score(resume_text)
-                    edu_component = edu_score / 100.0
-                    
-                    # ATS Component
-                    contacts = extract_contacts(resume_text)
-                    ats_score = calculate_ats_score(
-                        resume_text, 
-                        has_email=bool(contacts.get("email")), 
-                        has_phone=bool(contacts.get("phone"))
-                    )
-                    ats_component = ats_score / 100.0
-                else:
-                    matched_all = result['skills_found']
-                    missing_required = result['missing_skills']
-                    skills_component = None
-                    exp_component = None
-                    edu_component = None
-                    ats_component = None
-
-                # Format our structured text for Embedding
-                skills_str = ", ".join(matched_all)
-                dense_context = f"Capabilities: {skills_str}. Profile context: {resume_text[:500]}"
-
-                parsed_batch.append({
+                resume_text, _ = _extract_text(file)
+                t_hash = semantic_ranking_engine.get_text_hash(resume_text)
+                candidate_resumes.append({
                     "file_name": file.name,
-                    "score": result['score'],
-                    "skills": matched_all,
-                    "missing": missing_required,
-                    "suggestions": result['suggestions'],
-                    "_skills_component": skills_component,
-                    "_exp_component": exp_component,
-                    "_edu_component": edu_component,
-                    "_ats_component": ats_component,
+                    "text": resume_text,
+                    "hash": t_hash,
+                    "file_obj": file
                 })
-                clean_texts.append(dense_context)
-                
+                hashes.append(t_hash)
             except Exception as e:
-                logger.warning(f"Failed to parse inner document {file.name}: {e}")
+                logger.warning(f"Failed to parse doc {file.name}: {e}")
                 continue
                 
-        if not parsed_batch:
-            return Response({"error": "Failed to parse content from the uploaded documents."}, status=400)
+        if not candidate_resumes:
+            return Response({"error": "Failed to parse content from any uploaded documents."}, status=400)
 
-        # 5. 🔥 BATCH ENCODE & Weighted Scoring
-        embeddings_matrix = semantic_model.encode(clean_texts).tolist()
+        # 5. 🔍 DB CACHE LOOKUP (Save compute/time)
+        # Find any existing embeddings for these resume hashes in the entire DB
+        existing_embeddings = {
+            emb.analysis.text_hash: emb.vector 
+            for emb in AnalysisEmbedding.objects.filter(analysis__text_hash__in=hashes).select_related('analysis')
+        }
 
-        if job_profile:
-            for i in range(len(parsed_batch)):
-                # Semantic/Context Component
-                sem = _cosine(query_vec, embeddings_matrix[i])
-                semantic_component = max(0.0, min(1.0, (sem + 1.0) / 2.0))
-                
-                # Fetch pre-calculated components
-                skills_comp = float(parsed_batch[i].get("_skills_component") or 0.0)
-                exp_comp = float(parsed_batch[i].get("_exp_component") or 0.5)
-                edu_comp = float(parsed_batch[i].get("_edu_component") or 0.5)
-                ats_comp = float(parsed_batch[i].get("_ats_component") or 0.5)
-                
-                # Normalize based on spec categories
-                # Note: 'weights' from _normalize_weights ensures sum is 1.0
-                final = (
-                    (weights["skills"] * skills_comp) +
-                    (weights["experience"] * exp_comp) +
-                    (weights["education"] * edu_comp) +
-                    (weights["ats"] * ats_comp)
-                )
-                
-                parsed_batch[i]["score"] = int(round(max(0.0, min(1.0, final)) * 100))
+        # 6. 🔥 SEMANTIC RANKING ENGINE (Caches + Explanations)
+        ranked_candidates = semantic_ranking_engine.rank_resumes(
+            job_desc, 
+            candidate_resumes, 
+            db_cache=existing_embeddings
+        )
 
-        # 6. 🏆 Ranking & Data Commits
-        # Sort candidates descending by literal score
-        sorted_indices = sorted(range(len(parsed_batch)), key=lambda k: parsed_batch[k]['score'], reverse=True)
-        
-        db_records = []
         leaderboard_response = []
         
-        # We index the parsed_batch correctly mapping back to the sorted array
-        for rank_1_based, idx_mapping in enumerate(sorted_indices, start=1):
-            candidate = parsed_batch[idx_mapping]
-            vector = embeddings_matrix[idx_mapping]
+        # 7. 🏆 Data Commits & Result hydration
+        for r in ranked_candidates:
+            # Re-run specific scoring for details
+            analysis_data = analyze_resume(r['text'], job_desc)
             
-            # Commit main record
+            # Commit main record with Hash for future caching
             ar = AnalysisRecord.objects.create(
                 user=user,
                 job_session=job_session,
-                resume_name=candidate['file_name'],
+                resume_name=r['file_name'],
                 job_description=job_desc,
                 job_profile=job_profile,
-                score=candidate['score'],
-                rank=rank_1_based
+                score=r['score'],
+                rank=r['rank'],
+                text_hash=r['hash']
             )
             
-            # Commit dependencies
             ExtractedData.objects.create(
                 analysis=ar,
-                skills=candidate['skills'],
-                missing_skills=candidate['missing'],
-                suggestions=candidate['suggestions']
+                skills=analysis_data['matched_skills'],
+                missing_skills=analysis_data['missing_skills'],
+                suggestions=analysis_data['suggestions']
             )
             
             AnalysisEmbedding.objects.create(
                 analysis=ar,
-                vector=vector
+                vector=r['embedding']
             )
             
-            # Front End Visual Payload mapping
-            candidate_payload = {
+            leaderboard_response.append({
                 "id": ar.id,
-                "name": candidate['file_name'],
-                "score": candidate['score'],
-                "rank": rank_1_based,
-                "skills": candidate['skills'],
-                "missing": candidate['missing']
-            }
-            
-            leaderboard_response.append(candidate_payload)
+                "name": r['file_name'],
+                "score": r['score'],
+                "rank": r['rank'],
+                "skills": analysis_data['matched_skills'],
+                "missing": analysis_data['missing_skills'],
+                "label": r['explanation'],  # Using the semantic explanation layer
+                "insight": analysis_data['feedback'] # Original NLP feedback
+            })
 
-        # 7. 🔥 Auto Shortlist Isolation
-        auto_shortlist = [c for c in leaderboard_response[:10] if c['score'] >= 60]
-
-        # 8. 📊 Atomic Usage Increment (Elite Logic)
+        # 8. 📊 SaaS Metrics
         FirebaseUser.objects.filter(id=user.id).update(
             scan_count=F('scan_count') + len(leaderboard_response)
         )
         user.refresh_from_db()
-        
-        logger.info(f"[USAGE] Recruiter {user.firebase_uid} performed Candidate Ranking ({user.scan_count}/500)")
 
         return Response({
             "session_id": job_session.id,
             "total_candidates": len(leaderboard_response),
             "top_candidates": leaderboard_response,
-            "auto_shortlist": auto_shortlist
+            "auto_shortlist": [c for c in leaderboard_response if c['score'] >= 75]
         }, status=200)
 
     except Exception as e:
@@ -612,20 +584,11 @@ def bulk_analyze_view(request):
 # ────────── NEW SAAS ENDPOINTS ──────────
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_history_view(request):
     """Returns all SaaS analyses for the authenticated user"""
     try:
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or 'Bearer ' not in auth_header:
-            return Response({"error": "Unauthorized"}, status=401)
-        
-        token = auth_header.split('Bearer ')[1]
-        decoded = auth.verify_id_token(token)
-        uid = decoded['uid']
-        
-        user = FirebaseUser.objects.filter(firebase_uid=uid).first()
-        if not user:
-            return Response([], status=200)
+        user = request.user
             
         history = AnalysisRecord.objects.filter(user=user).order_by('-created_at')
         
@@ -648,22 +611,14 @@ def get_history_view(request):
         return Response({"error": str(e)}, status=400)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_dashboard_analytics_view(request):
     """
     Dashboard Intelligence Layer: Returns scaled KPI aggregations,
     score distributions, and JSON-parsed Top Skills frequencies.
     """
     try:
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or 'Bearer ' not in auth_header:
-            return Response({"error": "Unauthorized"}, status=401)
-        
-        token = auth_header.split('Bearer ')[1]
-        decoded = auth.verify_id_token(token)
-        user = FirebaseUser.objects.filter(firebase_uid=decoded['uid']).first()
-        
-        if not user:
-            return Response({"error": "User sync failed"}, status=404)
+        user = request.user
 
         # 1. CORE KPIs (Fast DB Level Aggregations)
         # Limit to 1000 for scalability as per Phase 2 requirements
@@ -745,11 +700,9 @@ def semantic_search_view(request):
     """
     Phase 3: Natural Language AI Finder
     Allows recruiters to search through their candidate pool using plain English.
-    Computes query embeddings, strikes fast nearest-neighbors search via numpy,
-    and returns dynamically ranked candidates utilizing Hybrid Scoring.
     """
     try:
-        user = _get_firebase_user(request)
+        user = request.user
         if not user:
             return Response({"error": "Unauthorized", "code": "AUTH_REQUIRED"}, status=401)
             
@@ -774,23 +727,27 @@ def semantic_search_view(request):
             return Response({"error": "No indexed candidates found in pipeline."}, status=404)
             
         # 2. Extract raw vector arrays
-        stored_vectors = np.array([e.vector for e in embeddings])
+        stored_vectors = np.array([e.vector for e in embeddings], dtype=np.float32)
         
-        # 3. Compute Query Embedding & Similarity Matrix
-        query_vector = np.array(semantic_model.encode(query_text)).reshape(1, -1)
+        # 3. Compute Query Embedding
+        query_vector = semantic_ranking_engine.get_embedding(query_text).reshape(1, -1)
+        
+        # 4. Compute Similarity Matrix (Manual dot product for speed or reuse sklearn)
+        from sklearn.metrics.pairwise import cosine_similarity
         sim_scores = cosine_similarity(query_vector, stored_vectors)[0]
         
-        # 4. Sort Top-5
+        # 5. Sort Top-5
         top_k = min(5, len(stored_vectors))
         top_indices = sim_scores.argsort()[-top_k:][::-1]
         
-        # 5. Build Hybrid Result Matrix
+        # 6. Build Hybrid Result Matrix
         results = []
         for idx in top_indices:
             embedding_record = embeddings[idx]
             analysis_rec = embedding_record.analysis
             semantic_score = float(sim_scores[idx])
             
+            # Hybrid score (Context + Historical Quality)
             db_score_normalized = (analysis_rec.score or 0) / 100.0
             raw_hybrid = (0.7 * semantic_score) + (0.3 * db_score_normalized)
             
@@ -811,8 +768,8 @@ def semantic_search_view(request):
             results.append({
                 "id": analysis_rec.id,
                 "candidate": analysis_rec.resume_name,
-                "score": final_hybrid_percent,
-                "semantic_score": semantic_percent,
+                "score": int(final_hybrid_percent),
+                "semantic_score": int(semantic_percent),
                 "skills": skills[:5],
                 "reason": reason
             })
@@ -832,7 +789,7 @@ def analysis_detail_view(request, pk):
             return Response({"error": "Unauthorized"}, status=401)
             
         token = auth_header.split('Bearer ')[1]
-        decoded = auth.verify_id_token(token)
+        decoded = auth.verify_id_token(token, clock_skew_seconds=10)
         user = FirebaseUser.objects.filter(firebase_uid=decoded['uid']).first()
         
         if not user:
@@ -874,7 +831,7 @@ def api_score(request):
     raw_k = request.POST.get("keywords", "")
     try:
         key_list = [k.strip() for k in re.split(r"[;,]", raw_k)] if raw_k else None
-        text = _extract_text(up)
+        text, _ = _extract_text(up)
         result = _score_resume(text, key_list)
         return JsonResponse(result)
     except Exception as e:
@@ -892,7 +849,7 @@ def rewrite_resume_view(request):
     Converts weak bullets to high-impact, quantified bullets.
     """
     try:
-        user = _get_firebase_user(request)
+        user = request.user
         if not user:
             return Response({"error": "Unauthorized"}, status=401)
             
@@ -920,22 +877,109 @@ def rewrite_resume_view(request):
 
 # ────────── UTILITIES ──────────
 
+def _generate_action_plan(score, missing_skills, issues):
+    """
+    Decision Engine Layer: Converts raw gaps into a prioritized roadmap.
+    """
+    plan = []
+    estimated_boost = 0
+    
+    if missing_skills:
+        skills_boost = min(25, len(missing_skills) * 7)
+        plan.append({
+            "priority": 1,
+            "action": f"Inject Missing Skills: {', '.join(missing_skills[:3])}",
+            "impact": f"+{skills_boost}% Gain",
+            "type": "SKILL_GAP"
+        })
+        estimated_boost += skills_boost
+        
+    has_quantified = False
+    for issue in issues:
+        if "metric" in issue.lower() or "quantified" in issue.lower() or "measurable" in issue.lower():
+            plan.append({
+                "priority": 2,
+                "action": "Quantify bullet points with data/percentages",
+                "impact": "+15% Gain",
+                "type": "QUANTIFICATION"
+            })
+            estimated_boost += 15
+            has_quantified = True
+            break
+
+    if score < 75:
+        plan.append({
+            "priority": 3,
+            "action": "Add 1 detailed technical project section",
+            "impact": "+12% Gain",
+            "type": "PROJECTS"
+        })
+        estimated_boost += 12
+
+    return {
+        "steps": plan[:3],
+        "target_score": min(98, score + estimated_boost)
+    }
+
+from .utils.audit_engine import ResumeAuditEngine
+
+@csrf_exempt
+def analyze_resume_simple_view(request):
+    """
+    Quality Audit Engine (Real ML):
+    Audits Structure, Language, Impact, and ATS Compatibility.
+    """
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    
+    upload = request.FILES.get("resume")
+    if not upload:
+        return JsonResponse({"error": "No file provided"}, status=400)
+    
+    try:
+        text, raw = _extract_text(upload)
+        
+        # Real ML Audit
+        engine = ResumeAuditEngine()
+        audit = engine.run_full_audit(text)
+        
+        # Generate the Action Plan using the audit issues
+        action_plan = _generate_action_plan(
+            audit['overall_score'], 
+            [], # Empty skills list as Scanner is Quality-only
+            audit['critical_issues']
+        )
+        
+        return JsonResponse({
+            "score": audit['overall_score'],
+            "readiness": audit['readiness'],
+            "breakdown": audit['breakdown'],
+            "issues": audit['critical_issues'][:5], # Top 5 primary issues
+            "summary": audit['summary'],
+            "action_plan": action_plan,
+            "extracted_text": text
+        })
+    except Exception as e:
+        logger.error(f"Audit Error: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)
+
 def _extract_text(upload):
     name = (upload.name or "").lower()
     data = upload.read()
     try:
         if name.endswith(".pdf"):
-            text = ""
-            with fitz.open(stream=data, filetype="pdf") as doc:
-                for page in doc:
-                    text += page.get_text()
-            return text
+            from PyPDF2 import PdfReader
+            import io
+            reader = PdfReader(io.BytesIO(data))
+            return "\n".join((p.extract_text() or "") for p in reader.pages), data
         if name.endswith(".docx"):
+            from docx import Document
+            import io
             doc = Document(io.BytesIO(data))
-            return "\n".join(p.text for p in doc.paragraphs)
-        return data.decode(errors="ignore")
+            return "\n".join(p.text for p in doc.paragraphs), data
+        return data.decode(errors="ignore"), data
     except Exception:
-        return data.decode(errors="ignore")
+        return data.decode(errors="ignore"), data
 
 def _score_resume(text, keywords=None):
     text_raw = text or ""
@@ -948,8 +992,82 @@ def _score_resume(text, keywords=None):
     present_kw = [k for k in kws if re.search(rf"\b{re.escape(k.lower())}\b", text_low)]
     score = int(min(100, (len(present_kw) / max(1, len(kws))) * 100))
     
-    return {
-        "total": score,
-        "present": ";".join(present_kw),
-        "missing": ";".join([k for k in kws if k not in present_kw]),
-    }
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_reset_link_view(request):
+    user = request.user
+    if not user.email:
+        return Response({"error": "No email associated with this account"}, status=400)
+    
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    
+    # In a real environment, this would be a real domain
+    reset_link = f"http://localhost:5173/reset-password/{uid}/{token}"
+    
+    try:
+        send_mail(
+            subject="Candidex AI — Reset Your Password",
+            message=f"A password reset was requested for your Candidex account. Click the link below to set a new key:\n\n{reset_link}\n\nThis link will expire for your protection.",
+            from_email="security@candidex.ai",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info(f"[SECURITY] Reset link generated for {user.email}")
+        return Response({"message": "Neural reset link broadcasted to your email."})
+    except Exception as e:
+        # Fallback for dev: Log the link so we can use it
+        logger.error(f"MAIL ERROR: {str(e)}")
+        return Response({
+            "message": "Reset link generated (check server logs in dev).",
+            "dev_link": reset_link # REMOVE THIS IN PRODUCTION
+        })
+
+@api_view(['POST'])
+@permission_classes([]) # Publically accessible with token
+def reset_password_confirm_view(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = FirebaseUser.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, FirebaseUser.DoesNotExist):
+        return Response({"error": "Invalid or expired neural link."}, status=400)
+
+    if not default_token_generator.check_token(user, token):
+        return Response({"error": "Security token has expired or already been used."}, status=400)
+
+    new_password = request.data.get("password")
+    if not new_password or len(new_password) < 6:
+        return Response({"error": "New password must be at least 6 characters."}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    logger.info(f"[SECURITY] Password successfully rotated for user {uid}")
+    return Response({"message": "Neural key successfully rotated. You may now sign in."})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    user = request.user
+    current_password = request.data.get("current_password")
+    new_password = request.data.get("new_password")
+
+    if not current_password or not new_password:
+        return Response({"error": "Missing credentials"}, status=400)
+
+    # Note: If user signed in with Social, they might not have a Django password set
+    if user.has_usable_password():
+        if not user.check_password(current_password):
+            return Response({"error": "Incorrect current password"}, status=400)
+    
+    if len(new_password) < 6:
+        return Response({"error": "Password must be at least 6 characters"}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    return Response({"message": "Password updated successfully"})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def request_email_change_view(request):
+    # This would normally involve sending a verification token
+    return Response({"message": "Verification link sent to new email address. (Mock Flow)"})
