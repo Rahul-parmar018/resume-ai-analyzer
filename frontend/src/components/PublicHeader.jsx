@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const PublicHeader = () => {
   const { user, profile, loading } = useAuth();
@@ -12,11 +12,9 @@ const PublicHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
-  const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const menuRef = useRef(null);
   const aiResumeRef = useRef(null);
-  const recruiterToolsRef = useRef(null);
 
   const role = profile?.role || 'candidate';
 
@@ -24,7 +22,7 @@ const PublicHeader = () => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
       const currentScroll = window.scrollY;
-      setScrollProgress((currentScroll / totalScroll) * 100);
+      setScrollProgress((currentScroll / (totalScroll || 1)) * 100);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -56,13 +54,6 @@ const PublicHeader = () => {
     if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
     if (email) return email[0].toUpperCase();
     return "U";
-  };
-
-  const truncateEmail = (email) => {
-    if (!email) return "";
-    const [user, domain] = email.split("@");
-    if (user.length > 12) return user.substring(0, 10) + "..." + "@" + domain;
-    return email;
   };
 
   const navItems = [
@@ -144,35 +135,26 @@ const PublicHeader = () => {
                           <Link 
                             to="/resume-scanner" 
                             onClick={() => setIsAIResumeOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all font-bold text-xs"
                           >
                             <span className="material-symbols-outlined text-emerald-500">qr_code_scanner</span>
-                            <div>
-                              <p className="font-bold text-sm">Resume Scanner</p>
-                              <p className="text-[10px] text-slate-400 font-medium">Instant ATS Detection</p>
-                            </div>
+                            Resume Scanner
                           </Link>
                           <Link 
                             to="/resume-gap-analysis" 
                             onClick={() => setIsAIResumeOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all font-bold text-xs"
                           >
                             <span className="material-symbols-outlined text-emerald-500">query_stats</span>
-                            <div>
-                              <p className="font-bold text-sm">Skill Gap Analyzer</p>
-                              <p className="text-[10px] text-slate-400 font-medium">Neural JD Comparison</p>
-                            </div>
+                            Gap Analyzer
                           </Link>
                           <Link 
                             to="/resume-optimizer" 
                             onClick={() => setIsAIResumeOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all font-bold text-xs"
                           >
                             <span className="material-symbols-outlined text-emerald-500">auto_fix_high</span>
-                            <div>
-                              <p className="font-bold text-sm">Resume Optimizer</p>
-                              <p className="text-[10px] text-slate-400 font-medium">Smart AI Rewriting</p>
-                            </div>
+                            Optimizer
                           </Link>
                         </div>
                       </div>
@@ -181,18 +163,26 @@ const PublicHeader = () => {
                 );
               }
 
+              if (item.name === "Recruiter Tools") {
+                return (
+                  <div key="recruiter-dropdown" className="relative group/rec">
+                    <button className="opacity-50 cursor-not-allowed font-bold text-slate-500 text-xs flex items-center gap-1">
+                      Recruiter Tools
+                      <span className="bg-yellow-100 text-yellow-700 text-[8px] px-1 rounded uppercase">Soon</span>
+                    </button>
+                  </div>
+                )
+              }
+
               return (
                 <Link 
                   key={item.path}
                   to={item.path} 
                   className={`transition-all font-bold relative py-1 ${
-                    isActive ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+                    location.pathname === item.path ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
                   {item.name}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-400 rounded-full" />
-                  )}
                 </Link>
               );
             })}
@@ -205,60 +195,111 @@ const PublicHeader = () => {
 
           {user ? (
             <div className="hidden md:block relative" ref={menuRef}>
-               {/* User Avatar Logic (Existing) */}
-               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">
+               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black shadow-lg">
                  {getInitials(profile?.display_name || user?.displayName, user?.email)}
                </button>
+               <AnimatePresence>
+                 {isMenuOpen && (
+                   <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    className="absolute right-0 mt-3 w-64 bg-white border border-slate-100 shadow-2xl rounded-2xl py-2 z-50 overflow-hidden"
+                   >
+                     <div className="px-5 py-4 border-b border-slate-50 mb-1">
+                        <p className="text-sm font-black text-slate-900 truncate">{profile?.display_name || user?.displayName || "User"}</p>
+                        <p className="text-[10px] text-slate-400 font-medium truncate">{user.email}</p>
+                     </div>
+                     <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-5 py-3 text-xs font-bold text-rose-500 hover:bg-rose-50 transition-colors">
+                        <span className="material-symbols-outlined text-sm">logout</span> Sign Out
+                     </button>
+                   </motion.div>
+                 )}
+               </AnimatePresence>
             </div>
           ) : (
             <div className="hidden md:flex gap-4 items-center">
               <Link to="/login" className="text-slate-500 text-sm hover:text-slate-900 transition-colors font-bold px-2">Login</Link>
-              <Link to="/register" className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all">Get Started</Link>
+              <Link to="/register" className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10">Get Started</Link>
             </div>
           )}
         </div>
       </motion.div>
 
       {/* Mobile Navigation Drawer */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-white z-[100] p-8 flex flex-col gap-10 animate-in slide-in-from-right duration-300">
-          <div className="flex justify-between items-center mb-8">
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
-              <img src="/images/logo.png" alt="Logo" className="w-10 h-10" />
-              <h1 className="text-xl font-black tracking-tighter italic">Candidex <span className="text-blue-500">AI</span></h1>
-            </Link>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-slate-900">close</span>
-            </button>
-          </div>
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="md:hidden fixed inset-0 bg-white z-[100] p-8 flex flex-col gap-10 overflow-hidden"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
+                <img src="/images/logo.png" alt="Logo" className="w-10 h-10" />
+                <h1 className="text-xl font-black tracking-tighter italic">Candidex <span className="text-blue-500">AI</span></h1>
+              </Link>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm transition-all active:scale-95"
+              >
+                <span className="material-symbols-outlined text-slate-900">close</span>
+              </button>
+            </div>
 
-          <nav className="flex flex-col gap-6 overflow-y-auto pb-10">
-            <div className="space-y-4">
-              <p className="text-xs font-black text-blue-500 uppercase tracking-[0.3em]">AI Resume Suite</p>
-              <div className="flex flex-col gap-4 pl-2">
-                <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Scanner</Link>
-                <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Gap Analysis</Link>
-                <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Optimizer</Link>
+            <nav className="flex flex-col gap-6 overflow-y-auto pb-20 no-scrollbar">
+              <div className="space-y-4">
+                <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] opacity-80">AI Neural Suite</p>
+                <div className="flex flex-col gap-5 pl-1">
+                  <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-black text-slate-900 tracking-tighter hover:text-blue-600 transition-colors">Scanner</Link>
+                  <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-black text-slate-900 tracking-tighter hover:text-blue-600 transition-colors">Gap Analysis</Link>
+                  <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-black text-slate-900 tracking-tighter hover:text-blue-600 transition-colors">Optimizer</Link>
+                </div>
               </div>
-            </div>
 
-            <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-500 tracking-tighter">How it Works</Link>
-            
-            <div className="flex flex-col gap-2">
-               <div className="flex items-center gap-3">
-                  <span className="text-2xl font-black text-slate-400 tracking-tighter">Recruiter Tools</span>
-                  <span className="text-[9px] bg-yellow-400 text-black px-2 py-1 rounded-lg font-black tracking-widest leading-none">COMING SOON</span>
-               </div>
-            </div>
+              <div className="h-px bg-slate-50 w-full" />
 
-            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-500 tracking-tighter">Support</Link>
-            
-            <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
-              Product <span className="material-symbols-outlined text-2xl">arrow_outward</span>
-            </Link>
-          </nav>
-        </div>
-      )}
+              <div className="flex flex-col gap-6">
+                <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-400 hover:text-slate-900 tracking-tighter transition-colors">How it Works</Link>
+                <div className="flex flex-col gap-1">
+                   <div className="flex items-center gap-3">
+                      <span className="text-3xl font-black text-slate-300 tracking-tighter">Recruiter Tools</span>
+                      <span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-black tracking-widest leading-none">SOON</span>
+                   </div>
+                </div>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-400 hover:text-slate-900 tracking-tighter transition-colors">Support</Link>
+                
+                <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-4xl font-black text-slate-900 tracking-tighter flex items-center gap-2 group">
+                  Product 
+                  <span className="material-symbols-outlined text-4xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">arrow_outward</span>
+                </Link>
+              </div>
+
+              {user ? (
+                <div className="mt-8 p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100">
+                   <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-black">
+                        {getInitials(profile?.display_name || user?.displayName, user?.email)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900">{profile?.display_name || user?.displayName || "User"}</p>
+                        <p className="text-xs text-slate-500">{user.email}</p>
+                      </div>
+                   </div>
+                   <button onClick={handleSignOut} className="w-full py-4 bg-white border border-slate-200 rounded-2xl font-black text-rose-500 shadow-sm active:scale-[0.98] transition-all">Sign Out</button>
+                </div>
+              ) : (
+                <div className="mt-auto grid grid-cols-2 gap-4">
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="py-4 bg-white border border-slate-200 rounded-2xl font-black text-slate-900 text-center shadow-sm">Login</Link>
+                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="py-4 bg-slate-900 text-white rounded-2xl font-black text-center shadow-xl">Join</Link>
+                </div>
+              )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
