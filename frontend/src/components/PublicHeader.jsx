@@ -279,67 +279,118 @@ const PublicHeader = () => {
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300 h-screen overflow-y-auto pb-20">
-          {navItems.map((item) => {
-            if (item.name === "AI Resume") {
-              return (
-                <div key="mobile-ai-suite" className="flex flex-col gap-2">
-                  <button 
-                    onClick={() => setIsMobileAIExpanded(!isMobileAIExpanded)}
-                    className="flex items-center justify-between text-lg font-bold text-slate-900"
-                  >
-                    AI Resume
-                    <span className={`material-symbols-outlined transition-transform ${isMobileAIExpanded ? 'rotate-180' : ''}`}>expand_more</span>
-                  </button>
-                  {isMobileAIExpanded && (
-                    <div className="pl-4 flex flex-col gap-4 py-2 animate-in fade-in slide-in-from-left duration-300 border-l-2 border-slate-100 ml-1">
-                      <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
-                        <span className="material-symbols-outlined text-emerald-500 text-xl">qr_code_scanner</span>
-                        <span className="font-bold">Resume Scanner</span>
-                      </Link>
-                      <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
-                        <span className="material-symbols-outlined text-emerald-500 text-xl">query_stats</span>
-                        <span className="font-bold">Skill Gap Analyzer</span>
-                      </Link>
-                      <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 text-slate-600">
-                        <span className="material-symbols-outlined text-emerald-500 text-xl">auto_fix_high</span>
-                        <span className="font-bold">Resume Optimizer</span>
-                      </Link>
-                    </div>
-                  )}
+        <div className="md:hidden fixed inset-0 bg-white z-[60] flex flex-col animate-in slide-in-from-right duration-300">
+          {/* Mobile Drawer Header */}
+          <div className="flex justify-between items-center p-6 border-b border-slate-50">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
+              <div className="w-10 h-10">
+                <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <span className="font-heading text-xl font-black italic text-slate-900">Candidex AI</span>
+            </Link>
+            <div className="flex items-center gap-4">
+              {user && (
+                <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-black">
+                  {getInitials(profile?.display_name || user?.displayName, user?.email)}
                 </div>
-              );
-            }
-            if (item.name === "Recruiter Tools") {
-              return (
-                <div key="mobile-rec" className="flex items-center gap-3 opacity-50">
-                  <span className="text-lg font-bold text-slate-500">{item.name}</span>
-                  <span className="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
-                    COMING SOON
+              )}
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 bg-slate-50 rounded-xl">
+                <span className="material-symbols-outlined text-slate-600">close</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-8">
+            <nav className="flex flex-col gap-6">
+              {/* AI Resume Section (Expandable) */}
+              <div className="flex flex-col gap-4">
+                <button 
+                  onClick={() => setIsMobileAIExpanded(!isMobileAIExpanded)}
+                  className="flex items-center justify-between w-full group"
+                >
+                  <span className="text-xl font-black text-slate-900">AI Resume</span>
+                  <span className={`material-symbols-outlined transition-transform duration-300 ${isMobileAIExpanded ? 'rotate-180 text-emerald-500' : 'text-slate-400'}`}>
+                    expand_more
                   </span>
-                </div>
-              );
-            }
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
+                </button>
+                
+                {isMobileAIExpanded && (
+                  <div className="flex flex-col gap-4 pl-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl group active:scale-95 transition-all">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="material-symbols-outlined text-emerald-500 text-2xl">qr_code_scanner</span>
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900">Resume Scanner</p>
+                        <p className="text-xs text-slate-500">Neural ATS Detection</p>
+                      </div>
+                    </Link>
+                    <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl group active:scale-95 transition-all">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="material-symbols-outlined text-emerald-500 text-2xl">query_stats</span>
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900">Gap Analyzer</p>
+                        <p className="text-xs text-slate-500">Skill Alignment Check</p>
+                      </div>
+                    </Link>
+                    <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl group active:scale-95 transition-all">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="material-symbols-outlined text-emerald-500 text-2xl">auto_fix_high</span>
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900">AI Optimizer</p>
+                        <p className="text-xs text-slate-500">Smart Neural Rewriting</p>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Other Items */}
+              {navItems.filter(i => i.name !== "AI Resume").map((item) => (
+                <Link 
+                  key={item.path} 
+                  to={item.path} 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-xl font-black text-slate-400 hover:text-slate-900 transition-colors"
+                >
+                  {item.name}
+                  {item.name === "Recruiter Tools" && (
+                    <span className="ml-2 text-[8px] bg-yellow-400 text-black px-2 py-0.5 rounded-full uppercase tracking-widest font-black">Coming Soon</span>
+                  )}
+                </Link>
+              ))}
+
+              <Link 
+                to="/app" 
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-lg font-bold ${
-                  location.pathname === item.path ? "text-slate-900" : "text-slate-500"
-                }`}
+                className="text-xl font-black text-slate-400 flex items-center gap-2"
               >
-                {item.name}
+                Product <span className="material-symbols-outlined text-sm">arrow_outward</span>
               </Link>
-            );
-          })}
-          <Link
-            to="/app"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-lg font-bold text-slate-500 flex items-center gap-1"
-          >
-            Product <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
-          </Link>
+            </nav>
+
+            {/* Auth Buttons in Mobile Menu */}
+            {!user && (
+              <div className="pt-8 border-t border-slate-100 flex flex-col gap-4">
+                <Link 
+                  to="/login" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full py-4 text-center font-bold text-slate-600 border border-slate-200 rounded-2xl"
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full py-4 text-center font-bold text-white bg-slate-900 rounded-2xl shadow-xl shadow-slate-900/20"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>
