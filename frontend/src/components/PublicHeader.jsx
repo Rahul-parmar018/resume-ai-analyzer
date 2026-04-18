@@ -74,6 +74,7 @@ const PublicHeader = () => {
   ];
 
   return (
+    <>
     <header className="fixed top-0 w-full glass-header z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         <Link to="/" className="flex items-center gap-2 group">
@@ -276,6 +277,7 @@ const PublicHeader = () => {
           </button>
         </div>
       </div>
+    </header>
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
@@ -393,7 +395,7 @@ const PublicHeader = () => {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 };
 
