@@ -1,5 +1,4 @@
 import re
-import spacy
 import textstat
 from collections import Counter
 

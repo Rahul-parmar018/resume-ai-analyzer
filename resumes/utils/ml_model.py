@@ -1,14 +1,15 @@
 import os
 import logging
+
 os.environ["USE_TF"] = "0"
-from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
 _model = None
 
 def get_model():
-    """Lazy loader for the SentenceTransformer model."""
+    """Lazy loader for the SentenceTransformer model.
+    ALL heavy imports happen inside this function to prevent startup crashes."""
     global _model
     if _model is None:
         from sentence_transformers import SentenceTransformer
