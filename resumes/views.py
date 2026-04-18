@@ -1120,3 +1120,4 @@ def change_password_view(request):
 def request_email_change_view(request):
     # This would normally involve sending a verification token
     return Response({"message": "Verification link sent to new email address. (Mock Flow)"})
+
