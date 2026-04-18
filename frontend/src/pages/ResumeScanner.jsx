@@ -136,7 +136,7 @@ const ResumeScanner = () => {
                             {loading && (
                               <div className="absolute inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center rounded-[3rem]">
                                  <RefreshCcw className="w-12 h-12 text-emerald-500 animate-spin mb-6" />
-                                 <p className="text-slate-900 text-3xl font-black tracking-tighter uppercase italic animate-pulse tracking-tight">Checking your resume...</p>
+                                 <p className="text-slate-900 text-3xl font-black tracking-tighter uppercase italic animate-pulse tracking-tight">Checking your resume... (First run may take 30-60s)</p>
                               </div>
                             )}
                         </div>

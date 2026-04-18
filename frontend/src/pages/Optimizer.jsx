@@ -387,7 +387,7 @@ const Optimizer = () => {
                   </div>
                   <div className="text-center space-y-2">
                       <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Initializing Neural Engine</h2>
-                      <p className="text-slate-400 font-medium text-lg italic animate-pulse">Competing with 1.4M candidate data points...</p>
+                      <p className="text-slate-400 font-medium text-lg italic animate-pulse">Competing with 1.4M candidate data points... (First run may take 30-60s)</p>
                   </div>
               </div>
           )}
