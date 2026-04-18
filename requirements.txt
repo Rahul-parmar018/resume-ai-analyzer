@@ -22,3 +22,6 @@ firebase-admin
 # NLP Dependencies (Flexible)
 nltk
 spacy
+sentence-transformers
+scikit-learn
+numpy
