@@ -11,10 +11,10 @@ const PublicFooter = () => {
           {/* Brand & Socials */}
           <div className="max-w-xs">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-primary/20">
-                <span className="material-symbols-outlined text-accent text-sm">neurology</span>
+              <div className="w-10 h-10">
+                <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
               </div>
-              <p className="font-heading font-bold text-primary text-xl italic tracking-tight">Candidex AI</p>
+              <p className="font-heading font-black text-slate-950 text-xl tracking-tighter">Candidex <span className="text-blue-500 italic">AI</span></p>
             </div>
             <p className="text-sm text-secondary mb-6 leading-relaxed">
               Premium AI-powered resume intelligence for modern talent acquisition teams. Build world-class teams faster.

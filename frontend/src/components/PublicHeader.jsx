@@ -186,18 +186,29 @@ const PublicHeader = () => {
             </button>
           </div>
 
-          <nav className="flex flex-col gap-8">
-            <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-500 hover:text-slate-900 tracking-tighter">AI Resume</Link>
-            <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-500 hover:text-slate-900 tracking-tighter">How it Works</Link>
+          <nav className="flex flex-col gap-6 overflow-y-auto pb-10">
+            <div className="space-y-4">
+              <p className="text-xs font-black text-blue-500 uppercase tracking-[0.3em]">AI Resume Suite</p>
+              <div className="flex flex-col gap-4 pl-2">
+                <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Scanner</Link>
+                <Link to="/resume-gap-analysis" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Gap Analysis</Link>
+                <Link to="/resume-optimizer" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter">Optimizer</Link>
+              </div>
+            </div>
+
+            <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-500 tracking-tighter">How it Works</Link>
+            
             <div className="flex flex-col gap-2">
                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-black text-slate-400 tracking-tighter">Recruiter Tools</span>
-                  <span className="text-[10px] bg-yellow-400 text-black px-2 py-1 rounded-lg font-black tracking-widest leading-none">COMING SOON</span>
+                  <span className="text-2xl font-black text-slate-400 tracking-tighter">Recruiter Tools</span>
+                  <span className="text-[9px] bg-yellow-400 text-black px-2 py-1 rounded-lg font-black tracking-widest leading-none">COMING SOON</span>
                </div>
             </div>
-            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-500 hover:text-slate-900 tracking-tighter">Support</Link>
-            <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-3xl font-black text-slate-500 hover:text-slate-900 tracking-tighter flex items-center gap-2">
-              Product <span className="material-symbols-outlined text-3xl">arrow_outward</span>
+
+            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-500 tracking-tighter">Support</Link>
+            
+            <Link to="/resume-scanner" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
+              Product <span className="material-symbols-outlined text-2xl">arrow_outward</span>
             </Link>
           </nav>
         </div>
