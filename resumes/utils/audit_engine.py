@@ -3,12 +3,19 @@ import spacy
 import textstat
 from collections import Counter
 
-# Load a small spacy model for speed
-try:
-    nlp = spacy.load("en_core_web_sm")
-except:
-    # Fallback if model isn't downloaded (though spacy is installed)
-    nlp = None
+_nlp = None
+
+def _get_nlp():
+    """Lazy loader for the Spacy NLP model."""
+    global _nlp
+    if _nlp is None:
+        import spacy
+        try:
+            _nlp = spacy.load("en_core_web_sm")
+        except:
+            # Fallback if model isn't downloaded
+            _nlp = None
+    return _nlp
 
 class ResumeAuditEngine:
     def __init__(self):
@@ -57,6 +64,7 @@ class ResumeAuditEngine:
         }
 
     def _analyze_language(self, text):
+        nlp = _get_nlp()
         if not nlp:
             # Fallback regex-only verb check if spacy model is missing
             return self._analyze_language_fallback(text)
