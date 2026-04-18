@@ -26,14 +26,24 @@ import { useEffect } from "react";
 import "./App.css";
 
 function App() {
-  // ⚡ Early Wake-up: Ping backend on app load to reduce cold-start delay
+  // ⚡ Early Wake-up: Ping backend on app load to pre-load ML models
   useEffect(() => {
+    let retryCount = 0;
+    const MAX_RETRIES = 2;
+
     const wakeBackend = async () => {
       try {
-        await fetch(import.meta.env.VITE_API_URL + "/warmup/");
+        const response = await fetch(import.meta.env.VITE_API_URL + "/warmup/");
+        if (!response.ok) throw new Error("Warming failed");
         console.log("Neural engine warmed and ready.");
       } catch (err) {
-        console.warn("Backend still sleeping or unreachable.");
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          console.warn(`Warmup attempt ${retryCount} failed. Retrying in 5s...`);
+          setTimeout(wakeBackend, 5000);
+        } else {
+          console.error("Neural engine failed to warm up after retries. Fallback active.");
+        }
       }
     };
     wakeBackend();

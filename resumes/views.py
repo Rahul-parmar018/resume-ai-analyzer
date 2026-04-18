@@ -939,13 +939,15 @@ def analyze_resume_simple_view(request):
     try:
         text, raw = _extract_text(upload)
         
-        # Real ML Audit
         try:
+            logger.info(f"[PROCESS] Neural Audit start for {upload.name}")
             engine = ResumeAuditEngine()
             audit = engine.run_full_audit(text)
             audit["is_heuristic"] = False
+            logger.info("[PROCESS] Neural Audit success")
         except Exception as ml_err:
-            logger.error(f"ML Audit Failed: {str(ml_err)}. Falling back to heuristics.")
+            logger.warning(f"[FALLBACK] Neural engine failed or busy: {str(ml_err)}")
+            print(f"DEBUG: [FALLBACK TRIGGERED] {str(ml_err)}")
             # Heuristic Fallback (Safety net for RAM-constrained environments)
             audit = {
                 "overall_score": 65, # Safe average
@@ -988,10 +990,13 @@ def warmup_view(request):
         from .utils.ml_model import get_model
         from .utils.audit_engine import _get_nlp
         
-        logger.info("[WARMUP] Initializing Neural Engine...")
+        logger.info("[WARMUP] Neural Engine Ignition sequence started...")
+        print("DEBUG: [WARMUP] Loading Transformers...")
         get_model()  # SentenceTransformer
+        print("DEBUG: [WARMUP] Loading Spacy...")
         _get_nlp()   # Spacy
         
+        logger.info("[WARMUP] Neural Engine state: READY")
         return Response({"status": "Neural engine warmed and ready", "models": ["all-MiniLM-L6-v2", "en_core_web_sm"]})
     except Exception as e:
         logger.warning(f"[WARMUP] Partial fail: {str(e)}")
