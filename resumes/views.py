@@ -993,24 +993,36 @@ def analyze_resume_simple_view(request):
 @permission_classes([])
 def warmup_view(request):
     """
-    Force-loads all ML models into RAM to avoid first-request delay.
-    Called silently by frontend on app load.
+    Force-loads ML models into RAM sequentially to avoid RAM spikes.
+    Use ?engine=audit or ?engine=semantic to be selective.
     """
+    import gc
+    engine_type = request.GET.get('engine', 'all')
+    models_warmed = []
+    
     try:
         from .utils.ml_model import get_model
         from .utils.audit_engine import _get_nlp
         
-        logger.info("[WARMUP] Neural Engine Ignition sequence started...")
-        print("DEBUG: [WARMUP] Loading Transformers...")
-        get_model()  # SentenceTransformer
-        print("DEBUG: [WARMUP] Loading Spacy...")
-        _get_nlp()   # Spacy
+        logger.info(f"[WARMUP] Sequence started (Target: {engine_type})")
         
-        logger.info("[WARMUP] Neural Engine state: READY")
-        return Response({"status": "Neural engine warmed and ready", "models": ["all-MiniLM-L6-v2", "en_core_web_sm"]})
+        if engine_type in ['all', 'audit']:
+            logger.info("[WARMUP] Phase 1: Loading Spacy (Light Load)...")
+            _get_nlp()
+            models_warmed.append("spacy-en_core_web_sm")
+            gc.collect()
+
+        if engine_type in ['all', 'semantic']:
+            logger.info("[WARMUP] Phase 2: Loading SentenceTransformer (Heavy Load)...")
+            get_model()
+            models_warmed.append("sbert-all-MiniLM-L6-v2")
+            gc.collect()
+            
+        logger.info(f"[WARMUP] Completed. Models in RAM: {models_warmed}")
+        return Response({"status": "Warmed", "engines": models_warmed})
     except Exception as e:
-        logger.warning(f"[WARMUP] Partial fail: {str(e)}")
-        return Response({"status": "Partial warm", "error": str(e)}, status=200)
+        logger.warning(f"[WARMUP] Sequence interrupted: {str(e)}")
+        return Response({"status": "Partial", "error": str(e)}, status=200)
 
 def _extract_text(upload):
     name = (upload.name or "").lower()
