@@ -3,7 +3,7 @@ import { CheckCircle2, ArrowRight, Zap, Search, ShieldCheck } from "lucide-react
 import PublicHeader from "../../components/PublicHeader";
 import PublicFooter from "../../components/PublicFooter";
 
-const ResourceTemplate = ({ title, subtitle, content, keywords }) => {
+const ResourceTemplate = ({ title, subtitle, content, keywords, btnText = "Start Free Scan" }) => {
     return (
         <div className="bg-white min-h-screen font-body selection:bg-blue-100">
             <PublicHeader />
@@ -12,17 +12,26 @@ const ResourceTemplate = ({ title, subtitle, content, keywords }) => {
                 <div className="container mx-auto px-6">
                     {/* Hero Section */}
                     <div className="max-w-4xl mx-auto text-center mb-20">
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-6">
+                        <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-[0.85] mb-6">
                             {title}<span className="text-blue-600">.</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-slate-500 font-medium italic mb-10">
+                        <p className="text-xl md:text-2xl text-slate-500 font-medium italic mb-10 max-w-2xl mx-auto">
                             {subtitle}
                         </p>
-                        <Link to="/resume-scanner">
-                            <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-3 mx-auto">
-                                Start Free Scan <ArrowRight className="w-5 h-5" />
-                            </button>
-                        </Link>
+                        <div className="space-y-6">
+                            <Link to="/resume-scanner">
+                                <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-3 mx-auto active:scale-95">
+                                    {btnText} <ArrowRight className="w-5 h-5" />
+                                </button>
+                            </Link>
+                            
+                            {/* Trust Boost */}
+                            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> No signup required</div>
+                                <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Instant results in seconds</div>
+                                <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> 100% free resume scan</div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Content Section */}
