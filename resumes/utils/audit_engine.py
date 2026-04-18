@@ -1,6 +1,9 @@
 import re
 import textstat
+import logging
 from collections import Counter
+
+logger = logging.getLogger(__name__)
 
 _nlp = None
 
@@ -10,9 +13,11 @@ def _get_nlp():
     if _nlp is None:
         import spacy
         try:
-            _nlp = spacy.load("en_core_web_sm")
-        except:
-            # Fallback if model isn't downloaded
+            # OPTIMIZATION: Disable NER and Parser to save ~60MB RAM
+            # We only need the tagger for POS tagging (Verbs)
+            _nlp = spacy.load("en_core_web_sm", disable=["ner", "parser"])
+        except Exception as e:
+            logger.error(f"[ML] Spacy failed to load: {str(e)}")
             _nlp = None
     return _nlp
 
