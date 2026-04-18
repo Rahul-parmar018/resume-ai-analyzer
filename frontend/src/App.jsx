@@ -30,8 +30,8 @@ function App() {
   useEffect(() => {
     const wakeBackend = async () => {
       try {
-        await fetch(import.meta.env.VITE_API_URL + "/");
-        console.log("Neural engine pinged. Waking up...");
+        await fetch(import.meta.env.VITE_API_URL + "/warmup/");
+        console.log("Neural engine warmed and ready.");
       } catch (err) {
         console.warn("Backend still sleeping or unreachable.");
       }

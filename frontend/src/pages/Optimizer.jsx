@@ -185,8 +185,12 @@ const Optimizer = () => {
 
                       {error && <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-2xl text-[11px] font-black uppercase tracking-widest text-center italic">{error}</div>}
 
-                      <button onClick={handleAnalyze} className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-2xl hover:bg-slate-800 transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-4">
-                        Initialize Workbench <ArrowRight className="w-6 h-6" />
+                      <button 
+                        onClick={handleAnalyze} 
+                        disabled={loading}
+                        className={`w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-2xl transition-all shadow-2xl flex items-center justify-center gap-4 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 active:scale-95'}`}
+                      >
+                        {loading ? "Neural Analysis Processing..." : "Initialize Workbench"} <ArrowRight className="w-6 h-6" />
                       </button>
                   </div>
               </div>

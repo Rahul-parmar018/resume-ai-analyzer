@@ -943,6 +943,7 @@ def analyze_resume_simple_view(request):
         try:
             engine = ResumeAuditEngine()
             audit = engine.run_full_audit(text)
+            audit["is_heuristic"] = False
         except Exception as ml_err:
             logger.error(f"ML Audit Failed: {str(ml_err)}. Falling back to heuristics.")
             # Heuristic Fallback (Safety net for RAM-constrained environments)
@@ -950,8 +951,9 @@ def analyze_resume_simple_view(request):
                 "overall_score": 65, # Safe average
                 "readiness": "FAIR",
                 "breakdown": {"structure": 70, "language": 60, "impact": 60, "ats": 70},
-                "critical_issues": ["ML Engine Busy: Falling back to heuristic mode.", "Ensure contact info is present.", "Add more quantifiable metrics."],
-                "summary": "Heuristic Audit: The neural engine is currently warming up, but your foundational structure looks stable."
+                "critical_issues": ["Neural Engine Warming: Falling back to heuristic mode.", "Ensure contact info is present.", "Add more quantifiable metrics."],
+                "summary": "Heuristic Audit: The neural engine is currently warming up, but your foundational structure looks stable.",
+                "is_heuristic": True
             }
         
         # Generate the Action Plan using the audit issues
@@ -968,11 +970,32 @@ def analyze_resume_simple_view(request):
             "issues": audit['critical_issues'][:5], # Top 5 primary issues
             "summary": audit['summary'],
             "action_plan": action_plan,
-            "extracted_text": text
+            "extracted_text": text,
+            "is_heuristic": audit.get('is_heuristic', False)
         })
     except Exception as e:
         logger.error(f"Extraction Error: {str(e)}")
         return JsonResponse({"error": "Failed to extract text from document."}, status=500)
+
+@api_view(['GET'])
+@permission_classes([])
+def warmup_view(request):
+    """
+    Force-loads all ML models into RAM to avoid first-request delay.
+    Called silently by frontend on app load.
+    """
+    try:
+        from .utils.ml_model import get_model
+        from .utils.audit_engine import _get_nlp
+        
+        logger.info("[WARMUP] Initializing Neural Engine...")
+        get_model()  # SentenceTransformer
+        _get_nlp()   # Spacy
+        
+        return Response({"status": "Neural engine warmed and ready", "models": ["all-MiniLM-L6-v2", "en_core_web_sm"]})
+    except Exception as e:
+        logger.warning(f"[WARMUP] Partial fail: {str(e)}")
+        return Response({"status": "Partial warm", "error": str(e)}, status=200)
 
 def _extract_text(upload):
     name = (upload.name or "").lower()

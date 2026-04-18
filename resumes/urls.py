@@ -39,4 +39,5 @@ urlpatterns = [
     path('review-resume/', rv.api_review_resume, name='api_review_resume'),
     path('rewrite-resume/', views.rewrite_resume_view, name='rewrite_resume_api'),
     path('analyze-resume/', views.analyze_resume_simple_view, name='analyze_simple'),
+    path('warmup/', views.warmup_view, name='warmup'),
 ]

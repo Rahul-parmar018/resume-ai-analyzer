@@ -297,8 +297,17 @@ const ResumeScanner = () => {
                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 relative z-10">Match Score</h4>
                                  <div className="relative z-10">
                                      <div className="text-9xl font-black italic tracking-tighter leading-none select-none">{result.score}%</div>
-                                     <div className="mt-4 flex items-center justify-center gap-2 text-rose-400 font-bold uppercase text-[10px] tracking-widest">
-                                        <AlertTriangle className="w-3.5 h-3.5" /> Not enough to get shortlisted
+                                     {result.is_heuristic ? (
+                                        <div className="mt-4 flex items-center justify-center gap-2 text-amber-400 font-bold uppercase text-[9px] tracking-widest bg-amber-400/10 py-2 rounded-lg">
+                                           <RotateCcw className="w-3.5 h-3.5" /> Basic Mode (Neural warming up)
+                                        </div>
+                                     ) : (
+                                        <div className="mt-4 flex items-center justify-center gap-2 text-emerald-400 font-bold uppercase text-[9px] tracking-widest bg-emerald-400/10 py-2 rounded-lg">
+                                           <Sparkles className="w-3.5 h-3.5" /> Full Neural Audit Active
+                                        </div>
+                                     )}
+                                     <div className="mt-2 flex items-center justify-center gap-2 text-rose-400 font-bold uppercase text-[8px] tracking-[0.2em]">
+                                        <AlertTriangle className="w-3.5 h-3.5" /> High Shortlist Risk
                                      </div>
                                  </div>
                                  
