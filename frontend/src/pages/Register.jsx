@@ -27,9 +27,8 @@ const Register = () => {
     if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
     setError(""); setLoading(true);
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(user, { displayName: name });
-      navigate("/app");
+      navigate("/resume-scanner");
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };
@@ -38,7 +37,7 @@ const Register = () => {
     setError(""); setLoading(true);
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
-      navigate("/app");
+      navigate("/resume-scanner");
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };
