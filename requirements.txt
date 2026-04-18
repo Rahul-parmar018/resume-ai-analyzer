@@ -19,9 +19,11 @@ pyphen
 openai
 firebase-admin
 
-# NLP Dependencies (Flexible)
+# NLP & ML Dependencies (Hardened for Render 512MB RAM)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.0.0+cpu
+sentence-transformers==2.2.2
+scikit-learn==1.3.0
+numpy==1.25.0
 nltk
 spacy
-sentence-transformers
-scikit-learn
-numpy
