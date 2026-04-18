@@ -16,6 +16,7 @@ import CandidateTools from "./pages/CandidateTools";
 import ResumeScanner from "./pages/ResumeScanner";
 import ResumeGap from "./pages/ResumeGap";
 import ResumeFixer from "./pages/ResumeFixer";
+import RecruiterComingSoon from "./pages/RecruiterComingSoon";
 import HowItWorks from "./pages/HowItWorks";
 import AIResumeScannerLanding from "./pages/Resources/AIResumeScannerLanding";
 import ATSResumeCheckerLanding from "./pages/Resources/ATSResumeCheckerLanding";
