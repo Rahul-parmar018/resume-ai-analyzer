@@ -16,8 +16,10 @@ import CandidateTools from "./pages/CandidateTools";
 import ResumeScanner from "./pages/ResumeScanner";
 import ResumeGap from "./pages/ResumeGap";
 import ResumeFixer from "./pages/ResumeFixer";
-import RecruiterComingSoon from "./pages/RecruiterComingSoon";
 import HowItWorks from "./pages/HowItWorks";
+import AIResumeScannerLanding from "./pages/Resources/AIResumeScannerLanding";
+import ATSResumeCheckerLanding from "./pages/Resources/ATSResumeCheckerLanding";
+import ResumeScoreAILanding from "./pages/Resources/ResumeScoreAILanding";
 import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -56,6 +58,9 @@ function App() {
           {/* PUBLIC */}
           <Route path="/"          element={<Landing />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/ai-resume-scanner" element={<AIResumeScannerLanding />} />
+          <Route path="/ats-resume-checker" element={<ATSResumeCheckerLanding />} />
+          <Route path="/resume-score-ai" element={<ResumeScoreAILanding />} />
           <Route path="/pricing"   element={<Pricing />} />
           <Route path="/features"  element={<Features />} />
           <Route path="/customers" element={<Customers />} />

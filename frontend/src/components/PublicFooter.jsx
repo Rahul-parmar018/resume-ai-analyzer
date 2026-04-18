@@ -39,10 +39,10 @@ const PublicFooter = () => {
 
             <div className="space-y-4">
               <p className="font-black text-slate-900 uppercase tracking-widest text-[10px] mb-2">Resources</p>
-              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">ATS Guidelines</a>
-              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Cover Letter AI</a>
-              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Help Center</a>
-              <a href="#" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Career Blog</a>
+              <Link to="/ai-resume-scanner" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">AI Resume Scanner</Link>
+              <Link to="/ats-resume-checker" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">ATS Resume Checker</Link>
+              <Link to="/resume-score-ai" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">Resume Score AI</Link>
+              <Link to="/how-it-works" className="block text-slate-500 hover:text-emerald-500 font-medium transition-colors">How it Works</Link>
             </div>
 
             <div className="space-y-4">
