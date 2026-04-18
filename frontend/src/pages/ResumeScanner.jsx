@@ -286,17 +286,17 @@ const ResumeScanner = () => {
                        </button>
                     </header>
 
-                    <div className="max-w-6xl mx-auto px-6 py-16 space-y-24">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-16 space-y-12 sm:space-y-24">
                          
                          {/* SECTION 1 — SCORE + QUICK STATUS */}
-                         <div className="grid lg:grid-cols-12 gap-10 items-center">
-                             <div className="lg:col-span-5 bg-slate-900 text-white rounded-[3rem] p-12 text-center space-y-6 shadow-2xl relative overflow-hidden">
+                         <div className="grid lg:grid-cols-12 gap-6 sm:gap-10 items-center">
+                             <div className="lg:col-span-5 bg-slate-900 text-white rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-12 text-center space-y-6 shadow-2xl relative overflow-hidden">
                                  {/* Decorative Glow */}
                                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 blur-3xl rounded-full translate-x-12 -translate-y-12"></div>
                                  
                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 relative z-10">Match Score</h4>
                                  <div className="relative z-10">
-                                     <div className="text-9xl font-black italic tracking-tighter leading-none select-none">{result.score}%</div>
+                                     <div className="text-7xl sm:text-9xl font-black italic tracking-tighter leading-none select-none">{result.score}%</div>
                                      {result.is_heuristic ? (
                                         <div className="mt-4 flex items-center justify-center gap-2 text-amber-400 font-bold uppercase text-[9px] tracking-widest bg-amber-400/10 py-2 rounded-lg">
                                            <RotateCcw className="w-3.5 h-3.5" /> Basic Mode (Neural warming up)

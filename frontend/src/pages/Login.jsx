@@ -59,9 +59,11 @@ const Login = () => {
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #4edea3 0%, transparent 50%), radial-gradient(circle at 80% 20%, #6ffbbe 0%, transparent 40%)" }}></div>
         </div>
 
-        {/* Logo */}
-        <div className="relative z-10">
-          <span className="text-white font-headline text-2xl font-bold tracking-tighter">Candidex AI</span>
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center p-2 shadow-2xl">
+            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
+          </div>
+          <span className="text-white font-headline text-2xl font-bold tracking-tighter italic">Candidex AI</span>
         </div>
 
         {/* Testimonial */}

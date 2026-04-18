@@ -109,9 +109,9 @@ const Landing = () => {
           </motion.div>
 
           <div className="space-y-4">
-            <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-[6.5rem] font-black leading-[0.9] text-slate-900 tracking-tighter">
+            <motion.h1 variants={itemVariants} className="text-4xl sm:text-7xl lg:text-[6.5rem] font-black leading-[0.95] text-slate-900 tracking-tighter">
               AI Resume Analyzer that Gets You <br className="hidden lg:block" />
-              <span className="bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent italic">Shortlisted Faster</span>
+              <span className="bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent italic px-2">Shortlisted Faster</span>
             </motion.h1>
 
             <motion.p variants={itemVariants} className="text-slate-500 text-lg md:text-2xl leading-snug max-w-3xl mx-auto font-medium">

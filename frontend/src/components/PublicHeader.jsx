@@ -87,12 +87,12 @@ const PublicHeader = () => {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4"
       >
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-14 h-14 flex items-center justify-center transition-all group-hover:scale-110">
-            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="w-12 h-12 flex items-center justify-center transition-all group-hover:scale-105">
+            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain drop-shadow-sm" />
           </div>
-          <h1 className="font-heading text-2xl font-black tracking-tighter text-slate-950">
-            Candidex <span className="inline-block bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-500 bg-clip-text text-transparent italic px-1">AI</span>
+          <h1 className="font-heading text-2xl font-black tracking-tighter text-slate-950 italic">
+            Candidex AI
           </h1>
         </Link>
 
