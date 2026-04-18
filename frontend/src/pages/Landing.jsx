@@ -11,6 +11,7 @@ import IntelligenceEngine from "../components/IntelligenceEngine";
 import TrustSupport from "../components/TrustSupport";
 import { RecruiterShowcase, FinalCTA } from "../components/LandingSections";
 import FAQSection from "../components/FAQSection";
+import { ArrowRight } from "lucide-react";
 
 const Landing = () => {
   const { user, profile } = useAuth();
@@ -72,9 +73,9 @@ const Landing = () => {
               >
                 Upload Resume
               </button>
-              <Link to="/login">
-                <button className="bg-white border border-slate-200 px-10 py-5 rounded-2xl text-slate-900 hover:border-slate-900 transition-all font-black text-xl hover:-translate-y-1 flex items-center gap-3 group shadow-lg">
-                  <span className="material-symbols-outlined font-black group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              <Link to="/how-it-works">
+                <button className="bg-white border border-slate-200 px-10 py-5 rounded-2xl text-slate-900 hover:border-slate-800 transition-all font-black text-xl hover:-translate-y-1 flex items-center gap-3 group shadow-xl">
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                   See How It Works
                 </button>
               </Link>
