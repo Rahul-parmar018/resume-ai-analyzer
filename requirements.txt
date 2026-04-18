@@ -13,7 +13,7 @@ pymupdf
 PyPDF2
 python-docx
 textstat
-pypyphen
+pyphen
 
 # AI & Semantic Intelligence
 openai
