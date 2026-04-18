@@ -69,10 +69,9 @@ DATABASES = {
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [
-    BASE_DIR / "frontend" / "dist",
-]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+_frontend_dist = BASE_DIR / "frontend" / "dist"
+STATICFILES_DIRS = [_frontend_dist] if _frontend_dist.exists() else []
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Media files
 MEDIA_URL = '/media/'
