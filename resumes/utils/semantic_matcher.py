@@ -3,7 +3,7 @@ import numpy as np
 import re
 import hashlib
 from typing import List, Dict, Any, Tuple
-from .ml_model import model
+from .ml_model import get_model
 
 logger = logging.getLogger(__name__)
 
@@ -14,10 +14,17 @@ class SemanticRankingEngine:
     """
     
     def __init__(self):
-        self.model = model
+        # We'll use a property to access the model to ensure it's loaded lazily
+        self._model = None
         self.max_seq_length = 512  # Standard for MiniLM
         # In-memory session cache for embeddings to avoid re-computing same strings
         self._session_cache = {}
+
+    @property
+    def model(self):
+        if self._model is None:
+            self._model = get_model()
+        return self._model
 
     def get_text_hash(self, text: str) -> str:
         """Generate a stable hash for text to use as a cache key."""
