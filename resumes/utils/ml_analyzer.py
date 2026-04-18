@@ -1,8 +1,6 @@
 import re
 import json
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 # Load skills database
 SKILLS_FILE = os.path.join(os.path.dirname(__file__), "skills.json")
@@ -29,6 +27,9 @@ def extract_skills(text):
 def compute_similarity(resume, job_desc):
     """Enhanced TF-IDF Cosine Similarity with n-gram support (1,2)."""
     try:
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.metrics.pairwise import cosine_similarity
+        
         # Pre-process inputs
         resume_clean = re.sub(r'[^a-zA-Z0-9\s]', ' ', resume.lower())
         job_clean = re.sub(r'[^a-zA-Z0-9\s]', ' ', job_desc.lower())
