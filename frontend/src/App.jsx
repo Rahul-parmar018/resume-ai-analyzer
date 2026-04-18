@@ -12,6 +12,15 @@ import Onboarding from "./pages/Onboarding";
 import Pricing   from "./pages/Pricing";
 import Features  from "./pages/Features";
 import Customers from "./pages/Customers";
+import CandidateTools from "./pages/CandidateTools";
+import ResumeScanner from "./pages/ResumeScanner";
+import ResumeGap from "./pages/ResumeGap";
+import ResumeFixer from "./pages/ResumeFixer";
+import RecruiterTools from "./pages/RecruiterTools";
+import BulkScannerLanding from "./pages/BulkScannerLanding";
+import AIRankingLanding from "./pages/AIRankingLanding";
+import SemanticSearchLanding from "./pages/SemanticSearchLanding";
+import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthProvider   from "./components/AuthProvider";
@@ -29,6 +38,16 @@ function App() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/login"     element={<Login />} />
           <Route path="/register"  element={<Register />} />
+          <Route path="/ai-resume" element={<CandidateTools />} />
+          <Route path="/resume-scanner" element={<ResumeScanner />} />
+          <Route path="/resume-gap-analysis" element={<ResumeGap />} />
+          <Route path="/resume-fixer" element={<ResumeFixer />} />
+          <Route path="/resume-optimizer" element={<ResumeFixer />} />
+          <Route path="/recruiter-tools" element={<RecruiterTools />} />
+          <Route path="/bulk-scanner" element={<BulkScannerLanding />} />
+          <Route path="/ai-ranking" element={<AIRankingLanding />} />
+          <Route path="/semantic-search" element={<SemanticSearchLanding />} />
+          <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
 
           {/* ONBOARDING */}
           <Route

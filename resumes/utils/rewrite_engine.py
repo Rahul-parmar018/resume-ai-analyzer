@@ -74,13 +74,16 @@ class ResumeRewriteEngine:
         - Mention technologies if missing.
         - Keep each bullet concise (max 20 words).
         - Do NOT exaggerate or add unrealistic numbers.
-        - Return the results as a JSON array of objects with keys: "original", "improved", and "improvements" (list of strings).
+        - Return the results as a JSON array of objects with keys: 
+          "original", "improved", "improvements" (array of strings),
+          "impact_type" (one of: 'quantified', 'action_oriented', 'technical_density'),
+          "score_gain" (integer representing 5-15 point improvement).
 
         Bullets to rewrite:
         {json.dumps(bullets)}
 
         Output format:
-        {{"results": [{{"original": "...", "improved": "...", "improvements": ["..."]}}]}}
+        {{"results": [{{"original": "...", "improved": "...", "improvements": ["..."], "impact_type": "...", "score_gain": 12}}]}}
         """
 
         for attempt in range(self.max_retries):

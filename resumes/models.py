@@ -250,13 +250,31 @@ class FirebaseUser(models.Model):
     firebase_uid = models.CharField(max_length=255, unique=True, db_index=True)
     email = models.EmailField(blank=True, null=True)
     role = models.CharField(max_length=20, choices=[('candidate', 'Candidate'), ('recruiter', 'Recruiter')], null=True, blank=True)
+    # Profile Metadata
+    display_name = models.CharField(max_length=255, blank=True, null=True)
+    profile_image = models.URLField(max_length=500, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    
+    # System State
     optimization_count = models.IntegerField(default=0)
     scan_count = models.IntegerField(default=0)
     role_locked = models.BooleanField(default=False)
+    account_status = models.CharField(max_length=20, default='active', choices=[('active','Active'), ('suspended', 'Suspended'), ('deleted', 'Deleted')])
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
         return self.email or self.firebase_uid
+
+    @property
+    def is_authenticated(self):
+        """Required by DRF's IsAuthenticated permission."""
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
 
 
 class JobSession(models.Model):
@@ -283,6 +301,7 @@ class AnalysisRecord(models.Model):
     job_profile = models.JSONField(null=True, blank=True)
     score = models.IntegerField(default=0)
     rank = models.IntegerField(null=True, blank=True)
+    text_hash = models.CharField(max_length=64, blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):

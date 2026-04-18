@@ -85,3 +85,13 @@ if os.path.exists(firebase_cred_path) and not firebase_admin._apps:
 
 # ---------- Add your OpenAI key ----------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
+# Django Rest Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'resumes.auth_backend.FirebaseAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}

@@ -32,8 +32,18 @@ const Login = () => {
   const handleGoogle = async () => {
     setError(""); setLoading(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-      navigate("/app");
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      
+      // IDENTITY STABILIZATION: Force a token refresh to wake up the backend
+      const token = await result.user.getIdToken(true);
+      
+      // Briefly wait for AuthProvider to catch up
+      setTimeout(() => {
+        navigate("/app");
+      }, 500);
+      
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };

@@ -9,18 +9,31 @@ export const getScoreColor = (score) => {
   return "red";
 };
 
-export const getScoreColorClass = (score) => {
+export const getScoreColorClass = (score, mode = "all") => {
   const color = getScoreColor(score);
-  switch (color) {
-    case "green":
-      return "text-green-600 bg-green-50 border-green-100";
-    case "yellow":
-      return "text-amber-600 bg-amber-50 border-amber-100";
-    case "red":
-      return "text-red-600 bg-red-50 border-red-100";
-    default:
-      return "text-slate-600 bg-slate-50 border-slate-100";
-  }
+  const classes = {
+    green: {
+      text: "text-emerald-600",
+      bg: "bg-emerald-50",
+      border: "border-emerald-100",
+      all: "text-emerald-600 bg-emerald-50 border-emerald-100"
+    },
+    yellow: {
+      text: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-100",
+      all: "text-amber-600 bg-amber-50 border-amber-100"
+    },
+    red: {
+      text: "text-rose-600",
+      bg: "bg-rose-50",
+      border: "border-rose-100",
+      all: "text-rose-600 bg-rose-50 border-rose-100"
+    }
+  };
+
+  const selected = classes[color] || { text: "text-slate-600", bg: "bg-slate-50", border: "border-slate-100", all: "text-slate-600 bg-slate-50 border-slate-100" };
+  return selected[mode] || selected.all;
 };
 
 export const getScoreBorderClass = (score) => {
