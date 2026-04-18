@@ -108,34 +108,40 @@ const Landing = () => {
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none">Neural Matching v4.0 Active</span>
           </motion.div>
 
-          <div className="space-y-4">
-            <motion.h1 variants={itemVariants} className="text-4xl sm:text-7xl lg:text-[6.5rem] font-black leading-[0.95] text-slate-900 tracking-tighter">
-              AI Resume Analyzer that Gets You <br className="hidden lg:block" />
+          <div className="space-y-6">
+            <motion.h1 
+              variants={itemVariants} 
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter text-slate-900 leading-[1.1] sm:leading-[1.05]"
+            >
+              AI Resume Analyzer that Gets You <br className="hidden md:block" />
               <span className="bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent italic px-2">Shortlisted Faster</span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-slate-500 text-lg md:text-2xl leading-snug max-w-3xl mx-auto font-medium">
-              Analyze your resume, identify gaps, and improve it with AI — <span className="text-slate-900 border-b-4 border-emerald-500/10">calibrated to real recruiter intent.</span>
+            <motion.p 
+              variants={itemVariants} 
+              className="text-slate-500 text-base sm:text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto font-medium px-4"
+            >
+              Analyze your resume, identify gaps, and improve it with AI — <span className="text-slate-900 border-b-4 border-emerald-500/10 italic">calibrated to real recruiter intent.</span>
             </motion.p>
           </div>
 
-          <motion.div variants={itemVariants} className="flex flex-col items-center gap-6 pt-4 relative z-20">
-            <div className="flex gap-4 justify-center flex-wrap">
+          <motion.div variants={itemVariants} className="flex flex-col items-center gap-6 pt-4 relative z-20 px-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md sm:max-w-none">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleUploadClick}
-                className="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black text-xl hover:bg-slate-800 transition-all shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]"
+                className="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black text-lg sm:text-xl hover:bg-slate-800 transition-all shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]"
               >
                 Upload Resume
               </motion.button>
-              <Link to="/how-it-works">
+              <Link to="/how-it-works" className="w-full sm:w-auto">
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-white border-2 border-slate-100 px-10 py-5 rounded-[2rem] text-slate-900 hover:border-slate-800 transition-all font-black text-xl flex items-center gap-4 group shadow-xl"
+                  className="w-full bg-white border-2 border-slate-100 px-10 py-5 rounded-[2rem] text-slate-900 hover:border-slate-800 transition-all font-black text-lg sm:text-xl flex items-center justify-center gap-4 shadow-xl"
                 >
-                  <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight className="w-7 h-7" />
                   See Proof
                 </motion.button>
               </Link>

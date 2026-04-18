@@ -78,16 +78,16 @@ const ResumeScanner = () => {
             <PublicHeader />
 
             {/* 01. HERO - LIVED EXPERIENCE */}
-            <section className="pt-48 pb-20 px-6 bg-white text-center">
-                <div className="max-w-6xl mx-auto space-y-12 animate-fade-in relative z-10">
-                    <div className="space-y-8">
-                        <h1 className="text-6xl md:text-9xl font-black leading-none text-slate-900 tracking-tighter">
+            <section className="pt-32 sm:pt-48 pb-20 px-4 sm:px-6 bg-white text-center">
+                <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 animate-fade-in relative z-10">
+                    <div className="space-y-6">
+                        <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black leading-[1.1] sm:leading-none text-slate-900 tracking-tighter">
                             50 Applications. <br />
                             <span className="inline-block bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent italic px-2">Zero Replies?</span>
                         </h1>
-                        <p className="text-slate-500 text-xl md:text-3xl leading-tight max-w-4xl mx-auto font-medium">
+                        <p className="text-slate-500 text-base sm:text-xl md:text-3xl leading-relaxed sm:leading-tight max-w-4xl mx-auto font-medium px-4">
                             You apply. You wait. Nothing. Still no feedback. <br className="hidden md:block" /> 
-                            <span className="text-slate-900 font-bold underline decoration-emerald-500/30">We show you exactly why recruiters are ignoring you in 10 seconds.</span>
+                            <span className="text-slate-900 font-bold underline decoration-emerald-500/30 italic">We show you exactly why recruiters are ignoring you in 10 seconds.</span>
                         </p>
                     </div>
 
@@ -99,44 +99,45 @@ const ResumeScanner = () => {
                           onDragLeave={() => setIsDragging(false)}
                           onDrop={(e) => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); }}
                           onClick={() => !loading && fileInputRef.current?.click()}
-                          className={`relative w-full max-w-3xl border-2 border-dashed rounded-[3.5rem] p-20 transition-all duration-700 ${
+                          className={`relative w-full max-w-3xl border-2 border-dashed rounded-[2.5rem] sm:rounded-[3.5rem] p-8 sm:p-20 transition-all duration-700 ${
                             isDragging ? "border-emerald-500 bg-emerald-50 scale-[1.01]" : "border-slate-200 bg-slate-50/20 hover:border-emerald-400 group shadow-[0_40px_100px_-40px_rgba(0,0,0,0.1)]"
                           } ${loading ? "opacity-50" : "cursor-pointer"}`}
                         >
                             {/* Visual Trust Badge */}
-                            <div className="absolute top-8 right-8 flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
+                            <div className="absolute top-4 sm:top-8 right-4 sm:right-8 flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full">
                                 <Lock className="w-3 h-3 text-emerald-500" />
-                                <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest">PDF Processed Locally</span>
+                                <span className="text-[8px] font-black uppercase text-emerald-600 tracking-widest">Processed Locally</span>
                             </div>
 
                             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.docx,.txt" />
-                            <FileText className={`w-14 h-14 mx-auto mb-10 transition-colors ${file ? "text-emerald-500" : "text-slate-200 group-hover:text-emerald-500 font-black"}`} />
+                            <FileText className={`w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-6 sm:mb-10 transition-colors ${file ? "text-emerald-500" : "text-slate-200 group-hover:text-emerald-500 font-black"}`} />
                             
                             <div className="space-y-3">
-                                <h3 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">{file ? file.name : "Start Your Free Scan"}</h3>
-                                <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-[9px]">
+                                <h3 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tighter uppercase italic break-all">{file ? file.name : "Start Your Free Scan"}</h3>
+                                <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-[8px] sm:text-[9px]">
                                     Takes less than 10 seconds • No signup required
                                 </p>
                             </div>
 
                             {file && !loading ? (
-                                <button onClick={(e) => { e.stopPropagation(); handleAnalyze(); }} className="mt-12 w-full max-w-sm bg-slate-900 text-white px-10 py-6 rounded-3xl font-black text-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-4 mx-auto shadow-2xl">
+                                <button onClick={(e) => { e.stopPropagation(); handleAnalyze(); }} className="mt-8 sm:mt-12 w-full max-w-sm bg-slate-900 text-white px-10 py-5 sm:py-6 rounded-2xl sm:rounded-3xl font-black text-xl sm:text-2xl hover:bg-slate-800 transition-all flex items-center justify-center gap-4 mx-auto shadow-2xl">
                                     Analyze PDF →
                                 </button>
                             ) : !loading && (
                                 <div className="mt-10 flex flex-col items-center gap-4">
                                     <div className="flex items-center gap-2">
                                         <Sparkles className="w-4 h-4 text-emerald-500 underline" />
-                                        <span className="text-emerald-500 font-black text-xs uppercase tracking-widest">Click or Drop PDF here</span>
+                                        <span className="text-emerald-500 font-black text-[10px] sm:text-xs uppercase tracking-widest">Click or Drop PDF here</span>
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 italic">Most resumes we scan miss 2–3 critical recruiter signals.</p>
+                                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 italic px-4">Most resumes we scan miss 2–3 critical recruiter signals.</p>
                                 </div>
                             )}
 
                             {loading && (
-                              <div className="absolute inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center rounded-[3rem]">
-                                 <RefreshCcw className="w-12 h-12 text-emerald-500 animate-spin mb-6" />
-                                 <p className="text-slate-900 text-3xl font-black tracking-tighter uppercase italic animate-pulse tracking-tight">Checking your resume... (First run may take 30-60s)</p>
+                              <div className="absolute inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center rounded-[2.5rem] sm:rounded-[3rem] p-6 text-center">
+                                 <RefreshCcw className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 animate-spin mb-4 sm:mb-6" />
+                                 <p className="text-slate-900 text-xl sm:text-3xl font-black tracking-tighter uppercase italic animate-pulse">Checking your resume...</p>
+                                 <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-2">(Neural engine warming up)</p>
                               </div>
                             )}
                         </div>
