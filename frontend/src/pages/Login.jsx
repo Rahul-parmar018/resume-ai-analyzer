@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -92,7 +93,12 @@ const Login = () => {
           <Link to="/register" className="text-sm font-semibold text-primary">Sign up</Link>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-24 py-12 max-w-2xl mx-auto w-full">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-24 py-12 max-w-2xl mx-auto w-full"
+        >
           <div className="mb-12">
             <h1 className="font-headline text-3xl lg:text-4xl font-bold text-primary tracking-tight mb-3">Welcome back</h1>
             <p className="text-on-surface-variant font-medium">Continue your journey toward architectural career precision.</p>
@@ -176,7 +182,7 @@ const Login = () => {
               <Link to="/register" className="text-primary font-bold hover:underline ml-1">Sign up for free</Link>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         <footer className="p-8 mt-auto border-t border-outline-variant/10">
           <div className="max-w-2xl mx-auto flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2">

@@ -11,7 +11,37 @@ import IntelligenceEngine from "../components/IntelligenceEngine";
 import TrustSupport from "../components/TrustSupport";
 import { RecruiterShowcase, FinalCTA } from "../components/LandingSections";
 import FAQSection from "../components/FAQSection";
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+
+// Advanced Motion Orchestration
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+  }
+};
+
+const sectionReveal = {
+  initial: { opacity: 0, y: 50 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-100px" },
+  transition: { duration: 1, ease: "easeOut" }
+};
 
 const Landing = () => {
   const { user, profile } = useAuth();
@@ -39,84 +69,122 @@ const Landing = () => {
     <div className="bg-white text-primary font-sans min-h-screen">
       <PublicHeader />
 
-      {/* 1. HERO SECTION (100vh - Full Impact) */}
-      <section className="h-screen flex flex-col justify-center pt-20 pb-10 px-6 relative overflow-hidden bg-white">
-        {/* Background Textures */}
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[radial-gradient(circle_at_20%_20%,#10b9811a_0%,transparent_50%)] -z-10 animate-pulse"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(#f1f5f9_1px,transparent_1px)] [background-size:40px_40px] opacity-40 -z-20"></div>
+      {/* 1. HERO SECTION (Aggressively Optimized for 100% Viewport) */}
+      <section className="min-h-screen flex flex-col pt-12 pb-12 px-6 relative overflow-hidden bg-white">
+        {/* Advanced Parallax Background */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+            x: [0, 50, 0] 
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-500/5 blur-[120px] -z-10"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.3, 1],
+            rotate: [0, -90, 0],
+            x: [0, -50, 0] 
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-500/5 blur-[120px] -z-10"
+        />
         
-        <div className="max-w-[1100px] mx-auto text-center space-y-10 relative">
-          {/* Neural CSS Fix - Glass Chip Badge */}
-          <div className="inline-flex items-center gap-3 bg-slate-50 border border-slate-200 backdrop-blur-md rounded-full px-5 py-2 shadow-sm animate-fade-in mb-4">
+        <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:48px_48px] opacity-30 -z-20"></div>
+        
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-[1200px] mx-auto text-center space-y-10 relative"
+        >
+          {/* Neural Chip with Entrance Pulse */}
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-3 bg-slate-50 border border-slate-200 backdrop-blur-md rounded-full px-5 py-2 shadow-sm mb-4">
             <span className="relative flex h-2 w-2">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none">Neural Matching v4.0 is Live</span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none">Neural Matching v4.0 Active</span>
+          </motion.div>
+
+          <div className="space-y-4">
+            <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-[6.5rem] font-black leading-[0.9] text-slate-900 tracking-tighter">
+              AI Resume Analyzer that Gets You <br className="hidden lg:block" />
+              <span className="bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent italic">Shortlisted Faster</span>
+            </motion.h1>
+
+            <motion.p variants={itemVariants} className="text-slate-500 text-lg md:text-2xl leading-snug max-w-3xl mx-auto font-medium">
+              Analyze your resume, identify gaps, and improve it with AI — <span className="text-slate-900 border-b-4 border-emerald-500/10">calibrated to real recruiter intent.</span>
+            </motion.p>
           </div>
 
-          <div className="space-y-6">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] text-slate-900 tracking-tighter animate-[fade-slide_1s_ease-out_forwards]">
-              AI Resume Analyzer that Gets You <span className="bg-gradient-to-r from-emerald-500 to-blue-500 bg-clip-text text-transparent">Shortlisted Faster</span>
-            </h1>
-
-            <p className="text-slate-500 text-lg md:text-2xl leading-relaxed max-w-3xl mx-auto font-medium">
-              Analyze your resume, identify gaps, and improve it with AI — calibrated to real job requirements.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center gap-6 pt-6 relative z-20">
+          <motion.div variants={itemVariants} className="flex flex-col items-center gap-6 pt-4 relative z-20">
             <div className="flex gap-4 justify-center flex-wrap">
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleUploadClick}
-                className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-slate-800 transition-all shadow-2xl shadow-slate-900/10 hover:-translate-y-1"
+                className="bg-slate-900 text-white px-10 py-5 rounded-[2rem] font-black text-xl hover:bg-slate-800 transition-all shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]"
               >
                 Upload Resume
-              </button>
+              </motion.button>
               <Link to="/how-it-works">
-                <button className="bg-white border border-slate-200 px-10 py-5 rounded-2xl text-slate-900 hover:border-slate-800 transition-all font-black text-xl hover:-translate-y-1 flex items-center gap-3 group shadow-xl">
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                  See How It Works
-                </button>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white border-2 border-slate-100 px-10 py-5 rounded-[2rem] text-slate-900 hover:border-slate-800 transition-all font-black text-xl flex items-center gap-4 group shadow-xl"
+                >
+                  <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
+                  See Proof
+                </motion.button>
               </Link>
             </div>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-40 z-10">
-           <span className="material-symbols-outlined text-4xl">expand_more</span>
-        </div>
-
-        {/* Elite Fade */}
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none"></div>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* 2. LIVE AI SIMULATION (Explicit w-full wrapper to fix white gap) */}
-      <div className="w-full bg-slate-900 overflow-hidden relative z-20">
+      {/* 2. LIVE AI SIMULATION (Now with seamless dark transition) */}
+      <div className="w-full bg-slate-950 -mt-1 relative z-20 border-t border-white/5">
         <LiveSimulation />
       </div>
 
-      {/* 3. TRUST + STATS */}
-      <TrustedEcosystem />
+      {/* 3. TRUST + STATS (Bridging White/Dark) */}
+      <div className="relative bg-white pt-24">
+         <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-slate-950 to-white"></div>
+         <TrustedEcosystem />
+      </div>
 
-      {/* 4. ATS INTELLIGENCE (Logic) */}
-      <ATSIntelligence />
+      {/* 4. ATS INTERNAL (Terminal) */}
+      <motion.div {...sectionReveal}>
+        <ATSIntelligence />
+      </motion.div>
 
       {/* 5. AI ENGINE (Rewriting) */}
-      <IntelligenceEngine />
-
+      {/* 5. AI ENGINE (Rewriting) */}
+      <motion.div {...sectionReveal}>
+        <IntelligenceEngine />
+      </motion.div>
+      
       {/* 6. REVIEWS (Social Proof Grid) */}
-      <ReviewSection />
-
+      <motion.div {...sectionReveal}>
+        <ReviewSection />
+      </motion.div>
+      
       {/* 7. RECRUITER SHOWCASE */}
-      <RecruiterShowcase />
-
+      <motion.div {...sectionReveal}>
+        <RecruiterShowcase />
+      </motion.div>
+      
       {/* 8. HUMAN SUPPORT (TRUST IMAGE) */}
-      <TrustSupport />
-
+      <motion.div {...sectionReveal}>
+        <TrustSupport />
+      </motion.div>
+      
       {/* 9. FAQ Section */}
-      <FAQSection />
+      <motion.div {...sectionReveal}>
+        <FAQSection />
+      </motion.div>
 
       {/* 10. FINAL CTA */}
       <div className="relative">

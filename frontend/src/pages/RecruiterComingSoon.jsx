@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Stacks, MessageSquareSearch, UsersRound, Mail, ArrowRight } from "lucide-react";
+import { Layers, Search, Users, Mail, ArrowRight } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 
@@ -15,7 +15,12 @@ const RecruiterComingSoon = () => {
                 {/* Background Ambient Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] -z-10 rounded-full"></div>
 
-                <div className="max-w-3xl w-full text-center space-y-12">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="max-w-3xl w-full text-center space-y-12"
+                >
                      <div className="space-y-4">
                         <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-full text-indigo-400">
                              <span className="relative flex h-2 w-2">
@@ -34,19 +39,37 @@ const RecruiterComingSoon = () => {
                         </p>
                      </div>
 
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <motion.div 
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: { opacity: 0 },
+                            visible: {
+                                opacity: 1,
+                                transition: { staggerChildren: 0.1 }
+                            }
+                        }}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                     >
                         {[
-                            { icon: <MessageSquareSearch />, name: "Semantic Search", info: "Natural language talent discovery" },
-                            { icon: <Stacks />, name: "Bulk Analysis", info: "Auto-scan 100+ candidates" },
-                            { icon: <UsersRound />, name: "Neural Ranking", info: "Score by job description fit" }
+                            { icon: <Search />, name: "Semantic Search", info: "Natural language talent discovery" },
+                            { icon: <Layers />, name: "Bulk Analysis", info: "Auto-scan 100+ candidates" },
+                            { icon: <Users />, name: "Neural Ranking", info: "Score by job description fit" }
                         ].map((feat, i) => (
-                            <div key={i} className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl text-left space-y-3">
+                            <motion.div 
+                                key={i} 
+                                variants={{
+                                    hidden: { opacity: 0, scale: 0.9 },
+                                    visible: { opacity: 1, scale: 1 }
+                                }}
+                                className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl text-left space-y-3"
+                            >
                                 <div className="text-indigo-500">{feat.icon}</div>
                                 <h3 className="font-bold text-sm text-white">{feat.name}</h3>
                                 <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{feat.info}</p>
-                            </div>
+                            </motion.div>
                         ))}
-                     </div>
+                     </motion.div>
 
                      <div className="pt-10 flex flex-col items-center gap-8">
                         <div className="w-full max-w-md bg-white/[0.03] border border-white/10 p-2 rounded-2xl flex items-center shadow-2xl">
@@ -55,9 +78,13 @@ const RecruiterComingSoon = () => {
                                 placeholder="Enter email for early access" 
                                 className="bg-transparent flex-1 px-4 py-3 outline-none text-sm font-medium"
                              />
-                             <button className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all flex items-center gap-2">
+                             <motion.button 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all flex items-center gap-2"
+                             >
                                 Join Waitlist <ArrowRight className="w-4 h-4" />
-                             </button>
+                             </motion.button>
                         </div>
 
                         <div className="space-y-4">
@@ -72,7 +99,7 @@ const RecruiterComingSoon = () => {
                             </p>
                         </div>
                      </div>
-                </div>
+                </motion.div>
             </main>
 
             <PublicFooter />

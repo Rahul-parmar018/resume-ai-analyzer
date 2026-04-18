@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const IntelligenceEngine = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -100,13 +101,22 @@ const IntelligenceEngine = () => {
                     <div className="h-px bg-white/5 w-full"></div>
                     <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest block">Neural_Mapping_Engine</span>
                     
-                    <div className="space-y-1">
-                       <p className="text-3xl lg:text-5xl font-black text-white leading-none tracking-tighter">
-                          Actionable <br/>
-                          <span className="text-emerald-400">Decision Tree</span>
-                       </p>
-                       <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.2em] pt-4">Status: Finalized</p>
-                    </div>
+                    <AnimatePresence mode="wait">
+                      <motion.div 
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-1"
+                      >
+                         <p className="text-3xl lg:text-5xl font-black text-white leading-none tracking-tighter">
+                            {tabs[activeTab].title.split(' ')[0]} <br/>
+                            <span className="text-emerald-400">{tabs[activeTab].title.split(' ').slice(1).join(' ')}</span>
+                         </p>
+                         <p className="text-[9px] text-slate-600 font-bold uppercase tracking-[0.2em] pt-4">Status: Finalized</p>
+                      </motion.div>
+                    </AnimatePresence>
                  </div>
 
                  {/* Corner Accent */}

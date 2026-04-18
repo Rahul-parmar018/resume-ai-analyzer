@@ -8,24 +8,40 @@ import {
   CheckCircle2,
   TrendingUp,
   Target,
-  ShieldEllipsis,
-  Clock3,
-  MousePointer2,
+  Shield,
+  Clock,
+  MousePointer,
   Sparkles,
   Layout,
-  MessageSquareQuote,
+  MessageSquare,
   Lock,
   RotateCcw,
   XCircle,
   AlertTriangle,
-  ShieldAlert,
+  AlertCircle,
   ArrowRight,
   FileDown
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useResumeStore } from "../store/useResumeStore";
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVar = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+};
 
 const ResumeScanner = () => {
     const { setScanResult } = useResumeStore();
@@ -65,9 +81,9 @@ const ResumeScanner = () => {
             <section className="pt-48 pb-20 px-6 bg-white text-center">
                 <div className="max-w-6xl mx-auto space-y-12 animate-fade-in relative z-10">
                     <div className="space-y-8">
-                        <h1 className="text-6xl md:text-9xl font-black leading-[0.85] text-slate-900 tracking-tighter">
+                        <h1 className="text-6xl md:text-9xl font-black leading-none text-slate-900 tracking-tighter">
                             50 Applications. <br />
-                            <span className="bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent italic">Zero Replies?</span>
+                            <span className="inline-block bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent italic px-2">Zero Replies?</span>
                         </h1>
                         <p className="text-slate-500 text-xl md:text-3xl leading-tight max-w-4xl mx-auto font-medium">
                             You apply. You wait. Nothing. Still no feedback. <br className="hidden md:block" /> 
@@ -137,19 +153,25 @@ const ResumeScanner = () => {
             <section className="py-32 bg-slate-50 border-y border-slate-100">
                 <div className="max-w-7xl mx-auto px-6">
                     <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic text-center mb-24">How we help you get shortlisted</h2>
-                    <div className="grid md:grid-cols-3 gap-20">
+                    <motion.div 
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        className="grid md:grid-cols-3 gap-20"
+                    >
                         {[
                             { title: 'Resume Audit', desc: 'We compare your resume with real job descriptions and resumes that successfully get shortlisted.', icon: <Search className="w-6 h-6 text-emerald-500" /> },
                             { title: 'Gap Discovery', desc: 'Identify the exact reasons why your resume is being filtered out by automated screening software.', icon: <Zap className="w-6 h-6 text-blue-500" /> },
                             { title: 'The Fix-Plan', desc: 'Get a prioritized list of changes to make your experience sound stronger and more relevant to recruiters.', icon: <CheckCircle2 className="w-6 h-6 text-purple-500" /> },
                         ].map(item => (
-                            <div key={item.title} className="space-y-6 text-center">
+                            <motion.div key={item.title} variants={itemVar} className="space-y-6 text-center">
                                 <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-sm border border-slate-100">{item.icon}</div>
                                 <h4 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">{item.title}</h4>
                                 <p className="text-base font-medium text-slate-400 leading-relaxed max-w-[280px] mx-auto">{item.desc}</p>
-                            </div>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -164,7 +186,7 @@ const ResumeScanner = () => {
                         <p className="text-xl text-slate-500 font-medium italic">We don't give you a generic score. We provide the same clinical feedback a professional recruiter would give you during a resume review.</p>
                         <div className="pt-6 border-t border-slate-100">
                              <div className="flex items-center gap-4">
-                                 <MessageSquareQuote className="w-8 h-8 text-blue-500 opacity-20" />
+                                 <MessageSquare className="w-8 h-8 text-blue-500 opacity-20" />
                                  <p className="text-sm font-black text-slate-400 uppercase tracking-widest italic">"Most resumes miss 2-3 sector-specific keywords."</p>
                              </div>
                         </div>
@@ -307,7 +329,7 @@ const ResumeScanner = () => {
                                      ].map((issue, idx) => (
                                          <div key={idx} className="flex items-center gap-5 p-5 bg-slate-50 border border-slate-100 rounded-[1.5rem] group hover:border-rose-500 transition-all translate-x-0 hover:translate-x-2">
                                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${issue.status === 'critical' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>
-                                                 {issue.status === 'critical' ? <XCircle className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
+                                                 {issue.status === 'critical' ? <XCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                                              </div>
                                              <div>
                                                  <p className="text-sm font-black text-slate-900 uppercase italic truncate">{issue.label}</p>

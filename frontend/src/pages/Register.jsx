@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -88,7 +89,12 @@ const Register = () => {
 
       {/* Right: Registration Form */}
       <section className="w-full md:w-1/2 lg:w-2/5 bg-white flex items-center justify-center p-8 sm:p-12 lg:p-20">
-        <div className="w-full max-w-md space-y-10">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="w-full max-w-md space-y-10"
+        >
 
           {/* Header */}
           <div className="space-y-3">
@@ -197,7 +203,7 @@ const Register = () => {
               <Link to="/login" className="text-primary font-bold ml-1 hover:underline underline-offset-4">Sign In</Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Toast */}

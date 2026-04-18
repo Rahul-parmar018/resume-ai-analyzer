@@ -3,57 +3,40 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { motion } from "framer-motion";
 
 const PublicHeader = () => {
   const { user, profile, loading } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
+  const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const menuRef = useRef(null);
+  const aiResumeRef = useRef(null);
+  const recruiterToolsRef = useRef(null);
 
-  // Scroll Progress Logic
+  const role = profile?.role || 'candidate';
+
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalScroll) * 100;
-      setScrollProgress(progress);
+      const currentScroll = window.scrollY;
+      setScrollProgress((currentScroll / totalScroll) * 100);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
-  const role = profile?.role || 'candidate';
 
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "How It Works", path: "/how-it-works" },
-    { name: "Features", path: "/features" },
-    { name: "AI Resume", path: "/ai-resume" },
-    { name: "Recruiter Tools", path: "/recruiter-tools" },
-    { name: "Pricing", path: "/pricing" },
-  ];
-
-  // Helper: Initials for avatar
-  const getInitials = (name, email) => {
-    if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-    return email ? email.substring(0, 2).toUpperCase() : "U";
-  };
-
-  // Helper: Secure Email Truncation
-  const truncateEmail = (email) => {
-    if (!email) return "";
-    const [userStr, domain] = email.split("@");
-    if (userStr.length <= 4) return `${userStr}****@${domain}`;
-    return `${userStr.substring(0, 4)}****@${domain}`;
-  };
-
-  // Click outside to close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
+      }
+      if (aiResumeRef.current && !aiResumeRef.current.contains(event.target)) {
+        setIsAIResumeOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -63,31 +46,31 @@ const PublicHeader = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      setIsMenuOpen(false);
       navigate("/");
     } catch (error) {
       console.error("Sign out error", error);
     }
   };
 
-  const [isAIResumeOpen, setIsAIResumeOpen] = useState(false);
-  const [isRecruiterToolsOpen, setIsRecruiterToolsOpen] = useState(false);
-  const aiResumeRef = useRef(null);
-  const recruiterToolsRef = useRef(null);
+  const getInitials = (name, email) => {
+    if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+    if (email) return email[0].toUpperCase();
+    return "U";
+  };
 
-  // Close dropdowns on click outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (aiResumeRef.current && !aiResumeRef.current.contains(event.target)) {
-        setIsAIResumeOpen(false);
-      }
-      if (recruiterToolsRef.current && !recruiterToolsRef.current.contains(event.target)) {
-        setIsRecruiterToolsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const truncateEmail = (email) => {
+    if (!email) return "";
+    const [user, domain] = email.split("@");
+    if (user.length > 12) return user.substring(0, 10) + "..." + "@" + domain;
+    return email;
+  };
+
+  const navItems = [
+    { name: "AI Resume", path: "#" }, 
+    { name: "How it Works", path: "/how-it-works" },
+    { name: "Recruiter Tools", path: "/recruiter-tools" },
+    { name: "Support", path: "/contact" }
+  ];
 
   if (loading) return null;
 
@@ -98,8 +81,12 @@ const PublicHeader = () => {
         className="absolute top-0 left-0 h-[2px] bg-emerald-400 transition-all duration-150 z-[60]" 
         style={{ width: `${scrollProgress}%` }}
       />
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-
+      <motion.div 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4"
+      >
         <Link to="/" className="flex items-center gap-3 group">
           <div className="w-14 h-14 flex items-center justify-center transition-all group-hover:scale-110">
             <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
@@ -118,11 +105,7 @@ const PublicHeader = () => {
               return (
                 <div key="ai-resume-dropdown" className="relative group/ai" ref={aiResumeRef}>
                   <button 
-                    onClick={() => setIsAIResumeOpen(!isAIResumeOpen)}
-                    onMouseEnter={() => {
-                      setIsAIResumeOpen(true);
-                      setIsRecruiterToolsOpen(false);
-                    }}
+                    onMouseEnter={() => setIsAIResumeOpen(true)}
                     className={`transition-all font-bold flex items-center gap-1 py-1 ${
                       isActive || isAIResumeOpen ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
                     }`}
@@ -185,14 +168,14 @@ const PublicHeader = () => {
               return (
                 <div key="recruiter-tools-dropdown" className="relative group/rec" ref={recruiterToolsRef}>
                   <button 
-                    className="transition-all font-bold flex items-center gap-2 py-1 text-slate-400 cursor-not-allowed opacity-70"
+                    disabled
+                    className="opacity-50 cursor-not-allowed relative transition-all font-bold flex items-center gap-2 py-1 text-slate-500"
                   >
                     {item.name}
-                    <span className="text-[8px] bg-amber-500 text-black px-1.5 py-0.5 rounded-full font-black tracking-widest leading-none">SOON</span>
-                    <span className="material-symbols-outlined text-[18px]">expand_more</span>
+                    <span className="ml-1 text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
+                      COMING SOON
+                    </span>
                   </button>
-                  
-                  {/* Tooltip or small message on hover could go here, but keeping it simple as requested */}
                 </div>
               );
             }
@@ -303,23 +286,35 @@ const PublicHeader = () => {
             </span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 p-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`text-lg font-bold ${
-                location.pathname === item.path ? "text-slate-900" : "text-slate-500"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            if (item.name === "Recruiter Tools") {
+              return (
+                <div key="mobile-rec" className="flex items-center gap-3 opacity-50">
+                  <span className="text-lg font-bold text-slate-500">{item.name}</span>
+                  <span className="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
+                    COMING SOON
+                  </span>
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-lg font-bold ${
+                  location.pathname === item.path ? "text-slate-900" : "text-slate-500"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
           <Link
             to="/app"
             onClick={() => setIsMobileMenuOpen(false)}
