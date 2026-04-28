@@ -1,27 +1,19 @@
-import { auth } from "../firebase";
-
-const API_BASE = `${import.meta.env.VITE_API_URL}`;
+import api from "../api-client";
 
 /**
  * Fetches all job requisitions from the backend.
  */
 export const fetchRequisitions = async () => {
-    const res = await fetch(`${API_BASE}/requisitions/`);
-    if (!res.ok) throw new Error("Failed to fetch jobs");
-    return res.json();
+    const res = await api.get("/requisitions/");
+    return res.data;
 };
 
 /**
  * Creates a new job requisition.
  */
 export const createRequisition = async (data) => {
-    const res = await fetch(`${API_BASE}/requisition/create/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error("Failed to create job requirement");
-    return res.json();
+    const res = await api.post("/requisition/create/", data);
+    return res.data;
 };
 
 /**
@@ -31,29 +23,27 @@ export const uploadCandidates = async (reqId, files) => {
     const formData = new FormData();
     files.forEach(file => formData.append("files", file));
 
-    const res = await fetch(`${API_BASE}/requisition/${reqId}/analyze/`, {
-        method: "POST",
-        body: formData
+    const res = await api.post(`/requisition/${reqId}/analyze/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
     });
-    if (!res.ok) throw new Error("Batch upload failed");
-    return res.json();
+    return res.data;
 };
 
 /**
  * Fetches ranked candidates for a specific job.
  */
 export const fetchCandidates = async (reqId, filters = {}) => {
-    const params = new URLSearchParams(filters);
-    const res = await fetch(`${API_BASE}/requisition/${reqId}/candidates/?${params.toString()}`);
-    if (!res.ok) throw new Error("Failed to fetch candidate rankings");
-    return res.json();
+    const res = await api.get(`/requisition/${reqId}/candidates/`, {
+        params: filters
+    });
+    return res.data;
 };
 
 /**
  * Fetches intelligence metrics for a job requirement.
  */
 export const fetchRequisitionMetrics = async (reqId) => {
-    const res = await fetch(`${API_BASE}/requisition/${reqId}/metrics/`);
-    if (!res.ok) throw new Error("Failed to fetch requirement metrics");
-    return res.json();
+    const res = await api.get(`/requisition/${reqId}/metrics/`);
+    return res.data;
 };
+

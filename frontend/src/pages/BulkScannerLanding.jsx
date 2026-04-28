@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 import { useAuth } from "../components/AuthProvider";
+import api from "../api-client";
 
 const BulkScannerLanding = () => {
     const { user, profile } = useAuth();
@@ -32,26 +33,18 @@ const BulkScannerLanding = () => {
 
         try {
             setLoading(true);
-            const token = await user.getIdToken();
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-analyze/`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData,
+            const res = await api.post("/bulk-analyze/", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
-
-            if (!res.ok) throw new Error("Bulk analysis failed");
-
-            const data = await res.json();
-            setResult(data);
+            setResult(res.data);
         } catch (err) {
             console.error(err);
-            alert(err.message || "Error processing batch.");
+            alert(err.response?.data?.error || "Error processing batch.");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="bg-white text-slate-900 font-sans min-h-screen">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ShieldCheck, Lock, AlertCircle, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import api from "../api-client";
 
 const ResetPasswordConfirm = () => {
     const { uidb64, token } = useParams();
@@ -25,24 +26,15 @@ const ResetPasswordConfirm = () => {
 
         setStatus("loading");
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/user/reset-password-confirm/${uidb64}/${token}/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setStatus("success");
-                setMessage("Neural key successfully rotated.");
-            } else {
-                setStatus("error");
-                setMessage(data.error || "Security token invalid or expired.");
-            }
+            const res = await api.post(`/user/reset-password-confirm/${uidb64}/${token}/`, { password });
+            setStatus("success");
+            setMessage("Neural key successfully rotated.");
         } catch (err) {
             setStatus("error");
-            setMessage("Connection failure to Candidex Node.");
+            setMessage(err.response?.data?.error || "Security token invalid or expired.");
         }
     };
+
 
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-body">

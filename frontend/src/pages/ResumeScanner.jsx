@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import axios from "axios";
+import api from "../api-client";
 import { 
   FileText,
   RefreshCcw, 
@@ -63,7 +63,9 @@ const ResumeScanner = () => {
         const formData = new FormData();
         formData.append("resume", file);
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/analyze-resume/`, formData);
+            const res = await api.post("/analyze-resume/", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             setResult(res.data);
             setScanResult({ ...res.data, extracted_text: res.data.extracted_text || "" });
         } catch (err) {
@@ -72,6 +74,7 @@ const ResumeScanner = () => {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="bg-white text-slate-800 font-sans min-h-screen selection:bg-emerald-500/10">

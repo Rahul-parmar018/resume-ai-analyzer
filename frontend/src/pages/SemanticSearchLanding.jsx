@@ -2,6 +2,7 @@ import { useState } from "react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 import { useAuth } from "../components/AuthProvider";
+import api from "../api-client";
 
 const SemanticSearchLanding = () => {
     const { user, profile } = useAuth();
@@ -18,30 +19,16 @@ const SemanticSearchLanding = () => {
 
         try {
             setLoading(true);
-            const token = await user.getIdToken();
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/semantic-search/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ query })
-            });
-
-            if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.error || "Search failed");
-            }
-
-            const data = await res.json();
-            setResults(data);
+            const res = await api.post("/semantic-search/", { query });
+            setResults(res.data);
         } catch (err) {
             console.error(err);
-            alert(err.message || "Error performing neural search. Ensure you have analyzed some candidates first.");
+            alert(err.response?.data?.error || "Error performing neural search. Ensure you have analyzed some candidates first.");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="bg-white min-h-screen">

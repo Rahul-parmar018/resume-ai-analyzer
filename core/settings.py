@@ -41,6 +41,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://resume-ai-analyzer.vercel.app",
+    "https://candidex-ai-analyzer.vercel.app",
 ]
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http://localhost:5173$",
@@ -105,9 +106,17 @@ import firebase_admin
 from firebase_admin import credentials
 
 firebase_cred_path = BASE_DIR / "firebase-adminsdk.json"
-if os.path.exists(firebase_cred_path) and not firebase_admin._apps:
-    cred = credentials.Certificate(str(firebase_cred_path))
-    firebase_admin.initialize_app(cred)
+if not firebase_admin._apps:
+    if os.path.exists(firebase_cred_path):
+        cred = credentials.Certificate(str(firebase_cred_path))
+        firebase_admin.initialize_app(cred)
+    elif os.getenv("FIREBASE_ADMIN_SDK_JSON"):
+        import json
+        cred_json = json.loads(os.getenv("FIREBASE_ADMIN_SDK_JSON"))
+        cred = credentials.Certificate(cred_json)
+        firebase_admin.initialize_app(cred)
+    else:
+        print("WARNING: Firebase Admin SDK not initialized. Missing firebase-adminsdk.json and FIREBASE_ADMIN_SDK_JSON env var.")
 
 # ---------- Add your OpenAI key ----------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

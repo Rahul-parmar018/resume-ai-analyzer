@@ -1,4 +1,4 @@
-import { auth } from "../firebase";
+import api from "../api-client";
 
 const buildQueryTextFromProfile = (profile) => {
   const jobTitle = profile?.job_title || "";
@@ -18,8 +18,10 @@ const buildQueryTextFromProfile = (profile) => {
   ].filter(Boolean).join("\n");
 };
 
+/**
+ * Main Resume Optimization API
+ */
 export const analyzeResume = async (file, jdOrProfile, resumeText = "") => {
-  const token = await auth.currentUser.getIdToken();
   const formData = new FormData();
   if (file) formData.append("file", file);
   if (resumeText) formData.append("resume_text", resumeText);
@@ -31,83 +33,42 @@ export const analyzeResume = async (file, jdOrProfile, resumeText = "") => {
     formData.append("job_description", buildQueryTextFromProfile(jdOrProfile));
   }
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/optimize/`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
-    body: formData,
+  const res = await api.post("/optimize/", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
   });
-
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Analysis failed");
-  }
-
-  return res.json();
+  return res.data;
 };
 
+/**
+ * Fetch historical analyses
+ */
 export const fetchHistory = async () => {
-  const token = await auth.currentUser.getIdToken();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/history/`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  });
-
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Failed to fetch history");
-  }
-
-  return res.json();
+  const res = await api.get("/history/");
+  return res.data;
 };
 
+/**
+ * Fetch dashboard aggregated analytics
+ */
 export const fetchDashboardAnalytics = async () => {
-  const token = await auth.currentUser.getIdToken();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/dashboard/`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  });
-
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Failed to fetch dashboard intelligence");
-  }
-
-  return res.json();
+  const res = await api.get("/dashboard/");
+  return res.data;
 };
 
+/**
+ * Natural Language Talent Search
+ */
 export const executeSemanticSearch = async (query) => {
-  const token = await auth.currentUser.getIdToken();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/semantic-search/`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ query })
-  });
-  
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Failed to execute semantic search");
-  }
-  
-  return res.json();
+  const res = await api.post("/semantic-search/", { query });
+  return res.data;
 };
 
+/**
+ * Recruiter Batch Processing
+ */
 export const bulkAnalyzeResumes = async (files, jdOrProfile) => {
-  const token = await auth.currentUser.getIdToken();
   const formData = new FormData();
-  
-  // Attach all files securely to the array payload
-  Array.from(files).forEach((file) => {
-    formData.append("files", file);
-  });
+  Array.from(files).forEach((file) => formData.append("files", file));
   
   if (typeof jdOrProfile === "string") {
     formData.append("job_description", jdOrProfile);
@@ -116,54 +77,25 @@ export const bulkAnalyzeResumes = async (files, jdOrProfile) => {
     formData.append("job_description", buildQueryTextFromProfile(jdOrProfile));
   }
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-analyze/`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
-    body: formData
+  const res = await api.post("/bulk-analyze/", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
   });
-
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Bulk analysis failed");
-  }
-
-  return res.json();
+  return res.data;
 };
 
+/**
+ * Delete a specific analysis record
+ */
 export const deleteAnalysis = async (id) => {
-  const token = await auth.currentUser.getIdToken();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/analysis/${id}/`, {
-    method: "DELETE",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  });
-
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Failed to delete analysis");
-  }
-
-  return res.json();
+  const res = await api.delete(`/analysis/${id}/`);
+  return res.data;
 };
 
+/**
+ * AI-powered Bullet Point Rewriting
+ */
 export const rewriteResume = async (resumeText) => {
-  const token = await auth.currentUser.getIdToken();
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/rewrite-resume/`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ resume_text: resumeText })
-  });
-  
-  if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.error || "Rewrite failed");
-  }
-  
-  return res.json();
+  const res = await api.post("/rewrite-resume/", { resume_text: resumeText });
+  return res.data;
 };
+

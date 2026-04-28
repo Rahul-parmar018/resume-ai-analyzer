@@ -29,32 +29,17 @@ const ResumeGap = () => {
         if (file) {
             formData.append("file", file);
         } else if (scanResult) {
-            // If user has a scanned resume text, we'll send that instead or prompt for file
-            // Note: Current backend optimize endpoint expects 'file'. 
-            // In a real app, we'd allow sending text. For now, we'll guide user to upload file.
             return alert("The Gap Analyzer requires a file upload for semantic parsing. Please select your resume file.");
         }
         formData.append("job_description", jd);
 
         try {
             setLoading(true);
-            const token = await user.getIdToken(true);
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/optimize/`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData,
+            const res = await api.post("/optimize/", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
-
-            if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.error || "Analysis failed");
-            }
-
-            const data = await res.json();
-            setResult(data);
-            setGapResult(data);
+            setResult(res.data);
+            setGapResult(res.data);
         } catch (err) {
             console.error(err);
             alert("Error analyzing gaps. Please try again.");
