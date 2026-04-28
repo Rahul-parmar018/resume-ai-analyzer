@@ -112,7 +112,21 @@ if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
     elif os.getenv("FIREBASE_ADMIN_SDK_JSON"):
         import json
-        cred_json = json.loads(os.getenv("FIREBASE_ADMIN_SDK_JSON"))
+        firebase_json = os.getenv("FIREBASE_ADMIN_SDK_JSON")
+        try:
+            # Standard load
+            cred_json = json.loads(firebase_json)
+        except json.JSONDecodeError:
+            # Fallback: Handle cases where newlines were literal or backslashes were doubled
+            try:
+                # Replace literal newlines with escaped ones and try again
+                cleaned_json = firebase_json.replace('\n', '\\n').replace('\r', '\\r')
+                cred_json = json.loads(cleaned_json)
+            except:
+                # Last resort: Try to fix escaped backslashes specifically in the private key
+                fixed_json = firebase_json.replace('\\\\n', '\\n')
+                cred_json = json.loads(fixed_json)
+
         cred = credentials.Certificate(cred_json)
         firebase_admin.initialize_app(cred)
     else:
