@@ -102,35 +102,49 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Firebase Admin SDK Initialization
 import os
+import json
+import base64
 import firebase_admin
 from firebase_admin import credentials
 
 firebase_cred_path = BASE_DIR / "firebase-adminsdk.json"
 if not firebase_admin._apps:
+    cred_json = None
+
+    # Priority 1: Local JSON file (dev environment)
     if os.path.exists(firebase_cred_path):
         cred = credentials.Certificate(str(firebase_cred_path))
         firebase_admin.initialize_app(cred)
-    elif os.getenv("FIREBASE_ADMIN_SDK_JSON"):
-        import json
-        firebase_json = os.getenv("FIREBASE_ADMIN_SDK_JSON")
-        try:
-            # Standard load
-            cred_json = json.loads(firebase_json)
-        except json.JSONDecodeError:
-            # Fallback: Handle cases where newlines were literal or backslashes were doubled
-            try:
-                # Replace literal newlines with escaped ones and try again
-                cleaned_json = firebase_json.replace('\n', '\\n').replace('\r', '\\r')
-                cred_json = json.loads(cleaned_json)
-            except:
-                # Last resort: Try to fix escaped backslashes specifically in the private key
-                fixed_json = firebase_json.replace('\\\\n', '\\n')
-                cred_json = json.loads(fixed_json)
+        print("Firebase initialized from local file.")
 
+    # Priority 2: Base64-encoded JSON env var (safest for production)
+    elif os.getenv("FIREBASE_ADMIN_SDK_BASE64"):
+        try:
+            decoded = base64.b64decode(os.getenv("FIREBASE_ADMIN_SDK_BASE64")).decode("utf-8")
+            cred_json = json.loads(decoded)
+        except Exception as e:
+            print(f"ERROR parsing FIREBASE_ADMIN_SDK_BASE64: {e}")
+
+    # Priority 3: Raw JSON env var (fallback)
+    elif os.getenv("FIREBASE_ADMIN_SDK_JSON"):
+        raw = os.getenv("FIREBASE_ADMIN_SDK_JSON")
+        try:
+            cred_json = json.loads(raw)
+        except json.JSONDecodeError:
+            try:
+                # Handle env vars where \n became real newlines
+                cleaned = raw.replace("\n", "\\n").replace("\r", "")
+                cred_json = json.loads(cleaned)
+            except Exception as e:
+                print(f"ERROR parsing FIREBASE_ADMIN_SDK_JSON: {e}")
+
+    if cred_json and not firebase_admin._apps:
         cred = credentials.Certificate(cred_json)
         firebase_admin.initialize_app(cred)
-    else:
-        print("WARNING: Firebase Admin SDK not initialized. Missing firebase-adminsdk.json and FIREBASE_ADMIN_SDK_JSON env var.")
+        print("Firebase initialized from env var.")
+
+    if not firebase_admin._apps:
+        print("WARNING: Firebase Admin SDK not initialized. No credentials found.")
 
 # ---------- Add your OpenAI key ----------
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
