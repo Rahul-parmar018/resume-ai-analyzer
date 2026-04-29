@@ -73,12 +73,12 @@ const ResumeFixer = () => {
                         <span className="text-4xl font-black">{score}</span>
                     </div>
                     <div className="flex-1 space-y-3 text-center md:text-left">
-                        <h2 className="text-2xl font-bold">You match {score}/100 for {result.role}</h2>
+                        <h2 className="text-2xl font-bold">You match {score}/100 for {result?.role || "Target Role"}</h2>
                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${sc.b} ${sc.t}`}>
                             {score >= 70 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
-                            {result.ats_status}
+                            {result?.ats_status || "Analyzing"}
                         </div>
-                        {result.alignment?.is_shift && (
+                        {result?.alignment?.is_shift && (
                             <div className="mt-4 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-start gap-3">
                                 <Target className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0" />
                                 <div>
@@ -97,21 +97,21 @@ const ResumeFixer = () => {
                     {/* Skills Matrix */}
                     <div className="space-y-6">
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/20">Strengths ({result.strengths.length})</h3>
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/20">Strengths ({result?.strengths?.length || 0})</h3>
                             <div className="flex flex-wrap gap-2">
-                                {result.strengths.map(s => (
+                                {result?.strengths?.map(s => (
                                     <span key={s} className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs font-medium text-emerald-400 flex items-center gap-1.5">
                                         <Check className="w-3 h-3" /> {s}
                                     </span>
                                 ))}
-                                {result.strengths.length === 0 && <p className="text-xs text-white/20 italic">No direct matches found.</p>}
+                                {(!result?.strengths || result.strengths.length === 0) && <p className="text-xs text-white/20 italic">No direct matches found.</p>}
                             </div>
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-rose-400/50">Missing Core ({result.missing_core.length})</h3>
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-rose-400/50">Missing Core ({result?.missing_core?.length || 0})</h3>
                             <div className="flex flex-wrap gap-2">
-                                {result.missing_core.map(s => (
+                                {result?.missing_core?.map(s => (
                                     <span key={s} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs font-medium text-rose-400 flex items-center gap-1.5">
                                         <X className="w-3 h-3" /> {s}
                                     </span>
@@ -120,9 +120,9 @@ const ResumeFixer = () => {
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-400/50">Missing Important ({result.missing_important.length})</h3>
+                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-400/50">Missing Important ({result?.missing_important?.length || 0})</h3>
                             <div className="flex flex-wrap gap-2">
-                                {result.missing_important.map(s => (
+                                {result?.missing_important?.map(s => (
                                     <span key={s} className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs font-medium text-amber-400">
                                         {s}
                                     </span>
@@ -140,11 +140,11 @@ const ResumeFixer = () => {
                             <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">v1 Steps</span>
                         </div>
                         <div className="space-y-4">
-                            {result.roadmap.map((step, i) => (
+                            {result?.roadmap?.map((step, i) => (
                                 <div key={i} className="flex gap-4 group">
                                     <div className="flex flex-col items-center gap-2">
                                         <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold text-white/40 group-hover:border-indigo-500/50 group-hover:text-indigo-400 transition-all">{i + 1}</div>
-                                        {i < result.roadmap.length - 1 && <div className="w-px flex-1 bg-white/5" />}
+                                        {i < (result?.roadmap?.length || 0) - 1 && <div className="w-px flex-1 bg-white/5" />}
                                     </div>
                                     <p className="text-xs text-white/50 leading-relaxed pt-0.5 group-hover:text-white/80 transition-all">{step}</p>
                                 </div>
@@ -154,7 +154,7 @@ const ResumeFixer = () => {
                 </div>
 
                 {/* AI Suggestions */}
-                {result.recommendations?.length > 0 && (
+                {result?.recommendations?.length > 0 && (
                     <div className="space-y-6">
                         <h3 className="text-sm font-bold flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-400" /> AI Impact Rewrites
