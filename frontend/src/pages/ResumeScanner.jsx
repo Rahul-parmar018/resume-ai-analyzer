@@ -11,6 +11,7 @@ import {
   Shield,
   Clock,
   MousePointer,
+  Activity,
   Sparkles,
   Layout,
   MessageSquare,
