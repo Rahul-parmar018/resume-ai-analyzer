@@ -352,7 +352,8 @@ def optimize_resume_view(request):
             manual_job_skills = ["python", "django", "react", "docker", "aws"]
 
         # 🧠 DEEP JD GAP ANALYSIS (PHASE 2)
-        gap_report = run_gap_analysis(resume_text, job_desc)
+        from .utils.gap_analysis import analyze_with_llm
+        gap_report = analyze_with_llm(resume_text, job_desc)
         
         # Determine Fit Label based on Spec v1
         score = gap_report['match_score']
@@ -371,24 +372,24 @@ def optimize_resume_view(request):
         result = {
             "score": score,
             "fit_label": fit_label,
-            "semantic": gap_report.get('semantic', {}),
-            "skills_found": gap_report.get('skills', {}).get('matched', []),
-            "missing_skills": gap_report.get('skills', {}).get('missing_required', []),
-            "missing_preferred": gap_report.get('skills', {}).get('missing_preferred', []),
-            "experience": gap_report.get('experience', {}),
+            "semantic": {},
+            "skills_found": gap_report.get('verified_skills', []),
+            "missing_skills": gap_report.get('missing_skills', []),
+            "missing_preferred": [],
+            "experience": {},
             "suggestions": gap_report.get('recommendations', []),
-            "insight": gap_report.get('insight', ''),
-            "reasoning": gap_report.get('reasoning', []),
-            "confidence": gap_report.get('confidence', 0.85),
+            "insight": f"Your resume match is {score}%.",
+            "reasoning": [],
+            "confidence": 0.85,
             "trend": {
                 "previous_score": previous_score,
                 "improvement": improvement
             },
-            "metrics": gap_report.get('metrics', {}),
-            "stats": gap_report.get('stats', {}),
+            "metrics": {},
+            "stats": {},
             "recommendations": gap_report.get('recommendations', []),
             "extracted_text": resume_text,
-            "is_mock": gap_report.get('is_mock', False)
+            "is_mock": False
         }
 
         # 🗄️ ORM Save: SaaS Data Lifecycle
