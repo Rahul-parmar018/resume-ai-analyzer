@@ -37,10 +37,23 @@ const ResumeFixer = () => {
             setError("Paste your resume content to begin.");
             return;
         }
+        if (!jd.trim()) {
+            setError("Please enter job description for accurate analysis");
+            return;
+        }
+
         setLoading(true);
         setError("");
         try {
-            const data = await analyzeResume(file, jd || "General Role Optimization", textToUse);
+            const data = await analyzeResume(file, jd, textToUse);
+            console.log("API RESULT:", data);
+
+            if (!data || !data.recommendations) {
+                throw new Error("Invalid AI response");
+            }
+            if (data.is_mock) {
+                setError("AI service unavailable. Showing fallback results.");
+            }
             setResult(data);
         } catch (err) {
             setError(err.message || "Optimization failed.");
@@ -50,7 +63,7 @@ const ResumeFixer = () => {
     };
 
     const applySuggestion = (original, improved) => {
-        const updatedText = resumeText.replace(original, improved);
+        const updatedText = resumeText.split(original).join(improved);
         setResumeText(updatedText);
         setAppliedSuggestion(improved);
         handleAnalyze(updatedText);
@@ -110,12 +123,21 @@ const ResumeFixer = () => {
 
                         <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-2xl shadow-indigo-500/5 space-y-6">
                             <div className="space-y-3">
-                              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Optimization Input</label>
+                              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Optimization Input (Resume)</label>
                               <textarea
                                 value={resumeText}
                                 onChange={(e) => setResumeText(e.target.value)}
                                 placeholder="Paste your resume content here..."
-                                className="w-full h-80 p-5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all resize-none font-medium text-slate-600"
+                                className="w-full h-40 p-5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all resize-none font-medium text-slate-600"
+                              />
+                            </div>
+                            <div className="space-y-3">
+                              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Target Role (Job Description)</label>
+                              <textarea
+                                value={jd}
+                                onChange={(e) => setJd(e.target.value)}
+                                placeholder="Paste the target job description here..."
+                                className="w-full h-40 p-5 bg-slate-50/50 border border-slate-100 rounded-2xl text-[13px] focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all resize-none font-medium text-slate-600"
                               />
                             </div>
                             {error && <div className="p-3 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold text-center italic">{error}</div>}

@@ -152,5 +152,6 @@ def run_gap_analysis(resume_text, jd_text):
         },
         "insight": f"Your resume match is {final_score}%.",
         "recommendations": recommendations,
-        "extracted_text": resume_text
+        "extracted_text": resume_text,
+        "is_mock": True
     }

@@ -387,7 +387,8 @@ def optimize_resume_view(request):
             "metrics": gap_report.get('metrics', {}),
             "stats": gap_report.get('stats', {}),
             "recommendations": gap_report.get('recommendations', []),
-            "extracted_text": resume_text
+            "extracted_text": resume_text,
+            "is_mock": gap_report.get('is_mock', False)
         }
 
         # 🗄️ ORM Save: SaaS Data Lifecycle
