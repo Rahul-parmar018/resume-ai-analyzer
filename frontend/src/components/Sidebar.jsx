@@ -14,8 +14,8 @@ const Sidebar = () => {
     { name: "Gap Analysis",      icon: "query_stats",     path: "/resume-gap-analysis", roles: ['candidate'] },
 
     // Recruiter Hub
-    { name: "IntellHub",         icon: "dashboard",       path: "/app",                 roles: ['recruiter'] },
-    { name: "Candidate Finder",  icon: "hub",             path: "/app/scanner",         roles: ['recruiter'] },
+    { name: "Dashboard",         icon: "dashboard",       path: "/app",                 roles: ['recruiter'] },
+    { name: "Rank Candidates",   icon: "batch_prediction", path: "/app/scanner",         roles: ['recruiter'] },
 
     // Core Management
     { name: "History",           icon: "history",         path: "/app/history",         roles: ['candidate', 'recruiter'] },

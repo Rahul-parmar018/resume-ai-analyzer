@@ -62,7 +62,7 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             email = decoded_token.get('email')
             user, created = FirebaseUser.objects.get_or_create(
                 firebase_uid=uid,
-                defaults={'email': email}
+                defaults={'email': email, 'role': 'candidate'}
             )
             if created:
                 print(f"DEBUG: [Auth OK] New user created: {uid} ({email})")
@@ -82,7 +82,7 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
                 try:
                     user, created = FirebaseUser.objects.get_or_create(
                         firebase_uid=uid,
-                        defaults={'email': email}
+                        defaults={'email': email, 'role': 'candidate'}
                     )
                     return (user, debug_payload)
                 except Exception as db_err:

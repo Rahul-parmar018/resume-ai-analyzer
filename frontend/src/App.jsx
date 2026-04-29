@@ -8,7 +8,6 @@ import BulkScanner from "./pages/BulkScanner"; // Recruiter Mode
 import Finder    from "./pages/Finder";      // Recruiter Mode
 import Settings  from "./pages/Settings";
 import History   from "./pages/History";
-import Onboarding from "./pages/Onboarding";
 import Pricing   from "./pages/Pricing";
 import Features  from "./pages/Features";
 import Customers from "./pages/Customers";
@@ -99,15 +98,6 @@ function App() {
           <Route path="/semantic-search" element={<RecruiterComingSoon />} />
           <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
 
-          {/* ONBOARDING */}
-          <Route
-            path="/onboarding"
-            element={
-              <ProtectedRoute>
-                <Onboarding />
-              </ProtectedRoute>
-            }
-          />
 
           {/* PROTECTED */}
           <Route
@@ -120,7 +110,7 @@ function App() {
           >
             <Route index          element={<Dashboard />} />
             <Route path="optimize" element={<Optimizer />} />
-            <Route path="scanner"  element={<RecruiterComingSoon />} />
+            <Route path="scanner"  element={<BulkScanner />} />
             <Route path="finder"   element={<RecruiterComingSoon />} />
             <Route path="history"  element={<History />} />
             <Route path="settings" element={<Settings />} />

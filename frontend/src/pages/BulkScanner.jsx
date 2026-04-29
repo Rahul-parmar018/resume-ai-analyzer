@@ -1,312 +1,194 @@
 import { useState, useEffect } from "react";
 import { 
-  Check, X, Search, Briefcase, Users, 
-  Upload, FileText, Cpu, AlertTriangle, 
-  Shield, Code2, Zap, BarChart3, Target,
-  ChevronRight, ArrowRight, MousePointer2, Layers
+  Check, X, Search, Upload, FileText, Cpu, Target, Zap, ChevronLeft, ChevronRight
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
 import { useAuth } from "../components/AuthProvider";
 import { rankResumes } from "../api/analyze";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 const BIG_FIVE = [
-  { key: "AI/ML Engineer", icon: Target, desc: "Neural networks & ML pipelines" },
-  { key: "Cybersecurity Engineer", icon: Shield, desc: "Infosec & Threat Detection" },
-  { key: "Full Stack Developer", icon: Code2, desc: "Web architecture & APIs" },
-  { key: "DevOps Engineer", icon: Zap, desc: "CI/CD & Cloud Infrastructure" },
-  { key: "Data Scientist", icon: BarChart3, desc: "Analytics & Predictive Modeling" }
+  { key: "AI/ML Engineer", desc: "Neural networks" },
+  { key: "Cybersecurity Engineer", desc: "Infosec" },
+  { key: "Full Stack Developer", desc: "Web APIs" },
+  { key: "DevOps Engineer", desc: "Infrastructure" },
+  { key: "Data Scientist", desc: "Analytics" }
 ];
 
 const BulkScanner = () => {
     const { user, profile } = useAuth();
-    const [selectedRole, setSelectedRole] = useState("");
+    const location = useLocation();
+    const isInsideApp = location.pathname.startsWith("/app");
+    
+    const [selectedRole, setSelectedRole] = useState("AI/ML Engineer");
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
 
-    useEffect(() => {
-        document.title = "Recruiter Bulk Scanner | Candidex AI";
-    }, []);
-
-    const handleFileChange = (e) => {
-        const selectedFiles = Array.from(e.target.files);
-        if (selectedFiles.length > 10) {
-            setError("MVP Limit: Max 10 resumes per batch.");
-            return;
-        }
-        setFiles(selectedFiles);
-        setError("");
-    };
+    const handleFileChange = (e) => setFiles(Array.from(e.target.files));
 
     const handleRank = async () => {
-        if (!selectedRole) { setError("Select a target role."); return; }
-        if (files.length === 0) { setError("Upload at least one resume."); return; }
-        
+        if (files.length === 0) return;
         setLoading(true);
-        setError("");
         try {
             const data = await rankResumes(files, selectedRole);
             setResult(data);
         } catch (err) {
-            setError(err.response?.data?.error || "Ranking failed. Try again.");
+            setError("Ranking failed.");
         } finally {
             setLoading(false);
         }
     };
 
+    const filteredCandidates = result?.candidates.filter(c => 
+        c.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
+
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-white selection:bg-indigo-500/30 overflow-x-hidden">
-            <PublicHeader />
+        <div className={`min-h-screen ${isInsideApp ? 'bg-transparent' : 'bg-[#0A0A0B]'} text-white selection:bg-indigo-500/30`}>
+            {!isInsideApp && <PublicHeader />}
             
-            {/* 3D Background Elements */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                <div className="absolute top-[-10%] right-[-10%] w-[1000px] h-[1000px] bg-indigo-600/10 rounded-full blur-[180px] animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[150px]" />
-                <div className="absolute inset-0 bg-[url('/images/grid.png')] opacity-[0.02] bg-repeat" />
-            </div>
-
-            <div className="relative z-10">
-                <main className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 space-y-12">
-                    
-                    {/* Header */}
-                    <motion.header 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-6 max-w-4xl mx-auto text-center"
-                    >
-                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400">
-                            <Users className="w-4 h-4" /> Recruiter Intelligence Hub
-                        </div>
-                        <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]">
-                            Bulk Candidate <br /> <span className="text-indigo-500">Ranking.</span>
-                        </h1>
-                        <p className="text-xl text-white/40 italic font-medium max-w-2xl mx-auto leading-relaxed">
-                            Upload multiple resumes and rank them against industry-standard roles in seconds.
-                        </p>
-                    </motion.header>
-
-                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl mx-auto'} gap-10 items-start transition-all duration-700`}>
-                        
-                        {/* Input Area */}
-                        <motion.div 
-                            layout
-                            className="bg-white/[0.03] border border-white/5 rounded-[3rem] p-10 space-y-10 shadow-2xl backdrop-blur-3xl group hover:border-white/20 transition-all duration-500"
+            <main className={`max-w-[1600px] mx-auto px-6 ${isInsideApp ? 'pt-4' : 'pt-32'} pb-24`}>
+                
+                {/* 🚀 TOP BAR: COMPACT SINGLE-ROW CONTROLS */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-wrap items-center gap-4 shadow-2xl mb-8">
+                    <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Role</span>
+                        <select 
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                            className="bg-transparent text-xs font-black text-white outline-none cursor-pointer"
                         >
-                            <div className="space-y-6">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
-                                    01. Select Target Career Path <MousePointer2 className="w-3 h-3 text-indigo-500" />
-                                </label>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {BIG_FIVE.map((role) => (
-                                        <button
-                                            key={role.key}
-                                            onClick={() => setSelectedRole(role.key)}
-                                            className={`p-6 rounded-[2rem] border transition-all text-left group/btn relative overflow-hidden ${
-                                                selectedRole === role.key 
-                                                ? "bg-indigo-600 border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.3)]" 
-                                                : "bg-white/[0.02] border-white/5 hover:bg-white/5"
-                                            }`}
-                                        >
-                                            <div className="relative z-10 flex items-center gap-4">
-                                                <role.icon className={`w-6 h-6 ${selectedRole === role.key ? "text-white" : "text-indigo-400 group-hover/btn:scale-110 transition-transform"}`} />
-                                                <div>
-                                                    <p className="font-black italic text-sm uppercase leading-tight">{role.key}</p>
-                                                    <p className={`text-[10px] font-medium italic ${selectedRole === role.key ? "text-white/60" : "text-white/20"}`}>{role.desc}</p>
-                                                </div>
-                                            </div>
-                                            {selectedRole === role.key && (
-                                                <motion.div layoutId="roleGlow" className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
-                                    02. Upload Candidate Resumes <Upload className="w-3 h-3 text-indigo-500" />
-                                </label>
-                                <div 
-                                    className="relative group/upload"
-                                    onClick={() => document.getElementById('bulk-upload').click()}
-                                >
-                                    <div className="border-2 border-dashed border-white/10 rounded-[2.5rem] p-12 text-center group-hover/upload:border-indigo-500/50 transition-all cursor-pointer bg-white/[0.01]">
-                                        <input 
-                                            id="bulk-upload" 
-                                            type="file" 
-                                            multiple 
-                                            hidden 
-                                            accept=".pdf,.docx,.txt"
-                                            onChange={handleFileChange}
-                                        />
-                                        <div className="space-y-4">
-                                            <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto group-hover/upload:scale-110 group-hover/upload:bg-indigo-500/20 transition-all shadow-2xl">
-                                                <FileText className="w-10 h-10 text-indigo-500" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xl font-black italic tracking-tight uppercase">
-                                                    {files.length > 0 ? `${files.length} Resumes Ready` : "Drop Resumes Here"}
-                                                </p>
-                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mt-1">
-                                                    PDF, DOCX, or TXT • MAX 10 FILES
-                                                </p>
-                                            </div>
-                                            {files.length > 0 && (
-                                                <div className="flex flex-wrap justify-center gap-2 mt-4">
-                                                    {Array.from(files).slice(0, 3).map((f, i) => (
-                                                        <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-white/40 italic">
-                                                            {f.name.length > 15 ? f.name.substring(0, 12) + '...' : f.name}
-                                                        </span>
-                                                    ))}
-                                                    {files.length > 3 && (
-                                                        <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-indigo-400 italic">
-                                                            +{files.length - 3} more
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {error && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 text-rose-400">
-                                    <AlertTriangle className="w-5 h-5 shrink-0" />
-                                    <p className="text-sm font-bold italic">{error}</p>
-                                </motion.div>
-                            )}
-
-                            <button
-                                onClick={handleRank}
-                                disabled={loading}
-                                className={`w-full py-6 rounded-3xl font-black text-xl uppercase tracking-tighter italic transition-all flex items-center justify-center gap-4 shadow-2xl relative overflow-hidden group ${
-                                    loading 
-                                    ? "bg-white/5 text-white/20" 
-                                    : "bg-white text-black hover:bg-indigo-500 hover:text-white"
-                                }`}
-                            >
-                                {loading ? (
-                                    <>Ranking Neural Vectors... <Cpu className="w-6 h-6 animate-spin" /></>
-                                ) : (
-                                    <>Start Ranking Engine <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" /></>
-                                )}
-                            </button>
-                        </motion.div>
-
-                        {/* Result Area */}
-                        <AnimatePresence>
-                            {result && (
-                                <motion.div 
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="space-y-8"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-3xl font-black tracking-tight uppercase italic">Top Candidates <span className="text-indigo-500">for {result.role}</span></h2>
-                                        <div className="px-4 py-1.5 bg-indigo-600/20 border border-indigo-500/30 rounded-full text-[10px] font-black uppercase tracking-widest text-indigo-400">
-                                            {result.total} Processed
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        {result.candidates.map((cand, idx) => (
-                                            <motion.div
-                                                key={idx}
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: idx * 0.1 }}
-                                                className={`relative bg-white/[0.03] border border-white/5 rounded-[2.5rem] p-8 hover:border-indigo-500/30 transition-all group overflow-hidden ${idx === 0 ? 'border-indigo-500/40 ring-1 ring-indigo-500/20 shadow-2xl shadow-indigo-500/10' : ''}`}
-                                            >
-                                                {idx === 0 && (
-                                                    <div className="absolute top-0 right-0 px-8 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase italic tracking-widest rounded-bl-3xl">
-                                                        Top Pick
-                                                    </div>
-                                                )}
-                                                
-                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                                    <div className="flex items-center gap-6">
-                                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl italic border-2 transition-all group-hover:rotate-6 ${
-                                                            cand.score >= 80 ? 'bg-indigo-600 border-white/20 text-white' : 
-                                                            cand.score >= 60 ? 'bg-white/5 border-white/10 text-white/80' : 
-                                                            'bg-white/[0.02] border-white/5 text-white/40'
-                                                        }`}>
-                                                            #{idx + 1}
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="text-2xl font-black italic tracking-tight">{cand.name}</h3>
-                                                            <div className="flex items-center gap-2 mt-1">
-                                                                <div className="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden">
-                                                                    <div className={`h-full transition-all duration-1000 ${cand.score >= 80 ? 'bg-indigo-500' : 'bg-white/40'}`} style={{ width: `${cand.score}%` }} />
-                                                                </div>
-                                                                <span className={`text-sm font-black italic ${cand.score >= 80 ? 'text-indigo-400' : 'text-white/40'}`}>{cand.score}%</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="grid md:grid-cols-2 gap-6 mt-8 border-t border-white/5 pt-8">
-                                                    <div className="space-y-4">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2 italic">
-                                                            <Check className="w-3 h-3" /> Strengths
-                                                        </p>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {cand.strengths.slice(0, 5).map((s, i) => (
-                                                                <span key={i} className="px-3 py-1 bg-emerald-500/5 border border-emerald-500/10 rounded-xl text-[10px] font-bold text-emerald-500/60 italic uppercase tracking-wider">
-                                                                    {s}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                    <div className="space-y-4">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 flex items-center gap-2 italic">
-                                                            <X className="w-3 h-3" /> Gaps Detected
-                                                        </p>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {cand.missing.slice(0, 5).map((s, i) => (
-                                                                <span key={i} className="px-3 py-1 bg-rose-500/5 border border-rose-500/10 rounded-xl text-[10px] font-bold text-rose-500/60 italic uppercase tracking-wider">
-                                                                    {s}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                            {BIG_FIVE.map(r => <option key={r.key} value={r.key} className="bg-[#0A0A0B]">{r.key}</option>)}
+                        </select>
                     </div>
 
-                    {/* Explanatory Depth Section */}
-                    {!result && (
-                        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto pt-12 border-t border-white/5">
+                    <div 
+                        onClick={() => document.getElementById('bulk-upload').click()}
+                        className={`flex-1 min-w-[200px] flex items-center gap-3 px-4 py-2 border-2 border-dashed rounded-xl cursor-pointer transition-all ${files.length > 0 ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 hover:border-white/20'}`}
+                    >
+                        <Upload className="w-4 h-4 text-indigo-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40 truncate">
+                            {files.length > 0 ? `${files.length} Files Selected` : 'Click to upload resumes'}
+                        </span>
+                        <input id="bulk-upload" type="file" multiple hidden onChange={handleFileChange} />
+                    </div>
+
+                    <button 
+                        onClick={handleRank}
+                        disabled={loading || files.length === 0}
+                        className="bg-white text-black px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all disabled:opacity-10"
+                    >
+                        {loading ? 'Analyzing...' : 'Rank Candidates'}
+                    </button>
+                </div>
+
+                {/* 📊 RESULTS HUB */}
+                <AnimatePresence>
+                    {result && !loading && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                            
+                            {/* Filter Bar */}
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-4 border-b border-white/5">
+                                <h2 className="text-sm font-black italic tracking-widest text-indigo-400 uppercase">
+                                    {result.role} — <span className="text-white/40">{filteredCandidates.length} Candidates</span>
+                                </h2>
+                                <div className="relative w-full md:w-64">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
+                                    <input 
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 pl-9 pr-4 py-2 rounded-xl text-[10px] font-bold outline-none focus:border-indigo-500"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* THE GRID (MANDATORY 4 COLUMNS) */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                {filteredCandidates.map((cand, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        layout
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className={`p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 transition-all flex flex-col h-full ${idx === 0 ? 'ring-1 ring-indigo-500/30' : ''}`}
+                                    >
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="min-w-0">
+                                                <h3 className="text-xs font-black italic truncate">{cand.name}</h3>
+                                                <p className="text-[8px] font-bold text-white/20 mt-0.5 uppercase tracking-widest">#{idx + 1} Best Fit</p>
+                                            </div>
+                                            <span className={`text-sm font-black italic ${cand.score >= 80 ? 'text-indigo-400' : 'text-white/40'}`}>{cand.score}%</span>
+                                        </div>
+
+                                        <div className="space-y-4 py-4 border-t border-white/5 flex-1">
+                                            <div>
+                                                <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-2">Strengths</p>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {cand.strengths.slice(0, 3).map((s, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-emerald-500/5 text-emerald-500 text-[7px] font-black uppercase rounded-md border border-emerald-500/10">{s}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest mb-2">Gaps</p>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {cand.missing.slice(0, 3).map((s, i) => (
+                                                        <span key={i} className="px-2 py-1 bg-rose-500/5 text-rose-500 text-[7px] font-black uppercase rounded-md border border-rose-500/10">{s}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button className="w-full py-2 mt-4 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+                                            Details
+                                        </button>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Empty State */}
+                {!result && !loading && (
+                    <div className="py-20 text-center space-y-12">
+                        <div className="space-y-4">
+                            <h2 className="text-4xl font-black italic uppercase tracking-tighter">Ready to <span className="text-indigo-500">Rank?</span></h2>
+                            <p className="text-white/30 italic text-sm">Select a role and upload a batch of resumes to begin neural analysis.</p>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                             {[
-                                { title: "Neural Ranking", desc: "Our engine uses semantic vector overlap to rank candidates beyond simple keyword matching.", icon: Cpu },
-                                { title: "Batch Processing", desc: "Analyze up to 10 candidates simultaneously with unified role calibration.", icon: Layers },
-                                { title: "Decision Intelligence", desc: "Instant visibility into strengths and missing core skills for every applicant.", icon: Target }
-                            ].map((item, i) => (
-                                <div key={i} className="p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] space-y-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-2xl">
-                                        <item.icon className="w-6 h-6" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <h4 className="font-black italic uppercase text-sm tracking-tight">{item.title}</h4>
-                                        <p className="text-xs text-white/30 font-medium leading-relaxed italic">{item.desc}</p>
-                                    </div>
+                                { t: "Neural Vectors", d: "Deep semantic matching engine.", i: Cpu },
+                                { t: "Batch Flow", d: "Process up to 10 files at once.", i: Zap },
+                                { t: "Gap Detection", d: "Instant skill-gap intelligence.", i: Target }
+                            ].map((s, i) => (
+                                <div key={i} className="p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-indigo-500/20 transition-all group">
+                                    <s.i className="w-8 h-8 text-indigo-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest mb-2">{s.t}</h4>
+                                    <p className="text-[10px] text-white/20 italic font-medium">{s.d}</p>
                                 </div>
                             ))}
                         </div>
-                    )}
+                    </div>
+                )}
 
-                </main>
-            </div>
+                {loading && (
+                    <div className="py-40 text-center space-y-6">
+                        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Calibrating Neural Decision Engine...</p>
+                    </div>
+                )}
+
+            </main>
             
-            <PublicFooter />
+            {!isInsideApp && <PublicFooter />}
         </div>
     );
 };
