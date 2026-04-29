@@ -42,7 +42,7 @@ const Login = () => {
       
       // Briefly wait for AuthProvider to catch up
       setTimeout(() => {
-        navigate("/resume-scanner");
+        navigate("/app");
       }, 500);
       
     } catch (err) { setError(friendlyError(err.code)); }
