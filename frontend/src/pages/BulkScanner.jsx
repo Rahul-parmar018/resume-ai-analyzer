@@ -3,7 +3,7 @@ import {
   Check, X, Search, Briefcase, Users, 
   Upload, FileText, Cpu, AlertTriangle, 
   Shield, Code2, Zap, BarChart3, Target,
-  ChevronRight, ArrowRight, MousePointer2
+  ChevronRight, ArrowRight, MousePointer2, Layers
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
