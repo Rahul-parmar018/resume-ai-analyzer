@@ -410,15 +410,15 @@ def optimize_resume_view(request):
             resume_name=resume_name,
             job_description=job_desc,
             job_profile=job_profile,
-            score=result['match_score'],
+            score=result.get('score', 0),
             text_hash=t_hash
         )
         
         # 4. Save Extracted Data Details
         ExtractedData.objects.create(
             analysis=analysis_record,
-            skills=result['skills']['matched'],
-            missing_skills=result['skills']['missing_required'],
+            skills=result.get('skills_found', []),
+            missing_skills=result.get('missing_skills', []),
             suggestions=result.get('recommendations', []),
             section_scores=result.get('metrics', {}),
             rewrites=[]
