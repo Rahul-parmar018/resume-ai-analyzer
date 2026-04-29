@@ -296,17 +296,17 @@ def optimize_resume_view(request):
     try:
         user = request.user
         
-        # 🛡️ RBAC: Candidate Only
+        # 🛡️ RBAC: Candidate Only (Auto-assign if missing)
         if user.role == 'recruiter':
             return Response({
                 "error": "Recruiters cannot use the personal Optimizer. Use the Ranking Engine instead.",
                 "code": "ACCESS_DENIED"
             }, status=403)
-        elif not user.role:
-            return Response({
-                "error": "Please complete your profile onboarding to use the AI Optimizer.",
-                "code": "ROLE_REQUIRED"
-            }, status=403)
+        
+        if not user.role:
+            user.role = 'candidate'
+            user.save(update_fields=['role'])
+            logger.info(f"[RBAC] Auto-assigned candidate role to {user.email}")
         
         # 📊 Limit Check (Pre-computation)
         can_proceed, err_msg, err_code = _check_usage_limit(user, count_to_add=1)

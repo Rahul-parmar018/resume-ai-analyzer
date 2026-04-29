@@ -69,7 +69,9 @@ const ResumeScanner = () => {
             setResult(res.data);
             setScanResult({ ...res.data, extracted_text: res.data.extracted_text || "" });
         } catch (err) {
-            alert("Analysis failed. Please check your internet connection.");
+            const errMsg = err.response?.data?.error || err.message || "Unknown error";
+            console.error("[SCANNER] Analysis failed:", err);
+            alert(`Analysis failed: ${errMsg}. Please try again later.`);
         } finally {
             setLoading(false);
         }
