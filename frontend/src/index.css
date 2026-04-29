@@ -145,6 +145,21 @@
   animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.neural-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  filter: blur(100px);
+  z-index: -10;
+  pointer-events: none;
+}
+
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
