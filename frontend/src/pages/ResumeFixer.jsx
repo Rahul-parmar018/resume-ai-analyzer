@@ -31,8 +31,8 @@ const ResumeFixer = () => {
             setError("Paste your resume content to begin.");
             return;
         }
-        if (!jd.trim()) {
-            setError("Please enter job description for accurate analysis");
+        if (!jd.trim() || jd.length < 20) {
+            setError("Please enter a proper job description (min 20 characters) for accurate analysis.");
             return;
         }
 
@@ -54,10 +54,26 @@ const ResumeFixer = () => {
     };
 
     const applySuggestion = (original, improved) => {
-        const updatedText = resumeText.split(original).join(improved);
-        setResumeText(updatedText);
+        const index = resumeText.toLowerCase().indexOf(original.toLowerCase());
+
+        if (index === -1) {
+            setError("Sentence not found in editor. Please edit manually.");
+            return;
+        }
+
+        const before = resumeText.substring(0, index);
+        const match = resumeText.substring(index, index + original.length);
+        const after = resumeText.substring(index + original.length);
+
+        const highlighted = `${before}<<${match}>>${after}`;
+        setResumeText(highlighted);
         setAppliedSuggestion(improved);
-        handleAnalyze(updatedText);
+        setTimeout(() => setAppliedSuggestion(null), 3000);
+    };
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        setAppliedSuggestion("COPIED");
         setTimeout(() => setAppliedSuggestion(null), 2000);
     };
 
@@ -154,6 +170,9 @@ const ResumeFixer = () => {
                                     value={resumeText}
                                     onChange={(e) => setResumeText(e.target.value)}
                                 />
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-[11px] text-slate-500 italic">
+                                    Tip: When you click "Locate in Editor", the text will be wrapped in {"<< >>"} for easy finding.
+                                </div>
                             </div>
                         </div>
 
@@ -185,9 +204,15 @@ const ResumeFixer = () => {
                                                 <div className="space-y-4">
                                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Improve this sentence:</p>
                                                     <div className="space-y-4">
-                                                        <div className="flex items-start gap-4 bg-rose-50/30 p-4 rounded-2xl border border-rose-50">
+                                                        <div className="flex items-start gap-4 bg-rose-50/30 p-4 rounded-2xl border border-rose-50 relative group">
                                                             <span className="text-rose-500 font-bold text-sm">✕</span>
                                                             <p className="text-sm text-slate-500 italic">"{rec.original}"</p>
+                                                            <button 
+                                                                onClick={() => applySuggestion(rec.original, rec.improved)}
+                                                                className="absolute -top-3 -right-2 bg-white border border-slate-200 px-3 py-1 rounded-full text-[9px] font-black uppercase shadow-sm hover:bg-slate-50 opacity-0 group-hover:opacity-100 transition-all"
+                                                            >
+                                                                Locate in Editor
+                                                            </button>
                                                         </div>
                                                         <div className="flex items-start gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-50">
                                                             <span className="text-emerald-500 font-bold text-sm">✓</span>
@@ -197,11 +222,11 @@ const ResumeFixer = () => {
                                                 </div>
 
                                                 <button 
-                                                    onClick={() => applySuggestion(rec.original, rec.improved)}
+                                                    onClick={() => copyToClipboard(rec.improved)}
                                                     className="w-full py-5 bg-slate-900 text-white rounded-[1.25rem] font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.98]"
                                                 >
-                                                    {appliedSuggestion === rec.improved ? <Check className="w-5 h-5 text-emerald-400" /> : <MousePointer2 className="w-5 h-5" />}
-                                                    {appliedSuggestion === rec.improved ? 'Applied' : 'Apply Fix'}
+                                                    {appliedSuggestion === "COPIED" ? <Check className="w-5 h-5 text-emerald-400" /> : <MousePointer2 className="w-5 h-5" />}
+                                                    {appliedSuggestion === "COPIED" ? 'Copied to Clipboard' : 'Copy Improved Text'}
                                                 </button>
                                             </div>
                                         ))
