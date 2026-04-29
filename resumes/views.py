@@ -352,9 +352,8 @@ def optimize_resume_view(request):
         from .utils.gap_analysis import analyze_with_llm
         gap_report = analyze_with_llm(resume_text, job_desc, role_key=role_key or None)
 
-        
         # Determine Fit Label based on Spec v1
-        score = gap_report['match_score']
+        score = gap_report.get('match_score', 0)
         if score > 80:
             fit_label = "🔥 Strong Fit"
         elif score > 60:
@@ -365,29 +364,17 @@ def optimize_resume_view(request):
         # 📊 Trend Analysis (PHASE 4)
         last_analysis = AnalysisRecord.objects.filter(user=user).order_by('-created_at').first()
         previous_score = last_analysis.score if last_analysis else None
-        improvement = (score - previous_score) if previous_score is not None else 0
+        improvement = (score - (previous_score or 0)) if previous_score is not None else 0
 
+        # Construct Unified Response (Merged gap_report + SaaS metadata)
         result = {
-            "score": score,
+            **gap_report,  # Pass through all new fields (role, roadmap, alignment, etc.)
+            "score": score, # Legacy support
             "fit_label": fit_label,
-            "semantic": {},
-            "skills_found": gap_report.get('verified_skills', []),
-            "missing_skills": gap_report.get('missing_skills', []),
-            "missing_preferred": [],
-            "experience": {},
-            "suggestions": gap_report.get('recommendations', []),
-            "summary": gap_report.get('summary', ''),
-            "issues": gap_report.get('issues', []),
-            "insight": f"Your resume match is {score}%.",
-            "reasoning": [],
-            "confidence": 0.85,
             "trend": {
                 "previous_score": previous_score,
                 "improvement": improvement
             },
-            "metrics": {},
-            "stats": {},
-            "recommendations": gap_report.get('recommendations', []),
             "extracted_text": resume_text,
             "is_mock": False
         }
@@ -410,17 +397,17 @@ def optimize_resume_view(request):
             resume_name=resume_name,
             job_description=job_desc,
             job_profile=job_profile,
-            score=result.get('score', 0),
+            score=score,
             text_hash=t_hash
         )
         
         # 4. Save Extracted Data Details
         ExtractedData.objects.create(
             analysis=analysis_record,
-            skills=result.get('skills_found', []),
-            missing_skills=result.get('missing_skills', []),
-            suggestions=result.get('recommendations', []),
-            section_scores=result.get('metrics', {}),
+            skills=gap_report.get('strengths', []),
+            missing_skills=gap_report.get('missing_core', []) + gap_report.get('missing_important', []),
+            suggestions=gap_report.get('recommendations', []),
+            section_scores={"match_score": score},
             rewrites=[]
         )
         
