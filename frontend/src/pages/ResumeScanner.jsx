@@ -22,7 +22,8 @@ import {
   Monitor,
   Eye,
   FileSearch,
-  Check
+  Check,
+  X
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
@@ -102,7 +103,7 @@ const ResumeScanner = () => {
                 <motion.header 
                     initial={{ opacity: 0, y: 30, rotateX: 5 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                    className="space-y-6 max-w-4xl"
+                    className="space-y-6 max-w-4xl mx-auto text-center"
                 >
                     <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400">
                         <Cpu className="w-4 h-4" /> Neural Audit Engine v5.2
@@ -110,7 +111,7 @@ const ResumeScanner = () => {
                     <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]">
                         Instant <br /> <span className="text-indigo-500">Resume Audit.</span>
                     </h1>
-                    <p className="text-xl text-white/40 italic font-medium max-w-2xl leading-relaxed">
+                    <p className="text-xl text-white/40 italic font-medium max-w-2xl mx-auto leading-relaxed">
                         Extract hidden scores, detect keyword gaps, and see your resume through the eyes of an automated recruitment system.
                     </p>
                 </motion.header>

@@ -66,7 +66,7 @@ const ResumeGap = () => {
                     <motion.header 
                         initial={{ opacity: 0, y: 20, rotateX: 10 }}
                         animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                        className="space-y-6 max-w-4xl"
+                        className="space-y-6 max-w-4xl mx-auto text-center"
                     >
                         <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400">
                             <Crosshair className="w-4 h-4" /> JD-Driven Alignment
@@ -74,7 +74,7 @@ const ResumeGap = () => {
                         <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]">
                             Skill Gap <br /> <span className="text-indigo-500">Analysis.</span>
                         </h1>
-                        <p className="text-xl text-white/40 italic font-medium max-w-2xl leading-relaxed">
+                        <p className="text-xl text-white/40 italic font-medium max-w-2xl mx-auto leading-relaxed">
                             Stop guessing. Match your resume against a specific job post to see exactly why you're missing the cut.
                         </p>
                     </motion.header>

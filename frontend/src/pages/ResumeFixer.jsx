@@ -96,7 +96,7 @@ const ResumeFixer = () => {
                     <motion.header 
                         initial={{ opacity: 0, y: 20, rotateX: 10 }}
                         animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                        className="space-y-4 max-w-3xl"
+                        className="space-y-4 max-w-3xl mx-auto text-center"
                     >
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-indigo-400">
                             <Sparkles className="w-3 h-3" /> AI-Powered Workbench
@@ -104,7 +104,7 @@ const ResumeFixer = () => {
                         <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase italic leading-[0.9]">
                             Optimize for the <br /> <span className="text-indigo-500">Shortlist.</span>
                         </h1>
-                        <p className="text-base md:text-lg text-white/50 leading-relaxed font-medium">
+                        <p className="text-base md:text-lg text-white/50 leading-relaxed font-medium mx-auto">
                             Don't leave your career to chance. Use deterministic analysis to align your resume with industry-standard benchmarks.
                         </p>
                     </motion.header>
