@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated
 from firebase_admin import auth
 from .auth_utils import verify_token
 from .utils.ml_analyzer import analyze_resume, compute_similarity, extract_skills
-from .utils.gap_analysis import run_gap_analysis
 from .utils.scoring import (
     calculate_education_score, 
     calculate_ats_score, 
