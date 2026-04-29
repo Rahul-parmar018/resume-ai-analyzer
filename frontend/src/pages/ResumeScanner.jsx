@@ -116,7 +116,7 @@ const ResumeScanner = () => {
                     </p>
                 </motion.header>
 
-                <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl'} gap-10 items-start`}>
+                <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl mx-auto'} gap-10 items-start`}>
                     
                     {/* Compact Interactive Input Area */}
                     <motion.div 

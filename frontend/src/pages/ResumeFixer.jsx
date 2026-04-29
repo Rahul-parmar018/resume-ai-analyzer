@@ -109,7 +109,7 @@ const ResumeFixer = () => {
                         </p>
                     </motion.header>
 
-                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-5xl'} gap-8 items-start`}>
+                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-5xl mx-auto'} gap-8 items-start`}>
                         
                         {/* Input Panel with 3D Hover Effect */}
                         <motion.div 

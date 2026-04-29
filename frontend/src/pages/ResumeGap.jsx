@@ -79,7 +79,7 @@ const ResumeGap = () => {
                         </p>
                     </motion.header>
 
-                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl'} gap-10 items-start`}>
+                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl mx-auto'} gap-10 items-start`}>
                         
                         {/* Interactive Dual-Pane Input */}
                         <motion.div 
