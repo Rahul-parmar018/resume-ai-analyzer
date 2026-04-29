@@ -125,10 +125,57 @@ def query_llm(prompt):
         print("HF Error:", e)
         return None
 
+def extract_jd_skills(jd_text):
+    """Dynamically extracts known technical skills from a raw JD string."""
+    if not jd_text: return [], []
+    t = jd_text.lower()
+    found = []
+    for s in SKILL_BANK:
+        n = norm(s)
+        if s.lower() in t or n in t.replace(".", "").replace("-", "").replace(" ", ""):
+            found.append(s)
+    
+    # Split into 'must-have' (Core) and 'nice-to-have' (Preferred) based on common JD phrasing
+    core = []
+    pref = []
+    # Simple heuristic: terms near "required", "must", "experience in" are core
+    # For now, let's treat the first 60% of found skills as core, rest as preferred
+    split_idx = int(len(found) * 0.6)
+    core = found[:split_idx]
+    pref = found[split_idx:]
+    
+    return core, pref
+
 def analyze_with_llm(resume_text, jd_text, role_key=None):
-    # Use deterministic engine for skills and scoring
+    # MODE 1: Skill Gap Finder (JD-driven)
+    if jd_text and not role_key:
+        core_jd, pref_jd = extract_jd_skills(jd_text)
+        # If JD is too thin, fallback to best role detection
+        if len(core_jd) < 3:
+            role_key, _ = best_fit_role(jd_text or resume_text)
+        else:
+            core_m, core_miss = match_skills(resume_text, core_jd)
+            pref_m, pref_miss = match_skills(resume_text, pref_jd)
+            
+            # JD-based scoring
+            score = int(((len(core_m) * 0.7) + (len(pref_m) * 0.3)) / max(1, (len(core_jd)*0.7 + len(pref_jd)*0.3)) * 100)
+            
+            return {
+                "role": "Custom Job Description",
+                "match_score": min(100, score),
+                "ats_status": "Optimized" if score >= 75 else "Needs Alignment",
+                "strengths": core_m + pref_m,
+                "missing_core": core_miss,
+                "missing_important": pref_miss,
+                "alignment": {"is_shift": False},
+                "roadmap": generate_roadmap(core_miss, pref_miss),
+                "recommendations": [], # JD-specific recs would need a heavier prompt
+                "summary": f"Matched {len(core_m)} core and {len(pref_m)} preferred skills from the JD."
+            }
+
+    # MODE 2: Resume Optimizer (Role-driven)
     if not role_key or role_key not in ROLES:
-        role_key = "Full Stack Developer"
+        role_key, _ = best_fit_role(resume_text)
     
     score, core_m, core_miss, imp_m, imp_miss, opt_m, opt_miss = score_role(resume_text, role_key)
     alignment = detect_shift(role_key, resume_text)
@@ -158,7 +205,6 @@ def analyze_with_llm(resume_text, jd_text, role_key=None):
     except Exception as e:
         print("LLM Rec Error:", e)
 
-    # Final response construction
     return {
         "role": role_key,
         "match_score": score,
