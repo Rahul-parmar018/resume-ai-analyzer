@@ -4,6 +4,7 @@ import PublicFooter from "../components/PublicFooter";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthProvider";
 import { useResumeStore } from "../store/useResumeStore";
+import api from "../api-client";
 
 const ResumeGap = () => {
     const { user } = useAuth();

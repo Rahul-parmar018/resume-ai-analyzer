@@ -17,12 +17,9 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Bypassing Onboarding as requested - Direct to tools
-  /*
-  if (!profile?.role && location.pathname !== "/onboarding" && !isSettingsPage) {
+  if (!profile?.role && location.pathname !== "/onboarding" && location.pathname !== "/settings") {
     return <Navigate to="/onboarding" replace />;
   }
-  */
 
   // If already has role and trying to go back to onboarding, send to their workspace
   if (profile?.role && location.pathname === "/onboarding") {

@@ -69,9 +69,30 @@ function App() {
           <Route path="/register"  element={<Register />} />
           <Route path="/ai-resume" element={<CandidateTools />} />
           <Route path="/resume-scanner" element={<ResumeScanner />} />
-          <Route path="/resume-gap-analysis" element={<ResumeGap />} />
-          <Route path="/resume-fixer" element={<ResumeFixer />} />
-          <Route path="/resume-optimizer" element={<ResumeFixer />} />
+          <Route
+            path="/resume-gap-analysis"
+            element={
+              <ProtectedRoute>
+                <ResumeGap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-fixer"
+            element={
+              <ProtectedRoute>
+                <ResumeFixer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-optimizer"
+            element={
+              <ProtectedRoute>
+                <ResumeFixer />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/recruiter-tools" element={<RecruiterComingSoon />} />
           <Route path="/bulk-scanner" element={<RecruiterComingSoon />} />
           <Route path="/ai-ranking" element={<RecruiterComingSoon />} />

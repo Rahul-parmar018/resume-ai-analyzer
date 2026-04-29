@@ -297,10 +297,15 @@ def optimize_resume_view(request):
         user = request.user
         
         # 🛡️ RBAC: Candidate Only
-        if user.role != 'candidate':
+        if user.role == 'recruiter':
             return Response({
                 "error": "Recruiters cannot use the personal Optimizer. Use the Ranking Engine instead.",
                 "code": "ACCESS_DENIED"
+            }, status=403)
+        elif not user.role:
+            return Response({
+                "error": "Please complete your profile onboarding to use the AI Optimizer.",
+                "code": "ROLE_REQUIRED"
             }, status=403)
         
         # 📊 Limit Check (Pre-computation)
