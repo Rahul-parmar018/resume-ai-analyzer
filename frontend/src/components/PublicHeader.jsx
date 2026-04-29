@@ -69,7 +69,7 @@ const PublicHeader = () => {
   const navItems = [
     { name: "AI Resume", path: "#" }, 
     { name: "How it Works", path: "/how-it-works" },
-    { name: "Recruiter Tools", path: "#" }, 
+    { name: "Recruiter Tools", path: "/bulk-scanner" }, 
     { name: "Pricing", path: "/pricing" }
   ];
 
@@ -385,14 +385,14 @@ const PublicHeader = () => {
               {/* Other Items */}
               {navItems.filter(i => i.name !== "AI Resume").map((item) => (
                 <Link 
-                  key={item.path} 
+                  key={item.name} 
                   to={item.path} 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-xl font-black text-slate-400 hover:text-slate-900 transition-colors"
+                  className="text-xl font-black text-slate-400 hover:text-slate-900 transition-colors flex items-center justify-between"
                 >
                   {item.name}
                   {item.name === "Recruiter Tools" && (
-                    <span className="ml-2 text-[8px] bg-yellow-400 text-black px-2 py-0.5 rounded-full uppercase tracking-widest font-black">Coming Soon</span>
+                    <span className="material-symbols-outlined text-indigo-500">arrow_forward</span>
                   )}
                 </Link>
               ))}
