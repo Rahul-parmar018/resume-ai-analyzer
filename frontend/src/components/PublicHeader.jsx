@@ -69,8 +69,8 @@ const PublicHeader = () => {
   const navItems = [
     { name: "AI Resume", path: "#" }, 
     { name: "How it Works", path: "/how-it-works" },
-    { name: "Recruiter Tools", path: "/recruiter-tools" },
-    { name: "Support", path: "/contact" }
+    { name: "Recruiter Tools", path: "#" }, 
+    { name: "Pricing", path: "/pricing" }
   ];
 
   return (
@@ -156,16 +156,49 @@ const PublicHeader = () => {
 
             if (item.name === "Recruiter Tools") {
               return (
-                <div key="recruiter-tools-dropdown" className="relative group/rec" ref={recruiterToolsRef}>
+                <div key="recruiter-tools-dropdown" className="relative group/rec" ref={recruiterToolsRef} onMouseEnter={() => setIsRecruiterToolsOpen(true)}>
                   <button 
-                    disabled
-                    className="opacity-50 cursor-not-allowed relative transition-all font-bold flex items-center gap-2 py-1 text-slate-500"
+                    className={`transition-all font-bold flex items-center gap-1 py-1 ${
+                      isActive || isRecruiterToolsOpen ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+                    }`}
                   >
                     {item.name}
-                    <span className="ml-1 text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black tracking-widest leading-none">
-                      COMING SOON
-                    </span>
+                    <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${isRecruiterToolsOpen ? "rotate-180" : ""}`}>expand_more</span>
                   </button>
+
+                  {isRecruiterToolsOpen && (
+                    <div 
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl py-3 dropdown-animate overflow-hidden"
+                      onMouseLeave={() => setIsRecruiterToolsOpen(false)}
+                    >
+                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-slate-50 rotate-45 z-0" />
+                      <div className="relative z-10">
+                        <div className="px-4 py-2 border-b border-slate-50 mb-1 bg-slate-50/50">
+                          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Hiring Suite</p>
+                        </div>
+                        <Link 
+                          to="/bulk-scanner" 
+                          onClick={() => setIsRecruiterToolsOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all"
+                        >
+                          <span className="material-symbols-outlined text-indigo-500">batch_prediction</span>
+                          <div>
+                            <p className="font-bold text-sm">Bulk Scanner</p>
+                            <p className="text-[10px] text-slate-400 font-medium">Rank Candidates Instantly</p>
+                          </div>
+                        </Link>
+                        <div className="px-4 py-3 opacity-40 cursor-not-allowed grayscale">
+                          <div className="flex items-center gap-3">
+                            <span className="material-symbols-outlined text-slate-400">psychology</span>
+                            <div>
+                                <p className="font-bold text-sm text-slate-400">Talent Search</p>
+                                <p className="text-[8px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-black w-fit mt-1">COMING SOON</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             }

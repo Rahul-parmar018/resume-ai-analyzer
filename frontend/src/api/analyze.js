@@ -85,6 +85,20 @@ export const bulkAnalyzeResumes = async (files, jdOrProfile) => {
 };
 
 /**
+ * Recruiter MVP: Quick Bulk Ranking
+ */
+export const rankResumes = async (files, role) => {
+  const formData = new FormData();
+  Array.from(files).forEach((file) => formData.append("files", file));
+  formData.append("role", role);
+
+  const res = await api.post("/recruiter/rank/", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+  return res.data;
+};
+
+/**
  * Delete a specific analysis record
  */
 export const deleteAnalysis = async (id) => {

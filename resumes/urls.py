@@ -10,6 +10,7 @@ urlpatterns = [
     # 🎯 Primary SaaS Phase 4 API Loop & Phase 2 Intelligence
     path('optimize/', views.optimize_resume_view, name='optimize_api'),
     path('bulk-analyze/', views.bulk_analyze_view, name='bulk_analyze_api'),
+    path('recruiter/rank/', views.rank_candidates_view, name='rank_candidates_api'),
     path('dashboard/', views.get_dashboard_analytics_view, name='dashboard_api'),
     path('semantic-search/', views.semantic_search_view, name='semantic_search_api'),
     path('history/', views.get_history_view, name='get_history_api'),

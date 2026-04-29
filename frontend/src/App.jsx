@@ -94,7 +94,7 @@ function App() {
             }
           />
           <Route path="/recruiter-tools" element={<RecruiterComingSoon />} />
-          <Route path="/bulk-scanner" element={<RecruiterComingSoon />} />
+          <Route path="/bulk-scanner" element={<BulkScanner />} />
           <Route path="/ai-ranking" element={<RecruiterComingSoon />} />
           <Route path="/semantic-search" element={<RecruiterComingSoon />} />
           <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />

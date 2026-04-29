@@ -1,724 +1,314 @@
-import { useState } from "react";
-import { bulkAnalyzeResumes } from "../api/analyze";
-import PageHeader from "../components/ui/PageHeader";
-import { getScoreColorClass } from "../utils/scoring";
+import { useState, useEffect } from "react";
+import { 
+  Check, X, Search, Briefcase, Users, 
+  Upload, FileText, Cpu, AlertTriangle, 
+  Shield, Code2, Zap, BarChart3, Target,
+  ChevronRight, ArrowRight, MousePointer2
+} from "lucide-react";
+import PublicHeader from "../components/PublicHeader";
+import PublicFooter from "../components/PublicFooter";
+import { useAuth } from "../components/AuthProvider";
+import { rankResumes } from "../api/analyze";
+import { motion, AnimatePresence } from "framer-motion";
 
-const EXPERIENCE_LEVELS = [
-  { value: "intern", label: "Intern" },
-  { value: "junior", label: "Junior (0–2)" },
-  { value: "mid", label: "Mid (2–5)" },
-  { value: "senior", label: "Senior (5+)" },
+const BIG_FIVE = [
+  { key: "AI/ML Engineer", icon: Target, desc: "Neural networks & ML pipelines" },
+  { key: "Cybersecurity Engineer", icon: Shield, desc: "Infosec & Threat Detection" },
+  { key: "Full Stack Developer", icon: Code2, desc: "Web architecture & APIs" },
+  { key: "DevOps Engineer", icon: Zap, desc: "CI/CD & Cloud Infrastructure" },
+  { key: "Data Scientist", icon: BarChart3, desc: "Analytics & Predictive Modeling" }
 ];
 
-const TOOL_OPTIONS = ["Docker", "AWS", "Kubernetes", "TensorFlow"];
+const BulkScanner = () => {
+    const { user, profile } = useAuth();
+    const [selectedRole, setSelectedRole] = useState("");
+    const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState("");
 
-const PRESETS = [
-  {
-    key: "frontend",
-    label: "Frontend Developer",
-    values: {
-      job_title: "Frontend Developer",
-      department: "Engineering",
-      experience_level: "mid",
-      required_skills: ["JavaScript", "React", "TypeScript"],
-      optional_skills: ["Next.js", "CSS", "Testing"],
-      tools: ["Docker", "AWS"],
-      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
-      notes: "Startup experience preferred",
-    },
-  },
-  {
-    key: "backend",
-    label: "Backend Engineer",
-    values: {
-      job_title: "Backend Engineer",
-      department: "Engineering",
-      experience_level: "mid",
-      required_skills: ["Python", "Django", "SQL"],
-      optional_skills: ["Redis", "Celery", "REST APIs"],
-      tools: ["Docker", "AWS", "Kubernetes"],
-      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
-      notes: "Experience scaling APIs preferred",
-    },
-  },
-  {
-    key: "datasci",
-    label: "Data Scientist",
-    values: {
-      job_title: "Data Scientist",
-      department: "Data",
-      experience_level: "mid",
-      required_skills: ["Python", "Machine Learning", "Statistics"],
-      optional_skills: ["NLP", "Deep Learning", "Data Visualization"],
-      tools: ["AWS", "TensorFlow"],
-      weights: { skills: 40, experience: 30, education: 15, ats: 15 },
-      notes: "Prior experimentation and model deployment preferred",
-    },
-  },
-];
+    useEffect(() => {
+        document.title = "Recruiter Bulk Scanner | Candidex AI";
+    }, []);
 
-const normalizeTag = (tag) => tag.trim().replace(/\s+/g, " ");
-
-const TagInput = ({ label, tags, setTags, placeholder }) => {
-  const [value, setValue] = useState("");
-
-  const addTag = (raw) => {
-    const next = normalizeTag(raw);
-    if (!next) return;
-    const exists = tags.some((t) => t.toLowerCase() === next.toLowerCase());
-    if (exists) return;
-    setTags([...tags, next]);
-    setValue("");
-  };
-
-  const removeTag = (idx) => setTags(tags.filter((_, i) => i !== idx));
-
-  return (
-    <div className="space-y-2">
-      <label className="block text-xs font-bold text-secondary uppercase tracking-widest">{label}</label>
-      <div className="w-full min-h-[3rem] p-3 bg-slate-50 border border-gray-100 rounded-2xl text-sm text-primary focus-within:ring-2 focus-within:ring-accent/20 outline-none transition-all">
-        <div className="flex flex-wrap gap-2 items-center">
-          {tags.map((t, idx) => (
-            <span
-              key={`${t}-${idx}`}
-              className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded-xl text-xs font-bold"
-            >
-              {t}
-              <button
-                type="button"
-                onClick={() => removeTag(idx)}
-                className="text-slate-400 hover:text-slate-700 transition-colors leading-none"
-                aria-label={`Remove ${t}`}
-              >
-                ×
-              </button>
-            </span>
-          ))}
-          <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === ",") {
-                e.preventDefault();
-                addTag(value);
-              }
-              if (e.key === "Backspace" && !value && tags.length) {
-                e.preventDefault();
-                setTags(tags.slice(0, -1));
-              }
-            }}
-            onBlur={() => addTag(value)}
-            placeholder={placeholder}
-            className="flex-1 min-w-[10rem] bg-transparent outline-none text-sm"
-          />
-        </div>
-      </div>
-      <p className="text-[11px] text-slate-400">Type a skill and press Enter to add.</p>
-    </div>
-  );
-};
-
-const WeightSlider = ({ label, value, onChange }) => (
-  <div className="space-y-2">
-    <div className="flex items-center justify-between">
-      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</span>
-      <span className="text-xs font-black text-primary">{value}%</span>
-    </div>
-    <input
-      type="range"
-      min={0}
-      max={100}
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full accent-black"
-    />
-  </div>
-);
-
-const BulkAnalyzer = () => {
-  const [files, setFiles] = useState([]);
-  const [jobTitle, setJobTitle] = useState("");
-  const [department, setDepartment] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState("mid");
-  const [requiredSkills, setRequiredSkills] = useState([]);
-  const [optionalSkills, setOptionalSkills] = useState([]);
-  const [tools, setTools] = useState([]);
-  const [notes, setNotes] = useState("");
-  const [weights, setWeights] = useState({ skills: 40, experience: 30, education: 15, ats: 15 });
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState("");
-  const [selectedForCompare, setSelectedForCompare] = useState([]);
-  const [showCompare, setShowCompare] = useState(false);
-
-  const setWeightKeepingTotal = (key, nextVal) => {
-    const clamped = Math.max(0, Math.min(100, Math.round(nextVal)));
-    const otherKeys = Object.keys(weights).filter((k) => k !== key);
-    const remaining = 100 - clamped;
-    const curOtherSum = otherKeys.reduce((acc, k) => acc + weights[k], 0);
-
-    const newWeights = { ...weights, [key]: clamped };
-
-    if (curOtherSum === 0) {
-      const share = Math.floor(remaining / otherKeys.length);
-      otherKeys.forEach((k, i) => {
-        newWeights[k] = i === otherKeys.length - 1 ? remaining - share * (otherKeys.length - 1) : share;
-      });
-    } else {
-      let allocated = 0;
-      otherKeys.forEach((k, i) => {
-        if (i === otherKeys.length - 1) {
-          newWeights[k] = remaining - allocated;
-        } else {
-          const share = Math.round((weights[k] / curOtherSum) * remaining);
-          newWeights[k] = share;
-          allocated += share;
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length > 10) {
+            setError("MVP Limit: Max 10 resumes per batch.");
+            return;
         }
-      });
-    }
-    setWeights(newWeights);
-  };
-
-  const applyPreset = (preset) => {
-    const v = preset.values;
-    setJobTitle(v.job_title || "");
-    setDepartment(v.department || "");
-    setExperienceLevel(v.experience_level || "mid");
-    setRequiredSkills(v.required_skills || []);
-    setOptionalSkills(v.optional_skills || []);
-    setTools(v.tools || []);
-    setWeights(v.weights || { skills: 50, experience: 30, semantic: 20 });
-    setNotes(v.notes || "");
-    setError("");
-  };
-
-  const buildJobProfile = () => {
-    const total = weights.skills + weights.experience + weights.semantic;
-    const safeTotal = total > 0 ? total : 100;
-    return {
-      job_title: jobTitle.trim(),
-      department: department.trim(),
-      experience_level: experienceLevel,
-      required_skills: requiredSkills,
-      optional_skills: optionalSkills,
-      tools,
-      weights: {
-        skills: weights.skills / safeTotal,
-        experience: weights.experience / safeTotal,
-        education: weights.education / safeTotal,
-        ats: weights.ats / safeTotal,
-      },
-      notes: notes.trim(),
+        setFiles(selectedFiles);
+        setError("");
     };
-  };
 
-  // File Handlers
-  const handleFileChange = (e) => {
-    const selected = Array.from(e.target.files);
-    if (selected.length > 150) {
-      setError("Maximum 150 resumes allowed per batch.");
-      return;
-    }
-    setFiles(selected);
-    setError("");
-  };
+    const handleRank = async () => {
+        if (!selectedRole) { setError("Select a target role."); return; }
+        if (files.length === 0) { setError("Upload at least one resume."); return; }
+        
+        setLoading(true);
+        setError("");
+        try {
+            const data = await rankResumes(files, selectedRole);
+            setResult(data);
+        } catch (err) {
+            setError(err.response?.data?.error || "Ranking failed. Try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const handleAnalyzeAll = async () => {
-    if (!files.length) { setError("Please upload at least one resume."); return; }
-    if (!jobTitle.trim()) { setError("Job Title is required."); return; }
-    if (!experienceLevel) { setError("Experience Level is required."); return; }
-    if (!requiredSkills.length) { setError("Add at least 1 Required Skill."); return; }
-    
-    try {
-      setLoading(true); 
-      setError(""); 
-      setResult(null);
-      setSelectedForCompare([]);
-      setShowCompare(false);
-      
-      const data = await bulkAnalyzeResumes(files, buildJobProfile());
-      setResult(data);
-    } catch (err) {
-      setError(err.message || "Bulk Analysis failed executing batch vectors.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Compare Logic
-  const toggleCompare = (id) => {
-    setSelectedForCompare(prev => {
-      if (prev.includes(id)) return prev.filter(c => c !== id);
-      if (prev.length >= 4) {
-         setError("You can only compare up to 4 candidates at once.");
-         return prev;
-      }
-      return [...prev, id];
-    });
-  };
-
-  const compareCandidatesRaw = selectedForCompare.map(id => 
-    result?.top_candidates.find(c => c.id === id)
-  ).filter(Boolean);
-
-  // Generate superset of all skills found across compared candidates
-  const allCompareSkills = Array.from(new Set(compareCandidatesRaw.flatMap(c => c.skills)));
-
-  return (
-    <div className="space-y-6 pb-12">
-      <PageHeader 
-        title="Candidate Ranking Engine"
-        subtitle="Recruiter Mode: Process up to 150 resumes simultaneously against a structured hiring profile with neural semantic matching."
-        actionLabel={files.length > 0 ? `${files.length} Ready` : "Awaiting PDFs"}
-        actionIcon="hub"
-      />
-
-      {/* Upload & Hiring Profile Configuration Block */}
-      {!result && !loading && (
-        <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 animate-fade-in">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-8">
+    return (
+        <div className="min-h-screen bg-[#0A0A0B] text-white selection:bg-indigo-500/30 overflow-x-hidden">
+            <PublicHeader />
             
-            {/* Multi-File Upload */}
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-secondary uppercase tracking-widest">01. Candidate Pool (Bulk)</label>
-              <div className="relative group h-48">
-                <input
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                />
-                <div className={`h-full border-2 border-dashed ${files.length > 0 ? 'border-accent bg-accent/5' : 'border-gray-200 bg-slate-50'} group-hover:border-accent group-hover:bg-accent/5 rounded-2xl p-6 text-center transition-all flex flex-col items-center justify-center`}>
-                  <span className={`material-symbols-outlined text-4xl mb-3 ${files.length > 0 ? 'text-accent' : 'text-slate-400 group-hover:text-accent'}`}>
-                    content_copy
-                  </span>
-                  <p className="text-sm font-bold text-primary">
-                    {files.length > 0 ? `${files.length} Resumes Staged for Batching` : "Drop Resumes Here (Max 150)"}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-2">PDF, DOCX formats supported</p>
-                </div>
-              </div>
+            {/* 3D Background Elements */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute top-[-10%] right-[-10%] w-[1000px] h-[1000px] bg-indigo-600/10 rounded-full blur-[180px] animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[150px]" />
+                <div className="absolute inset-0 bg-[url('/images/grid.png')] opacity-[0.02] bg-repeat" />
             </div>
 
-            {/* Structured Hiring Form */}
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-secondary uppercase tracking-widest">02. Structured Hiring Form</label>
-                  <p className="text-xs text-slate-400 mt-1">Use presets or build your own role profile. No more unstructured JD text walls.</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {PRESETS.map((p) => (
-                    <button
-                      key={p.key}
-                      type="button"
-                      onClick={() => applyPreset(p)}
-                      className="px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-black text-slate-700 transition-colors"
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* SECTION 1: Role Info */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-accent">badge</span>
-                  <h3 className="font-heading font-black text-primary">Role Info</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Job Title</label>
-                    <input
-                      value={jobTitle}
-                      onChange={(e) => setJobTitle(e.target.value)}
-                      placeholder="AI/ML Engineer"
-                      className="w-full h-12 px-4 bg-white border border-slate-200 rounded-2xl text-sm text-primary focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Department</label>
-                    <input
-                      value={department}
-                      onChange={(e) => setDepartment(e.target.value)}
-                      placeholder="Engineering"
-                      className="w-full h-12 px-4 bg-white border border-slate-200 rounded-2xl text-sm text-primary focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Experience Level</label>
-                  <select
-                    value={experienceLevel}
-                    onChange={(e) => setExperienceLevel(e.target.value)}
-                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-2xl text-sm text-primary focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                  >
-                    {EXPERIENCE_LEVELS.map((lvl) => (
-                      <option key={lvl.value} value={lvl.value}>{lvl.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* SECTION 2: Skills Selection */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-5">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-accent">psychology</span>
-                  <h3 className="font-heading font-black text-primary">Skills Selection</h3>
-                </div>
-                <TagInput
-                  label="Required Skills"
-                  tags={requiredSkills}
-                  setTags={setRequiredSkills}
-                  placeholder='Type "Python" and press Enter'
-                />
-                <TagInput
-                  label="Optional Skills"
-                  tags={optionalSkills}
-                  setTags={setOptionalSkills}
-                  placeholder='Type "Docker" and press Enter'
-                />
-              </div>
-
-              {/* SECTION 3: Tools / Tech Stack */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-accent">deployed_code</span>
-                  <h3 className="font-heading font-black text-primary">Tools / Tech Stack</h3>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Select Tools</label>
-                  <select
-                    multiple
-                    value={tools}
-                    onChange={(e) => {
-                      const selected = Array.from(e.target.selectedOptions).map((o) => o.value);
-                      setTools(selected);
-                    }}
-                    className="w-full min-h-[7rem] p-3 bg-white border border-slate-200 rounded-2xl text-sm text-primary focus:ring-2 focus:ring-accent/20 outline-none transition-all"
-                  >
-                    {TOOL_OPTIONS.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </div>
-                {tools.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {tools.map((t) => (
-                      <span key={t} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded-xl text-xs font-bold">{t}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* SECTION 4: Weight System */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-accent">tune</span>
-                    <h3 className="font-heading font-black text-primary">Weight System</h3>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setWeights({ skills: 40, experience: 30, education: 15, ats: 15 })}
-                    className="text-xs font-black text-slate-500 hover:text-primary transition-colors"
-                  >
-                    Reset 40/30/15/15
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <WeightSlider label="Skills" value={weights.skills} onChange={(v) => setWeightKeepingTotal("skills", v)} />
-                  <WeightSlider label="Experience" value={weights.experience} onChange={(v) => setWeightKeepingTotal("experience", v)} />
-                  <WeightSlider label="Education" value={weights.education} onChange={(v) => setWeightKeepingTotal("education", v)} />
-                  <WeightSlider label="ATS Format" value={weights.ats} onChange={(v) => setWeightKeepingTotal("ats", v)} />
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  Total: {weights.skills + weights.experience + weights.education + weights.ats}%. We auto-balance sliders to always equal 100%.
-                </div>
-              </div>
-
-              {/* SECTION 5: Additional Requirements */}
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-accent">notes</span>
-                  <h3 className="font-heading font-black text-primary">Additional Requirements</h3>
-                </div>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder='e.g., "Startup experience preferred" or "Remote only"'
-                  className="w-full h-24 p-4 bg-white border border-slate-200 rounded-2xl text-sm text-primary focus:ring-2 focus:ring-accent/20 outline-none transition-all resize-none"
-                />
-                <p className="text-[11px] text-slate-400">Optional. This is included in the semantic query context.</p>
-              </div>
-            </div>
-          </div>
-
-          {error && (
-            <div className="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600">
-              <span className="material-symbols-outlined text-xl">error</span>
-              <span className="text-sm font-bold">{error}</span>
-            </div>
-          )}
-
-          <button
-            onClick={handleAnalyzeAll}
-            disabled={files.length === 0 || !jobTitle.trim() || !requiredSkills.length}
-            className="w-full bg-primary text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-primary/20 group"
-          >
-            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">bolt</span>
-            <span>Analyze {files.length || 0} Candidates</span>
-          </button>
-        </div>
-      )}
-
-      {/* Loading State */}
-      {loading && (
-        <div className="flex flex-col items-center justify-center p-20 bg-white rounded-3xl border border-gray-100 shadow-sm text-center">
-          <div className="relative w-24 h-24 mb-6">
-            <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-            <span className="material-symbols-outlined text-4xl text-accent absolute inset-0 flex items-center justify-center animate-pulse">
-              memory
-            </span>
-          </div>
-          <h2 className="text-2xl font-black font-heading text-primary mb-2">Analyzing {files.length} Candidates</h2>
-          <p className="text-slate-500 font-medium">Batch scoring resumes using your structured hiring profile.</p>
-          <div className="mt-8 px-6 py-2 bg-slate-50 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest border border-slate-100">
-            Estimated time: {Math.ceil(files.length * 1.5)}s
-          </div>
-        </div>
-      )}
-
-      {/* Post-Analysis: Leaderboard & Compare */}
-      {result && !loading && (
-        <div className="space-y-8 animate-fade-in">
-          
-          {/* Quick Stats Panel */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><span className="material-symbols-outlined">group</span></div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Analyzed</p>
-                  <p className="text-2xl font-black text-primary">{result.total_candidates}</p>
-                </div>
-             </div>
-             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center"><span className="material-symbols-outlined">auto_awesome</span></div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Auto-Shortlisted</p>
-                  <p className="text-2xl font-black text-primary">{result.auto_shortlist?.length || 0}</p>
-                </div>
-             </div>
-             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3">
-                {selectedForCompare.length > 0 ? (
-                  <button 
-                    onClick={() => setShowCompare(true)}
-                    className="w-full py-3 bg-accent text-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all shadow-md shadow-accent/20"
-                  >
-                    <span className="material-symbols-outlined">compare_arrows</span>
-                    Compare ({selectedForCompare.length})
-                  </button>
-                ) : (
-                  <div className="text-center text-slate-400 text-xs font-bold py-1">Select to Compare</div>
-                )}
-                <div className="flex gap-2 w-full pt-1 border-t border-slate-50">
-                  <button 
-                    onClick={() => {
-                      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(result, null, 2));
-                      const downloadAnchorNode = document.createElement('a');
-                      downloadAnchorNode.setAttribute("href", dataStr);
-                      downloadAnchorNode.setAttribute("download", `batch_report_${result.session_id}.json`);
-                      document.body.appendChild(downloadAnchorNode);
-                      downloadAnchorNode.click();
-                      downloadAnchorNode.remove();
-                    }}
-                    className="flex-1 py-1.5 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[10px] font-black hover:bg-slate-100 transition-all"
-                  >
-                    JSON
-                  </button>
-                  <button 
-                    onClick={() => {
-                        const headers = ["Rank", "Name", "Score", "Skills"];
-                        const rows = result.top_candidates.map(c => [c.rank, c.name, c.score, c.skills.join("; ")]);
-                        const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                        const link = document.createElement("a");
-                        link.setAttribute("href", URL.createObjectURL(blob));
-                        link.setAttribute("download", `candidates_ranking_${result.session_id}.csv`);
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }}
-                    className="flex-1 py-1.5 bg-slate-50 border border-slate-100 text-slate-500 rounded-lg text-[10px] font-black hover:bg-slate-100 transition-all"
-                  >
-                    CSV
-                  </button>
-                </div>
-             </div>
-          </div>
-
-          {/* Compare Modal/View overlay */}
-          {showCompare && (
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden mb-8">
-              <div className="bg-slate-800 px-6 py-4 flex items-center justify-between text-white">
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-accent">view_week</span>
-                  <h3 className="font-bold font-heading">Candidate Comparison</h3>
-                </div>
-                <button onClick={() => setShowCompare(false)} className="hover:bg-slate-700 p-1 rounded-lg transition-colors">
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-
-              <div className="p-6 overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="p-4 border-b-2 border-slate-100 text-xs font-bold uppercase tracking-widest text-slate-400 bg-slate-50 rounded-tl-xl">Feature</th>
-                      {compareCandidatesRaw.map(c => (
-                        <th key={c.id} className="p-4 border-b-2 border-slate-100 bg-slate-50 first:rounded-tl-xl last:rounded-tr-xl">
-                          <div className="font-heading font-black text-primary text-lg truncate w-40" title={c.name}>{c.name.replace(/\.(pdf|docx)$/i, '')}</div>
-                          <div className="text-accent text-sm font-bold">{c.score}% Match</div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allCompareSkills.map((skill, i) => (
-                      <tr key={skill} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
-                        <td className="p-4 border-b border-slate-100/50 font-bold text-slate-700 text-sm">{skill}</td>
-                        {compareCandidatesRaw.map(c => {
-                          const hasSkill = c.skills.includes(skill);
-                          return (
-                            <td key={`${c.id}-${skill}`} className="p-4 border-b border-slate-100/50 text-center">
-                              {hasSkill ? (
-                                <span className="material-symbols-outlined text-green-500 font-bold">check_circle</span>
-                              ) : (
-                                <span className="material-symbols-outlined text-slate-300 font-bold">cancel</span>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Leaderboard Table Core */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-              <h3 className="font-heading font-black text-primary text-xl flex items-center gap-2">
-                <span className="material-symbols-outlined text-accent">leaderboard</span>
-                Candidate Leaderboard
-              </h3>
-              <button 
-                onClick={() => {
-                  setResult(null);
-                  setFiles([]);
-                  setJobTitle("");
-                  setDepartment("");
-                  setExperienceLevel("mid");
-                  setRequiredSkills([]);
-                  setOptionalSkills([]);
-                  setTools([]);
-                  setNotes("");
-                  setWeights({ skills: 50, experience: 30, semantic: 20 });
-                  setShowCompare(false);
-                  setSelectedForCompare([]);
-                  setError("");
-                }}
-                className="text-sm font-bold text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[18px]">refresh</span> New Session
-              </button>
-            </div>
-
-            <div className="divide-y divide-slate-100">
-              {result.top_candidates.map((c, idx) => {
-                const isShortlisted = result.auto_shortlist?.some(s => s.id === c.id);
-                const isSelected = selectedForCompare.includes(c.id);
-
-                return (
-                  <div key={c.id} className={`p-6 flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-slate-50 transition-colors ${isSelected ? 'bg-blue-50/30' : ''}`}>
+            <div className="relative z-10">
+                <main className="max-w-[1400px] mx-auto px-6 pt-32 pb-24 space-y-12">
                     
-                    {/* Rank & Compare Check */}
-                    <div className="flex items-center gap-4 shrink-0">
-                      <div 
-                        onClick={() => toggleCompare(c.id)}
-                        className={`w-6 h-6 rounded flex items-center justify-center cursor-pointer border-2 transition-all ${isSelected ? 'bg-accent border-accent text-primary' : 'border-slate-300 hover:border-accent text-transparent'}`}
-                      >
-                         <span className="material-symbols-outlined text-[16px] font-bold">check</span>
-                      </div>
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-heading font-black text-xl shadow-inner ${idx === 0 ? 'bg-yellow-100 text-yellow-700' : idx === 1 ? 'bg-slate-200 text-slate-700' : idx === 2 ? 'bg-amber-100 text-amber-700' : 'bg-slate-50 text-slate-400'}`}>
-                        #{c.rank}
-                      </div>
-                    </div>
-
-                    {/* Core Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h4 className="font-heading font-bold text-lg text-primary truncate">
-                          {c.name.replace(/\.(pdf|docx)$/i, '')}
-                        </h4>
-                        {isShortlisted && (
-                          <span className="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 rounded text-[10px] font-bold uppercase tracking-widest self-start mt-1">
-                            Auto-Shortlist
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Tailwind Score Bar */}
-                      <div className="flex items-center gap-3 mt-3">
-                        <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              c.score > 75 ? 'bg-green-500' : 
-                              c.score >= 50 ? 'bg-amber-500' : 
-                              'bg-red-500'
-                            }`} 
-                            style={{ width: `${c.score}%` }}
-                          ></div>
+                    {/* Header */}
+                    <motion.header 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6 max-w-4xl mx-auto text-center"
+                    >
+                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400">
+                            <Users className="w-4 h-4" /> Recruiter Intelligence Hub
                         </div>
-                        <span className={`text-xs font-black px-2 py-0.5 rounded-lg border ${getScoreColorClass(c.score)}`}>
-                          {c.score}%
-                        </span>
-                      </div>
+                        <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.8]">
+                            Bulk Candidate <br /> <span className="text-indigo-500">Ranking.</span>
+                        </h1>
+                        <p className="text-xl text-white/40 italic font-medium max-w-2xl mx-auto leading-relaxed">
+                            Upload multiple resumes and rank them against industry-standard roles in seconds.
+                        </p>
+                    </motion.header>
+
+                    <div className={`grid ${result ? 'lg:grid-cols-2' : 'max-w-6xl mx-auto'} gap-10 items-start transition-all duration-700`}>
+                        
+                        {/* Input Area */}
+                        <motion.div 
+                            layout
+                            className="bg-white/[0.03] border border-white/5 rounded-[3rem] p-10 space-y-10 shadow-2xl backdrop-blur-3xl group hover:border-white/20 transition-all duration-500"
+                        >
+                            <div className="space-y-6">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
+                                    01. Select Target Career Path <MousePointer2 className="w-3 h-3 text-indigo-500" />
+                                </label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {BIG_FIVE.map((role) => (
+                                        <button
+                                            key={role.key}
+                                            onClick={() => setSelectedRole(role.key)}
+                                            className={`p-6 rounded-[2rem] border transition-all text-left group/btn relative overflow-hidden ${
+                                                selectedRole === role.key 
+                                                ? "bg-indigo-600 border-indigo-500 shadow-[0_0_40px_rgba(79,70,229,0.3)]" 
+                                                : "bg-white/[0.02] border-white/5 hover:bg-white/5"
+                                            }`}
+                                        >
+                                            <div className="relative z-10 flex items-center gap-4">
+                                                <role.icon className={`w-6 h-6 ${selectedRole === role.key ? "text-white" : "text-indigo-400 group-hover/btn:scale-110 transition-transform"}`} />
+                                                <div>
+                                                    <p className="font-black italic text-sm uppercase leading-tight">{role.key}</p>
+                                                    <p className={`text-[10px] font-medium italic ${selectedRole === role.key ? "text-white/60" : "text-white/20"}`}>{role.desc}</p>
+                                                </div>
+                                            </div>
+                                            {selectedRole === role.key && (
+                                                <motion.div layoutId="roleGlow" className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
+                                    02. Upload Candidate Resumes <Upload className="w-3 h-3 text-indigo-500" />
+                                </label>
+                                <div 
+                                    className="relative group/upload"
+                                    onClick={() => document.getElementById('bulk-upload').click()}
+                                >
+                                    <div className="border-2 border-dashed border-white/10 rounded-[2.5rem] p-12 text-center group-hover/upload:border-indigo-500/50 transition-all cursor-pointer bg-white/[0.01]">
+                                        <input 
+                                            id="bulk-upload" 
+                                            type="file" 
+                                            multiple 
+                                            hidden 
+                                            accept=".pdf,.docx,.txt"
+                                            onChange={handleFileChange}
+                                        />
+                                        <div className="space-y-4">
+                                            <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto group-hover/upload:scale-110 group-hover/upload:bg-indigo-500/20 transition-all shadow-2xl">
+                                                <FileText className="w-10 h-10 text-indigo-500" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xl font-black italic tracking-tight uppercase">
+                                                    {files.length > 0 ? `${files.length} Resumes Ready` : "Drop Resumes Here"}
+                                                </p>
+                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mt-1">
+                                                    PDF, DOCX, or TXT • MAX 10 FILES
+                                                </p>
+                                            </div>
+                                            {files.length > 0 && (
+                                                <div className="flex flex-wrap justify-center gap-2 mt-4">
+                                                    {Array.from(files).slice(0, 3).map((f, i) => (
+                                                        <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-white/40 italic">
+                                                            {f.name.length > 15 ? f.name.substring(0, 12) + '...' : f.name}
+                                                        </span>
+                                                    ))}
+                                                    {files.length > 3 && (
+                                                        <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-indigo-400 italic">
+                                                            +{files.length - 3} more
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {error && (
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 text-rose-400">
+                                    <AlertTriangle className="w-5 h-5 shrink-0" />
+                                    <p className="text-sm font-bold italic">{error}</p>
+                                </motion.div>
+                            )}
+
+                            <button
+                                onClick={handleRank}
+                                disabled={loading}
+                                className={`w-full py-6 rounded-3xl font-black text-xl uppercase tracking-tighter italic transition-all flex items-center justify-center gap-4 shadow-2xl relative overflow-hidden group ${
+                                    loading 
+                                    ? "bg-white/5 text-white/20" 
+                                    : "bg-white text-black hover:bg-indigo-500 hover:text-white"
+                                }`}
+                            >
+                                {loading ? (
+                                    <>Ranking Neural Vectors... <Cpu className="w-6 h-6 animate-spin" /></>
+                                ) : (
+                                    <>Start Ranking Engine <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" /></>
+                                )}
+                            </button>
+                        </motion.div>
+
+                        {/* Result Area */}
+                        <AnimatePresence>
+                            {result && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="space-y-8"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-3xl font-black tracking-tight uppercase italic">Top Candidates <span className="text-indigo-500">for {result.role}</span></h2>
+                                        <div className="px-4 py-1.5 bg-indigo-600/20 border border-indigo-500/30 rounded-full text-[10px] font-black uppercase tracking-widest text-indigo-400">
+                                            {result.total} Processed
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        {result.candidates.map((cand, idx) => (
+                                            <motion.div
+                                                key={idx}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.1 }}
+                                                className={`relative bg-white/[0.03] border border-white/5 rounded-[2.5rem] p-8 hover:border-indigo-500/30 transition-all group overflow-hidden ${idx === 0 ? 'border-indigo-500/40 ring-1 ring-indigo-500/20 shadow-2xl shadow-indigo-500/10' : ''}`}
+                                            >
+                                                {idx === 0 && (
+                                                    <div className="absolute top-0 right-0 px-8 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase italic tracking-widest rounded-bl-3xl">
+                                                        Top Pick
+                                                    </div>
+                                                )}
+                                                
+                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                                    <div className="flex items-center gap-6">
+                                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl italic border-2 transition-all group-hover:rotate-6 ${
+                                                            cand.score >= 80 ? 'bg-indigo-600 border-white/20 text-white' : 
+                                                            cand.score >= 60 ? 'bg-white/5 border-white/10 text-white/80' : 
+                                                            'bg-white/[0.02] border-white/5 text-white/40'
+                                                        }`}>
+                                                            #{idx + 1}
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-2xl font-black italic tracking-tight">{cand.name}</h3>
+                                                            <div className="flex items-center gap-2 mt-1">
+                                                                <div className="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden">
+                                                                    <div className={`h-full transition-all duration-1000 ${cand.score >= 80 ? 'bg-indigo-500' : 'bg-white/40'}`} style={{ width: `${cand.score}%` }} />
+                                                                </div>
+                                                                <span className={`text-sm font-black italic ${cand.score >= 80 ? 'text-indigo-400' : 'text-white/40'}`}>{cand.score}%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid md:grid-cols-2 gap-6 mt-8 border-t border-white/5 pt-8">
+                                                    <div className="space-y-4">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2 italic">
+                                                            <Check className="w-3 h-3" /> Strengths
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {cand.strengths.slice(0, 5).map((s, i) => (
+                                                                <span key={i} className="px-3 py-1 bg-emerald-500/5 border border-emerald-500/10 rounded-xl text-[10px] font-bold text-emerald-500/60 italic uppercase tracking-wider">
+                                                                    {s}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <div className="space-y-4">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 flex items-center gap-2 italic">
+                                                            <X className="w-3 h-3" /> Gaps Detected
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {cand.missing.slice(0, 5).map((s, i) => (
+                                                                <span key={i} className="px-3 py-1 bg-rose-500/5 border border-rose-500/10 rounded-xl text-[10px] font-bold text-rose-500/60 italic uppercase tracking-wider">
+                                                                    {s}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    {/* Skills Summary (Right side on desktop) */}
-                    <div className="w-full md:w-64 shrink-0 border-l border-slate-100 md:pl-6 pt-4 md:pt-0">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Matched Key Skills</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {c.skills.slice(0, 4).map(sk => (
-                          <span key={sk} className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[11px] font-bold">
-                            {sk}
-                          </span>
-                        ))}
-                        {c.skills.length > 4 && (
-                          <span className="bg-slate-50 text-slate-400 px-2 py-1 rounded text-[11px] font-bold">
-                            +{c.skills.length - 4}
-                          </span>
-                        )}
-                        {c.skills.length === 0 && <span className="text-xs text-slate-400 italic">No exact matches</span>}
-                      </div>
-                    </div>
+                    {/* Explanatory Depth Section */}
+                    {!result && (
+                        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto pt-12 border-t border-white/5">
+                            {[
+                                { title: "Neural Ranking", desc: "Our engine uses semantic vector overlap to rank candidates beyond simple keyword matching.", icon: Cpu },
+                                { title: "Batch Processing", desc: "Analyze up to 10 candidates simultaneously with unified role calibration.", icon: Layers },
+                                { title: "Decision Intelligence", desc: "Instant visibility into strengths and missing core skills for every applicant.", icon: Target }
+                            ].map((item, i) => (
+                                <div key={i} className="p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] space-y-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-2xl">
+                                        <item.icon className="w-6 h-6" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h4 className="font-black italic uppercase text-sm tracking-tight">{item.title}</h4>
+                                        <p className="text-xs text-white/30 font-medium leading-relaxed italic">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                  </div>
-                );
-              })}
+                </main>
             </div>
-          </div>
-
+            
+            <PublicFooter />
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
-export default BulkAnalyzer;
+export default BulkScanner;

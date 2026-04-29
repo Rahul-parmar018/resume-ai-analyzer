@@ -433,6 +433,81 @@ def optimize_resume_view(request):
         }, status=500)
 
 
+from .utils.gap_analysis import score_role, ROLES
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser])
+def rank_candidates_view(request):
+    """
+    Recruiter MVP: Quick Bulk Ranking Engine.
+    Upload up to 10 resumes and rank them against one of the Big 5 roles.
+    """
+    try:
+        user = request.user
+        
+        # 🛡️ RBAC: Recruiter Only
+        if user.role != 'recruiter':
+            return Response({
+                "error": "Access Denied. This feature is exclusive to Recruiter accounts.",
+                "code": "ACCESS_DENIED"
+            }, status=403)
+        
+        # 1. Inputs
+        files = request.FILES.getlist('files')
+        role_key = request.data.get('role', '').strip()
+        
+        if not files:
+            return Response({"error": "Please upload at least one resume file."}, status=400)
+        
+        if len(files) > 10:
+            return Response({"error": "MVP Limit: Max 10 resumes per batch. Contact us for bulk scaling."}, status=400)
+            
+        if role_key not in ROLES:
+            return Response({"error": f"Invalid role. Choose from: {', '.join(ROLES.keys())}"}, status=400)
+
+        # 2. Processing
+        results = []
+        for file in files:
+            try:
+                # Reuse existing extraction logic
+                text, _ = _extract_text(file)
+                
+                # Reuse existing neural-weighted scoring
+                score, core_m, core_miss, imp_m, imp_miss, _, _ = score_role(text, role_key)
+                
+                results.append({
+                    "name": file.name.split('.')[0].title(),
+                    "score": score,
+                    "strengths": list(set(core_m + imp_m)),
+                    "missing": list(set(core_miss + imp_miss))
+                })
+            except Exception as e:
+                logger.warning(f"Skipping corrupt resume {file.name}: {e}")
+                continue
+
+        if not results:
+            return Response({"error": "No valid resumes could be processed."}, status=400)
+
+        # 3. Sorting (Top -> Low)
+        ranked = sorted(results, key=lambda x: x["score"], reverse=True)
+        
+        # 4. Usage Metrics
+        FirebaseUser.objects.filter(id=user.id).update(
+            scan_count=F('scan_count') + len(ranked)
+        )
+
+        return Response({
+            "role": role_key,
+            "total": len(ranked),
+            "candidates": ranked
+        }, status=200)
+
+    except Exception as e:
+        logger.error(f"Rank candidates error: {str(e)}")
+        return Response({"error": str(e)}, status=500)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser])
