@@ -159,11 +159,11 @@ const ResumeFixer = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                                         <p className="text-[8px] font-bold text-slate-400 mb-1">Strong Verbs</p>
-                                        <p className="text-xl font-black italic">{result.stats.strong_verbs}</p>
+                                        <p className="text-xl font-black italic">{result.stats?.strong_verbs || 0}</p>
                                     </div>
                                     <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                                         <p className="text-[8px] font-bold text-slate-400 mb-1">Metrics Found</p>
-                                        <p className="text-xl font-black italic">{result.stats.metrics_detected}</p>
+                                        <p className="text-xl font-black italic">{result.stats?.metrics_detected || 0}</p>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ const ResumeFixer = () => {
                             <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm space-y-5 flex flex-col h-[700px]">
                                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-500 border-b border-slate-50 pb-3">Optimized Suggestions</p>
                                 <div className="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-hide">
-                                    {result.recommendations.length > 0 ? result.recommendations.map((rec, i) => (
+                                    {(result.recommendations || []).length > 0 ? (result.recommendations || []).map((rec, i) => (
                                         <div key={i} className="group p-4 bg-slate-50 hover:bg-white hover:border-indigo-100 border border-slate-50 rounded-2xl transition-all space-y-3 relative">
                                             <div className="flex justify-between items-start">
                                                 <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[8px] font-bold uppercase">
