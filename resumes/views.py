@@ -332,6 +332,7 @@ def optimize_resume_view(request):
         # 🎯 Job description extraction (Dynamic vs. Default)
         job_profile = _parse_job_profile(request)
         user_jd = request.data.get("job_description", "").strip()
+        role_key = request.data.get("role_key", "").strip()
 
         if job_profile:
             job_desc = _build_query_text(job_profile)
@@ -344,15 +345,13 @@ def optimize_resume_view(request):
             job_desc = user_jd
             manual_job_skills = None
         else:
-            job_desc = """
-            Looking for a Python Django developer with experience in:
-            AWS, Docker, React, REST APIs
-            """
-            manual_job_skills = ["python", "django", "react", "docker", "aws"]
+            job_desc = ""
+            manual_job_skills = None
 
         # 🧠 DEEP JD GAP ANALYSIS (PHASE 2)
         from .utils.gap_analysis import analyze_with_llm
-        gap_report = analyze_with_llm(resume_text, job_desc)
+        gap_report = analyze_with_llm(resume_text, job_desc, role_key=role_key or None)
+
         
         # Determine Fit Label based on Spec v1
         score = gap_report['match_score']
@@ -377,6 +376,8 @@ def optimize_resume_view(request):
             "missing_preferred": [],
             "experience": {},
             "suggestions": gap_report.get('recommendations', []),
+            "summary": gap_report.get('summary', ''),
+            "issues": gap_report.get('issues', []),
             "insight": f"Your resume match is {score}%.",
             "reasoning": [],
             "confidence": 0.85,

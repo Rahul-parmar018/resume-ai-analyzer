@@ -21,10 +21,11 @@ const buildQueryTextFromProfile = (profile) => {
 /**
  * Main Resume Optimization API
  */
-export const analyzeResume = async (file, jdOrProfile, resumeText = "") => {
+export const analyzeResume = async (file, jdOrProfile, resumeText = "", roleKey = "") => {
   const formData = new FormData();
   if (file) formData.append("file", file);
   if (resumeText) formData.append("resume_text", resumeText);
+  if (roleKey) formData.append("role_key", roleKey);
 
   if (typeof jdOrProfile === "string") {
     if (jdOrProfile.trim()) formData.append("job_description", jdOrProfile);
