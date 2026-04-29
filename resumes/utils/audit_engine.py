@@ -1,4 +1,5 @@
 import re
+import os
 import textstat
 import logging
 from collections import Counter
@@ -11,6 +12,10 @@ def _get_nlp():
     """Lazy loader for the Spacy NLP model."""
     global _nlp
     if _nlp is None:
+        if os.getenv("MEMORY_OPTIMIZED", "False").lower() == "true":
+            logger.warning("[ML] Memory Optimized mode enabled — Skipping Spacy load.")
+            return None
+            
         import spacy
         try:
             # OPTIMIZATION: Disable NER and Parser to save ~60MB RAM
