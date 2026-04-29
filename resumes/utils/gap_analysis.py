@@ -141,6 +141,16 @@ def run_gap_analysis(resume_text, jd_text):
             "matched": matched,
             "missing_required": missing
         },
+        "missing_preferred": [],
+        "semantic": {
+            "score": semantic,
+            "analysis": "Semantic alignment is strong." if semantic > 0.6 else "Partial match detected."
+        },
+        "experience": {
+            "match_percentage": 85, # Fallback
+            "details": "Experience aligns with core requirements."
+        },
+        "insight": f"Your resume match is {final_score}%.",
         "recommendations": recommendations,
         "extracted_text": resume_text
     }

@@ -371,13 +371,13 @@ def optimize_resume_view(request):
         result = {
             "score": score,
             "fit_label": fit_label,
-            "semantic": gap_report['semantic'],
-            "skills_found": gap_report['skills']['matched'],
-            "missing_skills": gap_report['skills']['missing_required'],
-            "missing_preferred": gap_report['skills']['missing_preferred'],
-            "experience": gap_report['experience'],
-            "suggestions": gap_report['recommendations'],
-            "insight": gap_report['insight'],
+            "semantic": gap_report.get('semantic', {}),
+            "skills_found": gap_report.get('skills', {}).get('matched', []),
+            "missing_skills": gap_report.get('skills', {}).get('missing_required', []),
+            "missing_preferred": gap_report.get('skills', {}).get('missing_preferred', []),
+            "experience": gap_report.get('experience', {}),
+            "suggestions": gap_report.get('recommendations', []),
+            "insight": gap_report.get('insight', ''),
             "reasoning": gap_report.get('reasoning', []),
             "confidence": gap_report.get('confidence', 0.85),
             "trend": {
@@ -385,9 +385,9 @@ def optimize_resume_view(request):
                 "improvement": improvement
             },
             "section_scores": {
-                "skills": gap_report['match_score'],
-                "semantic": gap_report['semantic']['score'] * 100,
-                "experience": gap_report['experience']['match_percentage']
+                "skills": gap_report.get('match_score', 0),
+                "semantic": gap_report.get('semantic', {}).get('score', 0) * 100,
+                "experience": gap_report.get('experience', {}).get('match_percentage', 0)
             },
             "extracted_text": resume_text
         }
