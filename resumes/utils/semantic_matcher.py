@@ -61,6 +61,12 @@ class SemanticRankingEngine:
             return self._session_cache[text_hash]
 
         chunks = self.chunk_text(text)
+        
+        # 📌 FIX: Handle Memory Optimized mode where model is None
+        if self.model is None:
+            logger.warning("[ML] Semantic Matcher in fallback mode. Returning zero vector.")
+            return np.zeros(384) # 384 is dimension of all-MiniLM-L6-v2
+
         if len(chunks) == 1:
             vec = self.model.encode(chunks[0])
         else:
