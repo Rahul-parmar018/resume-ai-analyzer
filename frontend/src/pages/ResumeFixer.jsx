@@ -237,7 +237,7 @@ const ResumeFixer = () => {
                                     <AlertCircle className="w-3.5 h-3.5" /> Missing Core Skills
                                 </h5>
                                 <div className="flex flex-wrap gap-2">
-                                   {result.skills.missing_required.length > 0 ? result.skills.missing_required.map(s => (
+                                   {(result.missing_skills || []).length > 0 ? (result.missing_skills || []).map(s => (
                                        <span key={s} className="px-3 py-1.5 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold border border-rose-100 uppercase italic">-{s}</span>
                                    )) : <p className="text-[11px] text-slate-400 italic">Excellent! No core skills missing.</p>}
                                 </div>
@@ -247,9 +247,9 @@ const ResumeFixer = () => {
                                     <CheckCircle2 className="w-3.5 h-3.5" /> Verified Keywords
                                 </h5>
                                 <div className="flex flex-wrap gap-2">
-                                   {result.skills.matched.length > 0 ? result.skills.matched.map(s => (
-                                       <span key={s} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-xl text-[10px] font-bold border border-indigo-100 uppercase italic">+{s}</span>
-                                   )) : <p className="text-[11px] text-slate-400 italic">No keyword match yet.</p>}
+                                   {(result.skills_found || []).length > 0 ? (result.skills_found || []).map(s => (
+                                       <span key={s} className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-bold border border-indigo-100 uppercase italic">{s}</span>
+                                   )) : <p className="text-[11px] text-slate-400 italic">No exact matches found.</p>}
                                 </div>
                              </div>
                         </div>
