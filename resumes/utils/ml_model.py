@@ -12,8 +12,11 @@ def get_model():
     ALL heavy imports happen inside this function to prevent startup crashes."""
     global _model
     if _model is None:
-        if os.getenv("MEMORY_OPTIMIZED", "False").lower() == "true":
-            logger.warning("[ML] Memory Optimized mode enabled — Skipping SentenceTransformer load.")
+        is_render = os.getenv("RENDER", "False").lower() == "true"
+        mem_opt = os.getenv("MEMORY_OPTIMIZED", "False").lower() == "true"
+        
+        if mem_opt or is_render:
+            logger.warning(f"[ML] Memory Optimized mode enabled (Render: {is_render}) — Skipping SentenceTransformer load.")
             return None
             
         from sentence_transformers import SentenceTransformer

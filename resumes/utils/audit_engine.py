@@ -12,8 +12,11 @@ def _get_nlp():
     """Lazy loader for the Spacy NLP model."""
     global _nlp
     if _nlp is None:
-        if os.getenv("MEMORY_OPTIMIZED", "False").lower() == "true":
-            logger.warning("[ML] Memory Optimized mode enabled — Skipping Spacy load.")
+        is_render = os.getenv("RENDER", "False").lower() == "true"
+        mem_opt = os.getenv("MEMORY_OPTIMIZED", "False").lower() == "true"
+        
+        if mem_opt or is_render:
+            logger.warning(f"[ML] Memory Optimized mode enabled (Render: {is_render}) — Skipping Spacy load.")
             return None
             
         import spacy
