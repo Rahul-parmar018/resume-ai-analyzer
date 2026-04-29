@@ -65,45 +65,44 @@ const ResumeFixer = () => {
         <div className="min-h-screen bg-white selection:bg-indigo-500/10 font-sans">
             <PublicHeader />
             
-            {/* 🥇 PRODUCT HEADER: CLARITY FIRST */}
-            <div className="bg-slate-50/50 border-b border-slate-100 pt-28 pb-10 px-6">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="space-y-4 max-w-2xl">
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none uppercase italic">
-                            AI <span className="text-indigo-600">Workbench</span>
+            {/* 🥇 PRODUCT HEADER: ACTIONABLE SCORE */}
+            <div className="bg-white border-b border-slate-100 pt-28 pb-12 px-6">
+                <div className="max-w-5xl mx-auto space-y-8 text-center md:text-left">
+                    <div className="space-y-2">
+                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+                            Your Resume Score: <span className="text-indigo-600">{result?.match_score || "N/A"}/100</span>
+                            {result && <span className="text-xl md:text-2xl text-slate-400 ml-4 italic font-medium">({result.ats_status})</span>}
                         </h1>
-                        {result && (
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-3 text-emerald-600 font-bold text-sm">
-                                    <CheckCircle2 className="w-5 h-5" />
-                                    <span>Strength: {result.match_score > 70 ? 'Strong alignment with core requirements' : 'Solid foundation detected'}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-rose-500 font-bold text-sm">
-                                    <AlertCircle className="w-5 h-5" />
-                                    <span>Missing: {result.missing_skills?.slice(0, 3).join(", ") || "None detected"}</span>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     {result && (
-                        <div className="flex gap-4">
-                            <div className="bg-slate-900 text-white px-8 py-5 rounded-3xl shadow-2xl flex flex-col items-center justify-center min-w-[160px]">
-                                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Match Score</p>
-                                <p className="text-4xl font-black italic text-emerald-400 leading-none">{result.match_score}%</p>
+                        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+                            <div className="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                                <CheckCircle2 className="w-6 h-6 text-emerald-500 mt-1 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black text-emerald-700 uppercase tracking-widest">Strengths</p>
+                                    <p className="text-slate-600 font-medium leading-relaxed">
+                                        {result.match_score > 70 ? 'Strong alignment with core technical requirements' : 'Solid professional foundation detected'}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="bg-white border border-slate-200 px-8 py-5 rounded-3xl shadow-xl flex flex-col items-center justify-center min-w-[160px]">
-                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">ATS Status</p>
-                                <p className="text-xl font-black italic text-slate-900 leading-none uppercase">{result.ats_status}</p>
+                            <div className="flex items-start gap-4 p-4 bg-rose-50/50 rounded-2xl border border-rose-100">
+                                <AlertCircle className="w-6 h-6 text-rose-500 mt-1 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black text-rose-700 uppercase tracking-widest">Areas to Improve</p>
+                                    <p className="text-slate-600 font-medium leading-relaxed">
+                                        Missing: {result.missing_skills?.length > 0 ? result.missing_skills.slice(0, 3).join(", ") : "None detected"}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-10">
+            <div className="max-w-7xl mx-auto px-6 py-12">
                 {!result && !loading ? (
-                    <div className="grid lg:grid-cols-2 gap-12 items-center py-10">
+                    <div className="grid lg:grid-cols-2 gap-16 items-center py-10">
                         <div className="space-y-8">
                             <h2 className="text-6xl font-black text-slate-900 leading-[0.9] tracking-tighter uppercase italic">
                                 Built for <br /> <span className="text-indigo-600">Shortlists.</span>
@@ -113,9 +112,9 @@ const ResumeFixer = () => {
                             </p>
                         </div>
 
-                        <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-2xl space-y-8">
+                        <div className="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-2xl space-y-10">
                             <div className="space-y-4">
-                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">1. Paste Resume Content</label>
+                              <label className="text-xs font-black uppercase tracking-widest text-slate-400">1. Paste Resume Content</label>
                               <textarea
                                 value={resumeText}
                                 onChange={(e) => setResumeText(e.target.value)}
@@ -124,28 +123,28 @@ const ResumeFixer = () => {
                               />
                             </div>
                             <div className="space-y-4">
-                              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">2. Paste Job Description</label>
+                              <label className="text-xs font-black uppercase tracking-widest text-slate-400">2. Paste Job Description</label>
                               <textarea
                                 value={jd}
                                 onChange={(e) => setJd(e.target.value)}
-                                placeholder="Paste the JD here..."
+                                placeholder="Paste the target role description here..."
                                 className="w-full h-44 p-6 bg-slate-50 border border-slate-200 rounded-3xl text-sm focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none font-medium text-slate-700"
                               />
                             </div>
                             {error && <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl text-xs font-bold text-center border border-rose-100">{error}</div>}
-                            <button onClick={() => handleAnalyze()} className="w-full py-6 bg-slate-900 text-white rounded-[1.5rem] font-black text-xl hover:bg-slate-800 transition-all shadow-2xl active:scale-[0.98] flex items-center justify-center gap-4">
-                              Analyze & Optimize <ArrowRight className="w-6 h-6" />
+                            <button onClick={() => handleAnalyze()} className="w-full py-7 bg-slate-900 text-white rounded-[2rem] font-black text-xl hover:bg-slate-800 transition-all shadow-2xl active:scale-[0.98] flex items-center justify-center gap-4">
+                              Analyze My Resume <ArrowRight className="w-6 h-6" />
                             </button>
                         </div>
                     </div>
                 ) : result && !loading ? (
-                    <div className="grid lg:grid-cols-2 gap-10">
+                    <div className="grid lg:grid-cols-2 gap-12">
                         
                         {/* 📝 LEFT COLUMN: LIVE EDITOR */}
                         <div className="space-y-6">
                             <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col h-[800px] space-y-6">
                                 <div className="flex justify-between items-center border-b border-slate-100 pb-6">
-                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Live Editor</h3>
+                                    <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Live Editor</h3>
                                     <button onClick={() => handleAnalyze()} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
                                         <RotateCcw className="w-5 h-5 text-slate-400" />
                                     </button>
@@ -159,52 +158,49 @@ const ResumeFixer = () => {
                         </div>
 
                         {/* 🚀 RIGHT COLUMN: AI FEEDBACK */}
-                        <div className="space-y-8">
+                        <div className="space-y-10">
                             {/* SUGGESTIONS SECTION */}
-                            <div className="space-y-6">
-                                <h4 className="text-[11px] font-black uppercase tracking-widest text-indigo-600 border-b border-slate-100 pb-4">
-                                    Strategic Improvements
+                            <div className="space-y-8">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-indigo-600 border-b border-slate-100 pb-4">
+                                    Recommended Rewrites
                                 </h4>
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     {(!result.recommendations || result.recommendations.length === 0) ? (
-                                        <div className="bg-slate-50 border border-slate-200 p-12 rounded-[2.5rem] text-center space-y-4">
-                                            <Sparkles className="w-10 h-10 text-slate-300 mx-auto" />
-                                            <div className="space-y-1">
-                                                <p className="font-black text-slate-900 uppercase italic">No suggestions generated.</p>
-                                                <p className="text-xs text-slate-500 font-medium">Model might be warming up or resume is already strong.</p>
+                                        <div className="bg-slate-50 border border-slate-200 p-16 rounded-[2.5rem] text-center space-y-6">
+                                            <Sparkles className="w-12 h-12 text-slate-300 mx-auto" />
+                                            <div className="space-y-2">
+                                                <p className="text-lg font-black text-slate-900 uppercase italic leading-none">No suggestions generated.</p>
+                                                <p className="text-sm text-slate-500 font-medium italic">Try adding a more detailed job description for better analysis.</p>
                                             </div>
                                             <button 
                                                 onClick={() => handleAnalyze()}
-                                                className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase hover:bg-slate-50 transition-all"
+                                                className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl"
                                             >
                                                 Retry Analysis
                                             </button>
                                         </div>
                                     ) : (
                                         result.recommendations.slice(0, 5).map((rec, i) => (
-                                            <div key={i} className="group p-6 bg-white border border-slate-200 rounded-[2rem] hover:border-indigo-200 transition-all shadow-sm space-y-4">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[10px] font-black px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full uppercase tracking-tighter">
-                                                        +{rec.impact_gain} Impact
-                                                    </span>
-                                                </div>
-                                                
-                                                <div className="space-y-3">
-                                                    <div className="flex items-start gap-3 opacity-40">
-                                                        <span className="text-rose-500 font-bold text-xs mt-0.5">✕</span>
-                                                        <p className="text-xs text-slate-600 italic">"{rec.original}"</p>
-                                                    </div>
-                                                    <div className="flex items-start gap-3">
-                                                        <span className="text-emerald-500 font-bold text-xs mt-0.5">✓</span>
-                                                        <p className="text-sm text-slate-900 font-bold italic">"{rec.improved}"</p>
+                                            <div key={i} className="group p-8 bg-white border border-slate-200 rounded-[2.5rem] hover:border-indigo-200 transition-all shadow-sm space-y-6">
+                                                <div className="space-y-4">
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Improve this sentence:</p>
+                                                    <div className="space-y-4">
+                                                        <div className="flex items-start gap-4 bg-rose-50/30 p-4 rounded-2xl border border-rose-50">
+                                                            <span className="text-rose-500 font-bold text-sm">✕</span>
+                                                            <p className="text-sm text-slate-500 italic">"{rec.original}"</p>
+                                                        </div>
+                                                        <div className="flex items-start gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-50">
+                                                            <span className="text-emerald-500 font-bold text-sm">✓</span>
+                                                            <p className="text-base text-slate-900 font-bold italic leading-relaxed">"{rec.improved}"</p>
+                                                        </div>
                                                     </div>
                                                 </div>
 
                                                 <button 
                                                     onClick={() => applySuggestion(rec.original, rec.improved)}
-                                                    className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
+                                                    className="w-full py-5 bg-slate-900 text-white rounded-[1.25rem] font-black text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.98]"
                                                 >
-                                                    {appliedSuggestion === rec.improved ? <Check className="w-4 h-4 text-emerald-400" /> : <MousePointer2 className="w-4 h-4" />}
+                                                    {appliedSuggestion === rec.improved ? <Check className="w-5 h-5 text-emerald-400" /> : <MousePointer2 className="w-5 h-5" />}
                                                     {appliedSuggestion === rec.improved ? 'Applied' : 'Apply Fix'}
                                                 </button>
                                             </div>
@@ -213,33 +209,48 @@ const ResumeFixer = () => {
                                 </div>
                             </div>
 
-                            {/* SKILLS SECTION */}
-                            <div className="grid grid-cols-1 gap-6 pt-6 border-t border-slate-100">
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black uppercase tracking-widest text-emerald-600">✓ Verified Keywords</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(result.skills_found || []).length > 0 ? result.skills_found.map(s => (
-                                            <span key={s} className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-700 uppercase italic">{s}</span>
-                                        )) : <p className="text-xs text-slate-400 italic">No direct keyword matches found.</p>}
+                            {/* SKILLS SECTION: ONLY SHOW IF DATA EXISTS */}
+                            {((result.skills_found?.length > 0) || (result.missing_skills?.length > 0)) ? (
+                                <div className="grid grid-cols-1 gap-10 pt-10 border-t border-slate-100">
+                                    {result.skills_found?.length > 0 && (
+                                        <div className="space-y-4">
+                                            <p className="text-xs font-black uppercase tracking-widest text-emerald-600">✓ Detected Skills</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {result.skills_found.map(s => (
+                                                    <span key={s} className="px-5 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 uppercase italic tracking-tighter">{s}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {result.missing_skills?.length > 0 && (
+                                        <div className="space-y-4">
+                                            <p className="text-xs font-black uppercase tracking-widest text-rose-500">✕ Missing Keywords</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {result.missing_skills.map(s => (
+                                                    <span key={s} className="px-5 py-2.5 bg-rose-50/50 border border-rose-100 rounded-xl text-xs font-bold text-rose-600 uppercase italic tracking-tighter">-{s}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : result && !loading && (
+                                <div className="pt-10 border-t border-slate-100">
+                                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+                                        <AlertCircle className="w-5 h-5 text-slate-400" />
+                                        <p className="text-sm text-slate-500 font-medium italic">
+                                            ⚠ AI could not extract keywords properly. Try adding a more detailed job description.
+                                        </p>
                                     </div>
                                 </div>
-                                <div className="space-y-4">
-                                    <p className="text-[11px] font-black uppercase tracking-widest text-rose-500">✕ Missing from Resume</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(result.missing_skills || []).length > 0 ? result.missing_skills.map(s => (
-                                            <span key={s} className="px-4 py-2 bg-rose-50/50 border border-rose-100 rounded-xl text-[11px] font-bold text-rose-600 uppercase italic">-{s}</span>
-                                        )) : <p className="text-xs text-slate-400 italic">Excellent! All core keywords found.</p>}
-                                    </div>
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 ) : loading && (
-                    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-                        <div className="w-20 h-20 border-[6px] border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
-                        <div className="text-center space-y-2">
-                            <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Analyzing your resume...</h2>
-                            <p className="text-slate-500 font-medium italic">This may take 10–20 seconds (AI loading)</p>
+                    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-10">
+                        <div className="w-24 h-24 border-[8px] border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="text-center space-y-3">
+                            <h2 className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">Analyzing your resume...</h2>
+                            <p className="text-lg text-slate-500 font-medium italic">This may take 10–20 seconds (AI loading)</p>
                         </div>
                     </div>
                 )}
@@ -249,4 +260,5 @@ const ResumeFixer = () => {
         </div>
     );
 };
+
 export default ResumeFixer;
