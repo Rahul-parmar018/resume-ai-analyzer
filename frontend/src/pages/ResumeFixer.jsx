@@ -135,11 +135,11 @@ const ResumeFixer = () => {
                                 </p>
                                 <div className="space-y-4">
                                     {[
-                                        { label: "Keyword Overlap", score: result.metrics.keyword_match, icon: <Target className="w-3 h-3" /> },
-                                        { label: "Action Verbs", score: result.metrics.action_verbs, icon: <Zap className="w-3 h-3" /> },
-                                        { label: "Quantified Results", score: result.metrics.quantified_results, icon: <TrendingUp className="w-3 h-3" /> },
-                                        { label: "Formatting", score: result.metrics.formatting, icon: <Layout className="w-3 h-3" /> },
-                                        { label: "Readability", score: result.metrics.readability, icon: <Activity className="w-3 h-3" /> },
+                                        { label: "Keyword Overlap", score: result.metrics?.keyword_match || 0, icon: <Target className="w-3 h-3" /> },
+                                        { label: "Action Verbs", score: result.metrics?.action_verbs || 0, icon: <Zap className="w-3 h-3" /> },
+                                        { label: "Quantified Results", score: result.metrics?.quantified_results || 0, icon: <TrendingUp className="w-3 h-3" /> },
+                                        { label: "Formatting", score: result.metrics?.formatting || 0, icon: <Layout className="w-3 h-3" /> },
+                                        { label: "Readability", score: result.metrics?.readability || 0, icon: <Activity className="w-3 h-3" /> },
                                     ].map((m, i) => (
                                         <div key={i} className="space-y-1.5">
                                             <div className="flex justify-between items-center text-[10px] font-bold uppercase italic text-slate-500">

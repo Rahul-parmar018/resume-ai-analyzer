@@ -389,6 +389,7 @@ def optimize_resume_view(request):
                 "semantic": gap_report.get('semantic', {}).get('score', 0) * 100,
                 "experience": gap_report.get('experience', {}).get('match_percentage', 0)
             },
+            "metrics": gap_report.get('metrics', {}),
             "extracted_text": resume_text
         }
 
