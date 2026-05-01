@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 
 const ATSIntelligence = () => {
   return (
-    <section className="py-24 px-6 bg-white relative overflow-hidden border-y border-slate-100">
+    <section className="py-24 px-6 bg-black/40 backdrop-blur-md relative overflow-hidden border-y border-white/5">
       {/* Precision Grid Backdrop */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:60px_60px] opacity-40"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f]"></div>
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center relative z-10">
         
@@ -14,25 +14,25 @@ const ATSIntelligence = () => {
         <div className="lg:basis-1/2 space-y-12">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-px bg-emerald-500"></div>
-              <h2 className="text-emerald-500 font-black text-[10px] uppercase tracking-[0.6em]">System Architecture</h2>
+              <div className="w-10 h-px bg-purple-500"></div>
+              <h2 className="text-purple-400 font-black text-[10px] uppercase tracking-[0.6em]">System Architecture</h2>
             </div>
             <motion.h1 
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter"
+              className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter"
             >
               Machine Intelligence <br/>
-              <span className="text-slate-400">Human Calibration</span>
+              <span className="text-white/30">Human Calibration</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              className="text-slate-500 text-lg font-medium leading-relaxed max-w-xl border-l-2 border-slate-100 pl-6"
+              className="text-white/40 text-lg font-medium leading-relaxed max-w-xl border-l-2 border-white/10 pl-6"
             >
               Our neural extraction engine processes unstructured PDF data into structured JSON objects with a validated 99.8% precision rate across 40+ languages.
             </motion.p>
@@ -53,11 +53,11 @@ const ATSIntelligence = () => {
                 transition={{ delay: 0.2 * i }}
                 className="space-y-1 group"
               >
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{stat.label}</p>
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest leading-none">{stat.label}</p>
                 <div className="flex items-end gap-2">
-                   <p className="text-2xl font-black text-slate-900 tracking-tight">{stat.val}</p>
-                   <div className="h-1.5 w-12 bg-slate-100 rounded-full mb-2 overflow-hidden">
-                      <div className="h-full bg-emerald-500 w-3/4 group-hover:w-full transition-all duration-1000"></div>
+                   <p className="text-2xl font-black text-white tracking-tight">{stat.val}</p>
+                   <div className="h-1.5 w-12 bg-white/10 rounded-full mb-2 overflow-hidden">
+                      <div className="h-full bg-purple-500 w-3/4 group-hover:w-full transition-all duration-1000"></div>
                    </div>
                 </div>
               </motion.div>
@@ -76,7 +76,7 @@ const ATSIntelligence = () => {
              {/* Main Terminal Block */}
              <motion.div 
                 whileHover={{ y: -10, rotateX: 2, rotateY: -2 }}
-                className="w-full max-w-lg bg-slate-900 rounded-xl shadow-[0_40px_100px_rgba(0,0,0,0.2)] border border-slate-800 overflow-hidden relative z-20"
+                className="w-full max-w-lg bg-slate-900 rounded-xl shadow-[0_40px_100px_rgba(0,0,0,0.4)] border border-slate-800 overflow-hidden relative z-20"
              >
                 {/* Terminal Header */}
                 <div className="bg-slate-800/50 px-6 py-3 flex justify-between items-center border-b border-slate-800">
@@ -93,12 +93,12 @@ const ATSIntelligence = () => {
                    <div className="space-y-1">
                       <p className=""><span className="text-pink-400">"candidate"</span>: &#123;</p>
                       <div className="pl-6 space-y-1 border-l border-slate-800 ml-2">
-                         <p><span className="text-indigo-400">"relevance_score"</span>: <span className="text-emerald-400">0.98</span>,</p>
+                         <p><span className="text-indigo-400">"relevance_score"</span>: <span className="text-purple-400">0.98</span>,</p>
                          <p><span className="text-indigo-400">"skills"</span>: [</p>
                          <div className="pl-6 border-l border-slate-800 ml-2">
-                            <p className="text-emerald-400">"Strategic Leadership",</p>
-                            <p className="text-emerald-400">"Neural Architecture",</p>
-                            <p className="text-emerald-400">"Predictive Analytics"</p>
+                            <p className="text-purple-400">"Strategic Leadership",</p>
+                            <p className="text-purple-400">"Neural Architecture",</p>
+                            <p className="text-purple-400">"Predictive Analytics"</p>
                          </div>
                          <p>],</p>
                          <p><span className="text-indigo-400">"matches"</span>: <span className="text-indigo-400">true</span></p>
@@ -107,9 +107,9 @@ const ATSIntelligence = () => {
                    </div>
 
                    {/* Typing Indicator Overlay */}
-                   <div className="mt-6 flex items-center gap-3 bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/20">
-                      <span className="material-symbols-outlined text-emerald-500 text-sm animate-pulse">check_circle</span>
-                      <p className="text-emerald-300 tracking-tight font-black animate-pulse">EXTRACTION COMPLETE: SEMANTIC MATCH SECURED</p>
+                   <div className="mt-6 flex items-center gap-3 bg-purple-500/10 p-4 rounded-lg border border-purple-500/20">
+                      <span className="material-symbols-outlined text-purple-400 text-sm animate-pulse">check_circle</span>
+                      <p className="text-purple-300 tracking-tight font-black animate-pulse">EXTRACTION COMPLETE: SEMANTIC MATCH SECURED</p>
                    </div>
                 </div>
              </motion.div>
@@ -118,34 +118,34 @@ const ATSIntelligence = () => {
              <motion.div 
                animate={{ y: [-10, 10, -10] }}
                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute top-[-5%] right-0 bg-white p-4 rounded-xl shadow-xl border border-slate-100 z-30"
+               className="absolute top-[-5%] right-0 glass-panel p-4 z-30"
              >
                 <div className="flex items-center gap-3">
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-                   <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Real-time Parsing</span>
+                   <div className="w-2 h-2 rounded-full bg-purple-500 animate-ping"></div>
+                   <span className="text-[10px] font-black text-white uppercase tracking-widest">Real-time Parsing</span>
                 </div>
              </motion.div>
 
              <motion.div 
-               animate={{ y: [10, -10, 10] }}
-               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute bottom-5 left-[-20px] bg-white p-6 rounded-xl shadow-xl border border-slate-100 z-30"
-             >
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Recruiter Visibility</p>
+                animate={{ y: [10, -10, 10] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-5 left-0 md:left-[-20px] glass-panel p-4 md:p-6 z-30 scale-90 md:scale-100"
+              >
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Recruiter Visibility</p>
                 <div className="flex -space-x-3 mb-4">
                    {[1,2,3,4].map(v => (
-                     <div key={v} className="w-10 h-10 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center font-black text-[10px] text-slate-400">
+                     <div key={v} className="w-10 h-10 rounded-full border-2 border-[#0a0a0f] bg-white/10 flex items-center justify-center font-black text-[10px] text-white/40">
                         U{v}
                      </div>
                    ))}
                 </div>
-                <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden">
-                   <div className="h-full bg-indigo-500 w-2/3"></div>
+                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                   <div className="h-full bg-purple-500 w-2/3"></div>
                 </div>
              </motion.div>
 
              {/* 3D Background Tech (Low Opacity) */}
-             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#10b9810d_0%,transparent_50%)]"></div>
+             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(168,85,247,0.05)_0%,transparent_50%)]"></div>
         </motion.div>
       </div>
     </section>

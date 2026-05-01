@@ -31,19 +31,19 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 px-6 bg-slate-50 text-slate-900 relative border-y border-slate-200 overflow-hidden">
+    <section className="py-20 px-6 bg-black/40 backdrop-blur-md text-white relative border-y border-white/5 overflow-hidden">
       {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:32px_32px] opacity-30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:32px_32px] opacity-30 pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
         <div className="text-center space-y-3 mb-12">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-            <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.2em] leading-none">Support Hub</span>
+          <div className="voxr-pill mx-auto w-fit">
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] leading-none">Support Hub</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-slate-900">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-white">
             Frequently Asked Questions
           </h2>
-          <p className="text-slate-500 text-base font-medium max-w-lg mx-auto">
+          <p className="text-white/40 text-base font-medium max-w-lg mx-auto">
             Quick answers about our neural matching engine and enterprise infrastructure.
           </p>
         </div>
@@ -54,8 +54,8 @@ const FAQSection = () => {
               key={i} 
               className={`transition-all duration-300 rounded-2xl border ${
                 openFaq === i 
-                  ? "bg-white border-emerald-500/30 shadow-xl shadow-slate-200/50" 
-                  : "bg-white border-slate-200 hover:border-slate-300 shadow-sm"
+                  ? "bg-white/5 border-purple-500/30 shadow-xl shadow-purple-500/5" 
+                  : "bg-white/[0.02] border-white/10 hover:border-white/20"
               }`}
             >
               <button 
@@ -63,10 +63,10 @@ const FAQSection = () => {
                 className="w-full px-6 py-5 text-left flex justify-between items-center outline-none group"
               >
                 <div className="flex items-center gap-5">
-                  <span className={`text-sm font-mono transition-colors duration-300 ${openFaq === i ? "text-emerald-500" : "text-slate-300"}`}>
+                  <span className={`text-sm font-mono transition-colors duration-300 ${openFaq === i ? "text-purple-400" : "text-white/20"}`}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className={`text-base md:text-lg font-bold tracking-tight transition-colors duration-300 ${openFaq === i ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900"}`}>
+                  <span className={`text-base md:text-lg font-bold tracking-tight transition-colors duration-300 ${openFaq === i ? "text-white" : "text-white/60 group-hover:text-white"}`}>
                     {faq.q}
                   </span>
                 </div>
@@ -75,7 +75,7 @@ const FAQSection = () => {
               <div className={`overflow-hidden transition-all duration-500 ${
                 openFaq === i ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
               }`}>
-                <div className="px-16 pb-6 text-slate-500 text-base font-medium leading-relaxed">
+                <div className="px-16 pb-6 text-white/40 text-base font-medium leading-relaxed">
                   {faq.a}
                 </div>
               </div>
@@ -84,12 +84,12 @@ const FAQSection = () => {
         </div>
 
         {/* Compact Support CTA */}
-        <div className="mt-12 p-6 rounded-2xl bg-white border border-slate-200 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-12 p-6 rounded-2xl glass-panel flex flex-col md:flex-row items-center justify-between gap-6">
            <div className="space-y-1 text-center md:text-left">
-              <h4 className="text-xl font-bold tracking-tight">Need a technical deep-dive?</h4>
-              <p className="text-slate-500 text-sm font-medium">Our architecture team is available for custom enterprise consultations.</p>
+              <h4 className="text-xl font-bold tracking-tight text-white">Need a technical deep-dive?</h4>
+              <p className="text-white/40 text-sm font-medium">Our architecture team is available for custom enterprise consultations.</p>
            </div>
-           <button className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-colors shadow-lg whitespace-nowrap">
+           <button className="bg-purple-600 text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-purple-500 transition-colors shadow-lg shadow-purple-600/25 whitespace-nowrap">
               Contact Support
            </button>
         </div>

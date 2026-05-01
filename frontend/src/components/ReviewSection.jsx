@@ -12,19 +12,19 @@ const ReviewCard = ({ text, name, ix }) => (
       }
     }}
     whileHover={{ y: -10, scale: 1.02, rotate: 1 }}
-    className="bg-white p-8 rounded-[1.5rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-slate-200 transition-all duration-300 group cursor-default"
+    className="glass-panel p-8 hover:border-purple-500/20 transition-all duration-300 group cursor-default"
   >
-    <div className="flex gap-1 text-emerald-400 mb-4 group-hover:scale-110 transition-transform origin-left">
+    <div className="flex gap-1 text-purple-400 mb-4 group-hover:scale-110 transition-transform origin-left">
       {[1,2,3,4,5].map(i => <span key={i} className="material-symbols-outlined text-[18px]">star</span>)}
     </div>
-    <p className="text-slate-700 font-bold leading-relaxed mb-6 italic">"{text}"</p>
-    <div className="flex items-center gap-3 pt-6 border-t border-slate-50">
-      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xs font-black text-slate-400">
+    <p className="text-white/70 font-bold leading-relaxed mb-6 italic">"{text}"</p>
+    <div className="flex items-center gap-3 pt-6 border-t border-white/5">
+      <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-xs font-black text-purple-400">
         {name[0]}
       </div>
       <div>
-        <p className="text-xs font-black text-slate-900 leading-none mb-1">{name}</p>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Verified Candidate</p>
+        <p className="text-xs font-black text-white leading-none mb-1">{name}</p>
+        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest leading-none">Verified Candidate</p>
       </div>
     </div>
   </motion.div>
@@ -41,14 +41,14 @@ const ReviewSection = () => {
   ];
 
   return (
-    <section className="py-20 px-6 bg-slate-50 relative overflow-hidden">
+    <section className="py-20 px-6 bg-black/40 backdrop-blur-md relative overflow-hidden">
       {/* Background patterns */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:40px_40px] opacity-30"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:40px_40px] opacity-30"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-12 space-y-4">
-          <h2 className="text-emerald-500 font-extrabold text-xs uppercase tracking-[0.4em]">Success Stories</h2>
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">Loved by Candidates & Hiring Teams</h1>
+          <h2 className="text-purple-400 font-extrabold text-xs uppercase tracking-[0.4em]">Success Stories</h2>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter">Loved by Candidates & Hiring Teams</h1>
         </div>
 
         {/* REVIEW GRID */}
