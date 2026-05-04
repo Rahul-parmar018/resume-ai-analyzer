@@ -19,17 +19,17 @@ const IntelligenceEngine = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch gap-12 relative z-10">
 
         {/* LEFT SIDE (COMPACT FEATURE TABS) */}
-        <div className="lg:flex-[0.5] space-y-8 flex flex-col justify-center">
-          <div className="space-y-4">
-            <div className="voxr-pill w-fit">
-              <span className="text-[9px] font-black uppercase tracking-widest">Neural Infrastructure v2.4</span>
+        <div className="lg:flex-[0.5] space-y-10 flex flex-col justify-center">
+          <div className="space-y-6">
+            <div className="voxr-glass-label w-fit">
+              Neural Infrastructure v4.0
             </div>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
               Intelligence <br />
-              <span className="text-white/40 italic">Built Different.</span>
+              <span className="text-white/30 italic font-serif">Built Different.</span>
             </h1>
-            <p className="text-white/40 text-base font-medium max-w-md">
-              We've moved beyond keywords. Our semantic engine understands the technical nuance of your experience.
+            <p className="text-white/40 text-xl font-medium max-w-md leading-relaxed">
+              We've moved beyond keywords. Our semantic engine understands the technical nuance of your experience at a vector level.
             </p>
           </div>
 

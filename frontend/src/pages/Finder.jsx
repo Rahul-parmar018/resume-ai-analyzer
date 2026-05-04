@@ -40,7 +40,7 @@ const Finder = () => {
         subtitle="Leverage MiniLM Neural Search to naturally query the mathematical semantic traits of your entire candidate pool."
         actionLabel="Import Resumes"
         actionIcon="cloud_upload"
-        actionLink="/app/analyze"
+        actionLink="/scanner"
       />
 
       {/* AI Query Mode (Killer Feature) */}
@@ -160,7 +160,7 @@ const Finder = () => {
 
               <div className="flex gap-2 w-full mt-2">
                 <button
-                  onClick={() => navigate(`/app/analysis/${c.id}`)}
+                  onClick={() => navigate(`/scanner/${c.id}`)}
                   className="flex-1 bg-slate-50 border border-slate-200 text-slate-700 px-0 py-3 rounded-xl text-sm font-bold hover:bg-slate-100 hover:text-primary active:scale-95 transition-all text-center flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-[18px]">visibility</span>

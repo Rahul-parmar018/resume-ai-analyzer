@@ -261,6 +261,7 @@ class FirebaseUser(models.Model):
     optimization_count = models.IntegerField(default=0)
     scan_count = models.IntegerField(default=0)
     role_locked = models.BooleanField(default=False)
+    role_onboarding_done = models.BooleanField(default=False)
     account_status = models.CharField(max_length=20, default='active', choices=[('active','Active'), ('suspended', 'Suspended'), ('deleted', 'Deleted')])
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -302,8 +303,10 @@ class AnalysisRecord(models.Model):
     job_profile = models.JSONField(null=True, blank=True)
     score = models.IntegerField(default=0)
     rank = models.IntegerField(null=True, blank=True)
+    resume_file = models.FileField(upload_to='recruiter_resumes/%Y/%m/%d/', null=True, blank=True)
     text_hash = models.CharField(max_length=64, blank=True, null=True, db_index=True)
     is_heuristic = models.BooleanField(default=False)  # Track if ML engine succeeded
+    status = models.CharField(max_length=20, default='new', choices=[('new', 'New'), ('shortlisted', 'Shortlisted'), ('interviewed', 'Interviewed'), ('rejected', 'Rejected')])
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):

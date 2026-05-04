@@ -78,12 +78,12 @@ const PublicHeader = () => {
     <>
     <header className="fixed top-0 w-full glass-header z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-12 h-12 flex items-center justify-center transition-all group-hover:scale-105">
-            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain drop-shadow-sm" />
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 flex items-center justify-center transition-all group-hover:scale-105">
+            <img src="/images/logo.png" alt="Candidex AI Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="font-heading text-2xl font-black tracking-tighter text-white italic">
-            Candidex AI
+          <h1 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">
+            Candidex <span className="text-white/30">AI</span>
           </h1>
         </Link>
 
@@ -133,7 +133,7 @@ const PublicHeader = () => {
                         >
                           <span className="material-symbols-outlined text-purple-400">query_stats</span>
                           <div>
-                            <p className="font-bold text-sm">Skill Gap Analyzer</p>
+                            <p className="font-bold text-sm">Gap Analyzer</p>
                             <p className="text-[10px] text-white/40 font-medium">Neural JD Comparison</p>
                           </div>
                         </Link>
@@ -144,8 +144,8 @@ const PublicHeader = () => {
                         >
                           <span className="material-symbols-outlined text-purple-400">auto_fix_high</span>
                           <div>
-                            <p className="font-bold text-sm">Resume Optimizer</p>
-                            <p className="text-[10px] text-white/40 font-medium">Smart AI Rewriting</p>
+                            <p className="font-bold text-sm">Resume Fixer</p>
+                            <p className="text-[10px] text-white/40 font-medium">Smart AI Optimization</p>
                           </div>
                         </Link>
                       </div>
@@ -208,8 +208,8 @@ const PublicHeader = () => {
               <Link 
                 key={item.path}
                 to={item.path} 
-                className={`transition-all font-bold relative py-1 ${
-                  isActive ? "text-white" : "text-white/60 hover:text-white"
+                className={`transition-all font-bold text-xs uppercase tracking-widest relative py-1 ${
+                  isActive ? "text-white" : "text-white/40 hover:text-white"
                 }`}
               >
                 {item.name}
@@ -219,12 +219,11 @@ const PublicHeader = () => {
               </Link>
             );
           })}
-          <Link to="/app">
-            <LightBeamButton className="px-4 py-2 !text-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+          <Link to="/settings">
+            <button className="voxr-glass-label !bg-white/5 !text-white flex items-center gap-2">
               Product 
-              <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">arrow_outward</span>
-            </LightBeamButton>
+              <span className="material-symbols-outlined text-[14px]">arrow_outward</span>
+            </button>
           </Link>
         </nav>
 
@@ -256,7 +255,9 @@ const PublicHeader = () => {
                         <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-md ${
                           role === 'recruiter' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'
                         }`}>
-                          {role === 'recruiter' ? 'Recruiter' : 'Candidate'}
+                          <NavLink to={role === 'recruiter' ? '/bulk-scanner' : '/resume-optimizer'}>
+                            {role === 'recruiter' ? 'Recruiter' : 'Candidate'}
+                          </NavLink>
                         </span>
                       </div>
                     </div>
@@ -267,7 +268,7 @@ const PublicHeader = () => {
 
                   <div className="p-2 space-y-1">
                     <Link
-                      to="/app/settings"
+                      to="/settings"
                       onClick={() => setIsMenuOpen(false)}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-white/70 hover:bg-white/5 hover:text-white transition-all"
                     >
@@ -403,7 +404,7 @@ const PublicHeader = () => {
               ))}
 
               <Link 
-                to="/app" 
+                to="/settings" 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-xl font-black text-white/40 flex items-center gap-2"
               >

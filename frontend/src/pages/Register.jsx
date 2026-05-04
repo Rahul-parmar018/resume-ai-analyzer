@@ -29,7 +29,7 @@ const Register = () => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(result.user, { displayName: name });
-      navigate("/app");
+      navigate("/settings");
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };
@@ -38,7 +38,7 @@ const Register = () => {
     setError(""); setLoading(true);
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
-      navigate("/app");
+      navigate("/settings");
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };

@@ -176,9 +176,9 @@ const HorizontalScrollShowcase = () => {
         
         {/* 0. INTRO PANEL */}
         <div className="panel w-[75vw] h-full flex-shrink-0 flex items-center justify-start px-12 md:px-24">
-           <div className="max-w-3xl space-y-4">
-              <div className="voxr-pill !bg-white/5 !border-white/10 w-fit">How it Works</div>
-              <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[0.95]">
+           <div className="max-w-3xl space-y-6">
+              <div className="voxr-glass-label w-fit">How it Works</div>
+              <h2 className="text-6xl md:text-9xl font-black text-white tracking-tighter leading-[0.9]">
                 Your Path from Resume <br />
                 <span className="text-white/30 italic font-serif">to Career Success</span>
               </h2>
@@ -223,10 +223,10 @@ const HorizontalScrollShowcase = () => {
                  </h2>
               </div>
 
-              <button className="group relative px-10 py-6 bg-white text-black rounded-full font-black text-xl flex items-center gap-4 mx-auto overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.1)]">
+              <button className="btn-primary mx-auto">
                  Try it now
-                 <span className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                    <ArrowRight className="w-6 h-6" />
+                 <span className="arrow-circle">
+                    <ArrowRight className="w-5 h-5 text-black" />
                  </span>
               </button>
            </div>

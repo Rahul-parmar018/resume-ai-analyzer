@@ -30,6 +30,7 @@ def _debug_decode_token(id_token):
 class FirebaseAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get('Authorization')
+        
         if not auth_header:
             return None
 

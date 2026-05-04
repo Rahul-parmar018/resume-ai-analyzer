@@ -18,9 +18,11 @@ from .utils.scoring import (
     _normalize_weights
 )
 from .utils.text_extract import extract_contacts
+from .utils.gap_analysis import analyze_with_llm, analyze_resume_text
 from .utils.dynamic_resume_analyzer import DynamicResumeAnalyzer
 from .models import FirebaseUser, AnalysisRecord, ExtractedData, AnalysisEmbedding, JobSession
-from django.db.models import Avg, Count, F
+from django.db.models import Avg, Count, F, Q, Max
+from django.utils import timezone
 from collections import Counter
 import numpy as np
 from .utils.semantic_matcher import engine as semantic_ranking_engine
@@ -37,8 +39,8 @@ logger = logging.getLogger(__name__)
 def _check_usage_limit(user, count_to_add=1):
     """Enforces SaaS usage limits based on role and tier"""
     tier_caps = {
-        'free': 5,
-        'pro': 50,
+        'free': 100,
+        'pro': 500,
         'enterprise': 999999
     }
     
@@ -69,6 +71,7 @@ def get_user_profile_view(request):
         "email": user.email,
         "role": user.role,
         "role_locked": user.role_locked,
+        "role_onboarding_done": user.role_onboarding_done,
         "display_name": user.display_name or (user.email.split('@')[0] if user.email else "User"),
         "profile_image": user.profile_image,
         "location": user.location,
@@ -142,26 +145,21 @@ def delete_user_account_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def update_user_role_view(request):
-    """SaaS Role Onboarding with Locking Logic"""
-    user = request.user  # Automatically populated by FirebaseAuthentication bridge
-    
-    if user.role_locked:
-        return Response({
-            "error": "Role is already locked for this account.",
-            "code": "ROLE_LOCKED"
-        }, status=403)
+    """SaaS Role Switching Logic (Unlocked)"""
+    user = request.user
     
     new_role = request.data.get('role')
     if new_role not in ['candidate', 'recruiter']:
         return Response({"error": "Invalid role selected"}, status=400)
     
     user.role = new_role
-    user.role_locked = True
+    user.role_onboarding_done = True  # Mark onboarding as complete
     user.save()
     
     return Response({
-        "message": f"Account successfully set to {new_role} mode.",
-        "role": user.role
+        "message": f"Switched to {new_role} mode.",
+        "role": user.role,
+        "role_onboarding_done": True
     })
 
 
@@ -433,79 +431,179 @@ def optimize_resume_view(request):
         }, status=500)
 
 
-from .utils.gap_analysis import score_role, ROLES
+from .utils.gap_analysis import score_role, ROLES, analyze_resume_text
+from .utils.role_templates import validate_custom_role, CUSTOM_ROLE_SCHEMA
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @parser_classes([MultiPartParser])
 def rank_candidates_view(request):
     """
-    Recruiter MVP: Quick Bulk Ranking Engine.
-    Upload up to 10 resumes and rank them against one of the Big 5 roles.
+    ML-Powered Bulk Ranking Engine.
+    Upload up to 50 resumes and rank them against a built-in or custom role.
+    Supports custom roles via JSON in the 'custom_role' field.
     """
     try:
         user = request.user
-        
-        # 🛡️ RBAC: Recruiter Only
+
+        # RBAC: Recruiter Only
         if user.role != 'recruiter':
             return Response({
                 "error": "Access Denied. This feature is exclusive to Recruiter accounts.",
                 "code": "ACCESS_DENIED"
             }, status=403)
-        
+
         # 1. Inputs
         files = request.FILES.getlist('files')
         role_key = request.data.get('role', '').strip()
-        
+        custom_role_json = request.data.get('custom_role', '').strip()
+
         if not files:
             return Response({"error": "Please upload at least one resume file."}, status=400)
-        
-        if len(files) > 10:
-            return Response({"error": "MVP Limit: Max 10 resumes per batch. Contact us for bulk scaling."}, status=400)
-            
-        if role_key not in ROLES:
-            return Response({"error": f"Invalid role. Choose from: {', '.join(ROLES.keys())}"}, status=400)
+
+        if len(files) > 50:
+            return Response({"error": "Max 50 resumes per batch."}, status=400)
+
+        # Resolve role template: custom JSON takes priority over built-in
+        role_template = None
+        role_display_name = role_key
+
+        if custom_role_json:
+            validated, error = validate_custom_role(custom_role_json)
+            if error:
+                return Response({"error": f"Custom role validation failed: {error}"}, status=400)
+            role_template = validated
+            role_display_name = validated['title']
+            role_key = f"custom:{validated['title']}"
+        elif role_key in ROLES:
+            role_template = ROLES[role_key]
+        else:
+            return Response({
+                "error": f"Invalid role. Choose from: {', '.join(ROLES.keys())} or provide a 'custom_role' JSON.",
+                "available_roles": list(ROLES.keys()),
+                "custom_role_format": CUSTOM_ROLE_SCHEMA
+            }, status=400)
 
         # 2. Processing
         results = []
         for file in files:
             try:
-                # Reuse existing extraction logic
                 text, _ = _extract_text(file)
-                
-                # Reuse existing neural-weighted scoring
-                score, core_m, core_miss, imp_m, imp_miss, _, _ = score_role(text, role_key)
-                
+
+                if not text or len(text.strip()) < 50:
+                    continue
+
+                # Extract candidate name from resume
+                lines = [l.strip() for l in text.splitlines() if l.strip()]
+                extracted_name = file.name.split('.')[0].replace('_', ' ').replace('-', ' ').title()
+                if lines and 2 <= len(lines[0].split()) <= 5 and len(lines[0]) < 60:
+                    extracted_name = lines[0]
+
+                # ML-powered analysis
+                analysis = analyze_resume_text(text, role_template)
+
+                # ORM persistence
+                t_hash = semantic_ranking_engine.get_text_hash(text)
+                record = AnalysisRecord.objects.create(
+                    user=user,
+                    resume_name=file.name,
+                    resume_file=file,
+                    job_description=f"Role: {role_display_name}",
+                    score=analysis["score"],
+                    text_hash=t_hash,
+                    status='new'
+                )
+
+                ExtractedData.objects.create(
+                    analysis=record,
+                    skills=analysis.get('skills', []),
+                    missing_skills=analysis.get('missing', []),
+                    suggestions=[analysis.get('recommendation', "")],
+                    section_scores=analysis.get('categories', {}) or {}
+                )
+
+                # Build resume URL safely
+                resume_url = None
+                if record.resume_file:
+                    try:
+                        resume_url = request.build_absolute_uri(record.resume_file.url)
+                    except Exception:
+                        pass
+
                 results.append({
-                    "name": file.name.split('.')[0].title(),
-                    "score": score,
-                    "strengths": list(set(core_m + imp_m)),
-                    "missing": list(set(core_miss + imp_miss))
+                    "id": record.id,
+                    "name": extracted_name,
+                    "email": analysis.get("email"),
+                    "resumeUrl": resume_url,
+                    "score": analysis["score"],
+                    "experience": analysis.get("experience"),
+                    "skills": analysis.get("skills", []),
+                    "matched": analysis.get("matched", []),
+                    "missing": analysis.get("missing", []),
+                    "recommendation": analysis.get("recommendation", ""),
+                    "categories": analysis.get("categories", {}),
+                    "scoring_breakdown": analysis.get("scoring_breakdown", {}),
                 })
             except Exception as e:
-                logger.warning(f"Skipping corrupt resume {file.name}: {e}")
+                err_msg = repr(e).encode('ascii', 'replace').decode('ascii')
+                try:
+                    logger.error("Error processing file: %s", err_msg)
+                except Exception:
+                    pass
                 continue
 
         if not results:
-            return Response({"error": "No valid resumes could be processed."}, status=400)
+            return Response({
+                "candidates": [],
+                "message": "No valid resumes could be processed. Ensure files are PDF/DOCX and contain readable text."
+            }, status=200)
 
-        # 3. Sorting (Top -> Low)
+        # 3. Sorting
         ranked = sorted(results, key=lambda x: x["score"], reverse=True)
-        
+
         # 4. Usage Metrics
         FirebaseUser.objects.filter(id=user.id).update(
             scan_count=F('scan_count') + len(ranked)
         )
 
         return Response({
-            "role": role_key,
+            "role": role_display_name,
             "total": len(ranked),
             "candidates": ranked
         }, status=200)
 
     except Exception as e:
-        logger.error(f"Rank candidates error: {str(e)}")
-        return Response({"error": str(e)}, status=500)
+        err_msg = repr(e).encode('ascii', 'replace').decode('ascii')
+        try:
+            logger.error("Rank candidates error: %s", err_msg)
+        except Exception:
+            pass
+        return Response({"error": "Analysis failed. Please check resume file format."}, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validate_custom_role_view(request):
+    """
+    Validate a custom role JSON before using it for bulk ranking.
+    Returns the validated role or an error message.
+    """
+    custom_role_json = request.data.get('custom_role', '')
+    if not custom_role_json:
+        return Response({
+            "error": "Please provide a 'custom_role' JSON field.",
+            "schema": CUSTOM_ROLE_SCHEMA
+        }, status=400)
+
+    validated, error = validate_custom_role(custom_role_json)
+    if error:
+        return Response({"valid": False, "error": error, "schema": CUSTOM_ROLE_SCHEMA}, status=400)
+
+    return Response({
+        "valid": True,
+        "role": validated,
+        "message": f"Role '{validated['title']}' is valid and ready for scoring."
+    })
 
 
 @api_view(['POST'])
@@ -689,87 +787,135 @@ def get_history_view(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_dashboard_analytics_view(request):
+def get_candidate_dashboard_view(request):
     """
-    Dashboard Intelligence Layer: Returns scaled KPI aggregations,
-    score distributions, and JSON-parsed Top Skills frequencies.
+    Career Intelligence Hub: Returns score trends, skill gaps,
+    and job matching insights based on resume performance.
     """
     try:
         user = request.user
-
-        # 1. CORE KPIs (Fast DB Level Aggregations)
-        # Limit to 1000 for scalability as per Phase 2 requirements
-        records_query = AnalysisRecord.objects.filter(user=user).order_by('-created_at')[:1000]
+        records = AnalysisRecord.objects.filter(user=user).order_by('-created_at')
         
-        total_resumes = records_query.count()
-        if total_resumes == 0:
+        if not records.exists():
             return Response({
-                "total_resumes": 0, "average_score": 0,
-                "score_distribution": {"low": 0, "medium": 0, "high": 0},
-                "top_skills": [], "top_missing_skills": [],
-                "recent_activity": [], "insight": "No candidates analyzed yet."
+                "latest_score": 0, "history": [], "job_matches": [], "skill_gaps": [], "apps_sent": 0
             }, status=200)
 
-        # Re-fetch without slice for standard aggregations 
-        base_query = AnalysisRecord.objects.filter(user=user)
+        latest = records.first()
+        ext = getattr(latest, 'extracted_data', None)
         
-        avg_score_raw = base_query.aggregate(avg=Avg('score'))['avg']
-        average_score = round(avg_score_raw, 1) if avg_score_raw else 0
-        
-        # 2. SCORE DISTRIBUTION (Fast Bucket Queries)
-        score_dist = {
-            "low": base_query.filter(score__lt=40).count(),
-            "medium": base_query.filter(score__gte=40, score__lt=70).count(),
-            "high": base_query.filter(score__gte=70).count()
-        }
-        
-        # 3. JSON SKILL MINING (In-Memory Processing on limited set)
-        skills_counter = Counter()
-        missing_counter = Counter()
-
-        # Optimize by getting only the fields we need using select_related
-        extracted_subset = ExtractedData.objects.filter(analysis__in=records_query).values('skills', 'missing_skills')
-        
-        for data in extracted_subset:
-            skills = data.get('skills', [])
-            missing = data.get('missing_skills', [])
-            # Defend against None or stringified JSON edge cases
-            if isinstance(skills, list):
-                skills_counter.update(skills)
-            if isinstance(missing, list):
-                missing_counter.update(missing)
-                
-        # Format Top 5 Arrays: [["Python", 320], ["React", 280]]
-        top_skills = skills_counter.most_common(5)
-        top_missing = missing_counter.most_common(5)
-
-        # 4. DYNAMIC BUSINESS INTELLIGENCE (AI String Illusion)
-        formatted_missing = ", ".join([skill[0].title() for skill in top_missing[:2]]) if top_missing else "core"
-        insight_string = f"Pipeline alert: High frequency of candidates lack {formatted_missing} expertise." if formatted_missing != "core" else "Pipeline looks healthy based on historical parsing."
-
-        # 5. RECENT ACTIVITY LIST
-        recent_activity = [
-            {
-                "resume": rec.resume_name,
-                "score": rec.score,
-                "date": rec.created_at.strftime("%Y-%m-%d"),
-                "id": rec.id
-            } for rec in records_query[:5]
+        # 📊 Score Trend (Last 5)
+        history = [
+            {"score": r.score, "date": r.created_at.strftime("%b %d")} 
+            for r in records[:5][::-1]
         ]
-        
-        return Response({
-            "total_resumes": total_resumes,
-            "average_score": average_score,
-            "score_distribution": score_dist,
-            "top_skills": top_skills,
-            "top_missing_skills": top_missing,
-            "recent_activity": recent_activity,
-            "insight": insight_string
-        }, status=200)
 
+        # 🧠 Skill Gaps (Cumulative from recent history)
+        gaps = set()
+        for r in records[:3]:
+            ext_data = getattr(r, 'extracted_data', None)
+            if ext_data and ext_data.missing_skills:
+                gaps.update(ext_data.missing_skills)
+
+        # 🎯 Job Matches (Simulated based on historical JDs vs Resume)
+        # In a real system, this would query a Jobs table with semantic similarity
+        job_matches = []
+        if latest.job_description:
+            # We use the historical job descriptions as "Matched Opportunities"
+            # This makes the dashboard feel alive with real data they've interacted with
+            seen_jds = set()
+            for r in records:
+                if r.job_description and r.job_description not in seen_jds:
+                    title = r.job_description.split('\n')[0][:30] + "..."
+                    job_matches.append({
+                        "title": title if len(title) > 10 else "Potential Role",
+                        "match": r.score,
+                        "id": r.id
+                    })
+                    seen_jds.add(r.job_description)
+                if len(job_matches) >= 3: break
+
+        return Response({
+            "latest_score": latest.score,
+            "history": history,
+            "job_matches": job_matches,
+            "skill_gaps": list(gaps)[:5],
+            "apps_sent": records.count()
+        }, status=200)
     except Exception as e:
-        logger.error(f"Dashboard aggregation error: {str(e)}")
+        logger.error(f"Candidate Dashboard error: {str(e)}")
         return Response({"error": str(e)}, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_recruiter_dashboard_view(request):
+    """
+    Hiring Intelligence Hub: Returns pipeline density, top talent,
+    and efficiency metrics for high-volume recruitment.
+    """
+    try:
+        user = request.user
+        records = AnalysisRecord.objects.filter(user=user)
+        
+        total_scans = user.scan_count if hasattr(user, 'scan_count') else records.count()
+        
+        if not records.exists():
+            return Response({
+                "total_scans": 0, "avg_score": 0, "top_score": 0,
+                "top_candidates": [], "pipeline": {"strong": 0, "medium": 0, "weak": 0},
+                "recent_activity": []
+            }, status=200)
+
+        avg_score = round(records.aggregate(Avg('score'))['score__avg'] or 0, 1)
+        top_score = records.aggregate(Max('score'))['score__max'] or 0
+        
+        # 🏆 Top Candidates (Live Leaderboard)
+        top_candidates = [
+            {
+                "name": r.resume_name,
+                "score": r.score,
+                "id": r.id,
+                "date": r.created_at.strftime("%m/%d")
+            } for r in records.order_by('-score')[:5]
+        ]
+
+        # 📊 Pipeline Distribution
+        pipeline = {
+            "strong": records.filter(score__gte=80).count(),
+            "medium": records.filter(score__gte=50, score__lt=80).count(),
+            "weak": records.filter(score__lt=50).count()
+        }
+
+        # 🕒 Recent Activity
+        recent = [
+            {
+                "resume": r.resume_name,
+                "score": r.score,
+                "time": r.created_at.strftime("%H:%M") if r.created_at.date() == timezone.now().date() else r.created_at.strftime("%b %d")
+            } for r in records.order_by('-created_at')[:5]
+        ]
+
+        return Response({
+            "total_scans": total_scans,
+            "avg_score": avg_score,
+            "top_score": top_score,
+            "top_candidates": top_candidates,
+            "pipeline": pipeline,
+            "recent_activity": recent
+        }, status=200)
+    except Exception as e:
+        logger.error(f"Recruiter Dashboard error: {str(e)}")
+        return Response({"error": str(e)}, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_dashboard_analytics_view(request):
+    """
+    Legacy compatibility: Redirects to the appropriate role-based dashboard.
+    """
+    if request.user.role == 'recruiter':
+        return get_recruiter_dashboard_view(request._request)
+    return get_candidate_dashboard_view(request._request)
 
 
 @api_view(['POST'])
@@ -1042,11 +1188,20 @@ def analyze_resume_simple_view(request):
             audit['critical_issues']
         )
         
+        # Phase 1 UI Enhancements: Map strengths and weaknesses
+        strengths = []
+        if audit['breakdown']['structure'] >= 80: strengths.append("Solid document structure and hierarchy.")
+        if audit['breakdown']['language'] >= 70: strengths.append("Professional language and strong action verbs.")
+        if audit['breakdown']['impact'] >= 60: strengths.append("Good usage of measurable impact metrics.")
+        if audit['breakdown']['ats'] >= 80: strengths.append("High ATS compatibility and readability.")
+        
         return JsonResponse({
             "score": audit['overall_score'],
             "readiness": audit['readiness'],
             "breakdown": audit['breakdown'],
-            "issues": audit['critical_issues'][:5], # Top 5 primary issues
+            "strengths": strengths[:3],
+            "weaknesses": audit['critical_issues'][:5], # Top 5 primary issues
+            "improvements": [step['action'] for step in action_plan['steps']][:3],
             "summary": audit['summary'],
             "action_plan": action_plan,
             "extracted_text": text,
@@ -1093,21 +1248,29 @@ def warmup_view(request):
 
 def _extract_text(upload):
     name = (upload.name or "").lower()
+    upload.seek(0)
     data = upload.read()
+    upload.seek(0)
     try:
+        import io
         if name.endswith(".pdf"):
-            from PyPDF2 import PdfReader
-            import io
-            reader = PdfReader(io.BytesIO(data))
-            return "\n".join((p.extract_text() or "") for p in reader.pages), data
+            import fitz
+            doc = fitz.open(stream=data, filetype="pdf")
+            text = ""
+            for page in doc:
+                text += page.get_text()
+            return text, data
         if name.endswith(".docx"):
             from docx import Document
-            import io
             doc = Document(io.BytesIO(data))
             return "\n".join(p.text for p in doc.paragraphs), data
         return data.decode(errors="ignore"), data
-    except Exception:
-        return data.decode(errors="ignore"), data
+    except Exception as e:
+        logger.error(f"Extraction failed for {name}: {str(e)}")
+        try:
+            return data.decode(errors="ignore"), data
+        except:
+            return "", data
 
 def _score_resume(text, keywords=None):
     text_raw = text or ""
@@ -1199,4 +1362,173 @@ def change_password_view(request):
 def request_email_change_view(request):
     # This would normally involve sending a verification token
     return Response({"message": "Verification link sent to new email address. (Mock Flow)"})
+
+@api_view(['POST'])
+@permission_classes([])
+def refactor_bullets_view(request):
+    """
+    Top 1% Global Elite: Humanized Insights + Before/After ATS Impact Proof.
+    """
+    bullets = request.data.get('bullets', [])
+    if not bullets:
+        bullets = ["React development.", "SQL optimization."]
+    
+    # 🧠 ELITE CONTEXT MAP (Humanized + Comparative Impact)
+    CONTEXT_MAP = {
+        "React": {
+            "metric": "component rendering efficiency",
+            "impact": "smoother UI transitions and better user retention",
+            "feature": "state management",
+            "method": "memoization and lazy-loading",
+            "reasoning": "Shows strong understanding of React performance and how to handle real-world bottlenecks.",
+            "ats_before": "Generic 'worked on React' statement—low impact.",
+            "ats_after": "Strong keyword alignment for 'Performance' and 'Optimization'.",
+            "tag": "Frontend",
+            "place": "Experience Section"
+        },
+        "Node": {
+            "metric": "API response latency",
+            "impact": "improved system throughput under high-concurrency patterns",
+            "feature": "middleware orchestration",
+            "method": "asynchronous I/O and custom error handling",
+            "reasoning": "Highlights technical maturity in managing backend stability and distributed systems.",
+            "ats_before": "Missing scalability context—high risk of rejection.",
+            "ats_after": "Quantified impact on latency and throughput detected.",
+            "tag": "Backend",
+            "place": "Experience Section"
+        },
+        "SQL": {
+            "metric": "data retrieval performance",
+            "impact": "faster reporting and optimized dashboard refresh cycles",
+            "feature": "query optimization",
+            "method": "indexing and join restructuring",
+            "reasoning": "Proves ability to handle large-scale datasets—highly valued for senior-level roles.",
+            "ats_before": "No technical depth mentioned—appears junior.",
+            "ats_after": "Specific technical methods (indexing) provide high recruiter confidence.",
+            "tag": "Database",
+            "place": "Experience Section"
+        }
+    }
+
+    import random
+    improved = []
+    last_template = None
+    processed_skills = set()
+    
+    # 🧠 TONE DETECTION (Project vs Job)
+    is_project = any("project" in str(b).lower() or "built" in str(b).lower() for b in bullets)
+
+    for bullet in bullets:
+        if len(improved) >= 3: break
+        clean = str(bullet).lower()
+        
+        tech_key = None
+        for key in CONTEXT_MAP.keys():
+            if key.lower() in clean and key not in processed_skills:
+                tech_key = key
+                break
+        
+        if not tech_key: continue
+        processed_skills.add(tech_key)
+        
+        context = CONTEXT_MAP[tech_key]
+        
+        # 🔧 TEMPLATE SELECTION (Experience-calibrated)
+        TEMPLATES = [
+            "Improved {metric} by {method} using {tech}, leading to {impact}.",
+            "Spearheaded {feature} integration with {tech} via {method}, achieving significant {metric} gains.",
+            "Built {feature} using {tech} and {method}, noticeably enhancing {metric} and {impact}."
+        ] if not is_project else [
+            "Developed a {feature} using {tech} and {method} to improve {metric}.",
+            "Leveraged {tech} to optimize {feature} through {method}, achieving {metric}.",
+            "Integrated {method} into {tech} project, resulting in {impact}."
+        ]
+
+        template = random.choice([t for t in TEMPLATES if t != last_template])
+        last_template = template
+        
+        enhanced = template.format(
+            tech=tech_key,
+            metric=context["metric"],
+            impact=context["impact"],
+            feature=context["feature"],
+            method=context["method"]
+        )
+        
+        improved.append({
+            "text": enhanced,
+            "tag": context["tag"],
+            "placement": context["place"],
+            "metric": context["metric"],
+            "impact": context["impact"],
+            "method": context["method"],
+            "reasoning": context["reasoning"],
+            "ats_proof": {
+                "before": context["ats_before"],
+                "after": context["ats_after"]
+            }
+        })
+
+    return Response({
+        "refactored": improved
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def log_interview_view(request):
+    """Logs an interview outreach event and updates candidate status"""
+    user = request.user
+    record_id = request.data.get('id')
+    
+    try:
+        # We handle both AnalysisRecord (Modern) and Candidate (Legacy)
+        # Check AnalysisRecord first
+        analysis = AnalysisRecord.objects.filter(id=record_id, user=user).first()
+        if analysis:
+            analysis.status = 'interviewed'
+            analysis.save()
+            logger.info(f"[ACTION] Recruiter {user.email} marked Analysis {record_id} as INTERVIEWED")
+            return Response({"success": True, "status": "interviewed"})
+            
+        # Fallback to legacy Candidate if needed
+        from .models import Candidate
+        candidate = Candidate.objects.filter(id=record_id).first()
+        if candidate:
+            candidate.status = 'shortlisted' # Map to existing legacy choice
+            candidate.save()
+            return Response({"success": True, "status": "shortlisted"})
+            
+        return Response({"error": "Candidate record not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_candidate_view(request):
+    """Mark a candidate as rejected (Soft removal from active pipeline)"""
+    user = request.user
+    record_id = request.data.get('id')
+    
+    try:
+        # Modern AnalysisRecord
+        analysis = AnalysisRecord.objects.filter(id=record_id, user=user).first()
+        if analysis:
+            analysis.status = 'rejected'
+            analysis.save()
+            logger.info(f"[ACTION] Recruiter {user.email} REJECTED Analysis {record_id}")
+            return Response({"success": True, "status": "rejected"})
+            
+        # Legacy Candidate
+        from .models import Candidate
+        candidate = Candidate.objects.filter(id=record_id).first()
+        if candidate:
+            candidate.status = 'rejected'
+            candidate.save()
+            return Response({"success": True, "status": "rejected"})
+            
+        return Response({"error": "Candidate record not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 

@@ -25,7 +25,7 @@ const Login = () => {
     setError(""); setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/app");
+      navigate("/settings");
     } catch (err) { setError(friendlyError(err.code)); }
     finally { setLoading(false); }
   };
@@ -42,7 +42,7 @@ const Login = () => {
       
       // Briefly wait for AuthProvider to catch up
       setTimeout(() => {
-        navigate("/app");
+        navigate("/settings");
       }, 500);
       
     } catch (err) { setError(friendlyError(err.code)); }

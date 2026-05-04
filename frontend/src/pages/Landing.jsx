@@ -21,6 +21,7 @@ import HorizontalScrollShowcase from "../components/HorizontalScrollShowcase";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import LandingSkeleton from "../components/LandingSkeleton";
+import GlowCard from "../components/GlowCard";
 
 // Advanced Motion Orchestration
 const containerVariants = {
@@ -54,45 +55,45 @@ const sectionReveal = {
 const FEATURES = [
   {
     icon: "psychology",
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-600",
-    title: "Neural Resume Matching",
-    desc: "Our AI simulates recruiter behavior to score your resume against 10,000+ industry standards."
+    iconBg: "bg-purple-500/10",
+    iconColor: "text-purple-400",
+    title: "Neural Parsing Engine",
+    desc: "AI-powered extraction with 500+ semantic tokens, identifying hidden skill clusters that standard ATS systems ignore."
   },
   {
     icon: "speed",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
-    title: "Instant ATS Score",
-    desc: "Get your ATS compatibility score in under 3 seconds. No waiting, no fluff."
+    iconBg: "bg-blue-500/10",
+    iconColor: "text-blue-400",
+    title: "Real-time Compatibility",
+    desc: "Simulate exact recruiter screening rules in under 2 seconds. Get a definitive decision-grade score instantly."
   },
   {
     icon: "target",
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-600",
-    title: "Keyword Gap Analysis",
-    desc: "Identify exactly which keywords are missing and how to inject them naturally."
+    iconBg: "bg-emerald-500/10",
+    iconColor: "text-emerald-400",
+    title: "Semantic Gap Mapping",
+    desc: "Auto-detect missing high-intent keywords and calculate their impact on your ranking across 100+ industries."
   },
   {
     icon: "auto_fix_high",
-    iconBg: "bg-indigo-100",
-    iconColor: "text-indigo-600",
-    title: "One-Click Optimization",
-    desc: "Apply AI-suggested bullet points directly to your resume with perfect formatting."
+    iconBg: "bg-indigo-500/10",
+    iconColor: "text-indigo-400",
+    title: "Dynamic Bullet Forge",
+    desc: "Convert generic tasks into high-impact, results-driven achievements with neural context-aware rewriting."
   },
   {
     icon: "query_stats",
-    iconBg: "bg-violet-100",
-    iconColor: "text-violet-600",
-    title: "Skill Gap Analyzer",
-    desc: "Compare your resume against any job description to find alignment gaps instantly."
+    iconBg: "bg-violet-500/10",
+    iconColor: "text-violet-400",
+    title: "JD Vector Alignment",
+    desc: "Perform 1-to-1 vector matching between your resume and any job description to ensure 95%+ semantic alignment."
   },
   {
     icon: "batch_prediction",
-    iconBg: "bg-rose-100",
-    iconColor: "text-rose-600",
-    title: "Recruiter Bulk Scanner",
-    desc: "Recruiters can scan and rank hundreds of resumes in minutes with neural scoring."
+    iconBg: "bg-rose-500/10",
+    iconColor: "text-rose-400",
+    title: "Enterprise Bulk Ranker",
+    desc: "Production-grade engine for recruiters to scan, rank, and shortlist hundreds of candidates in minutes."
   }
 ];
 
@@ -120,8 +121,8 @@ const Landing = () => {
     if (!user) {
       navigate("/login");
     } else {
-      // Direct redirect to the standalone scanner page
-      navigate("/resume-scanner");
+      // Direct redirect to the appropriate tool based on role
+      navigate(profile?.role === 'recruiter' ? '/scanner' : '/optimize');
     }
   };
 
@@ -146,31 +147,27 @@ const Landing = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="space-y-6 relative pointer-events-auto"
+              className="space-y-8 relative pointer-events-auto"
             >
-              {/* Voxr-style pill badge */}
-              <motion.div variants={itemVariants} className="voxr-pill w-fit">
-                <span className="relative flex h-2 w-2">
-                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                   <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-                </span>
+              {/* Voxr-style glass pill */}
+              <motion.div variants={itemVariants} className="voxr-glass-label w-fit">
                 Neural Matching v4.0 Active
               </motion.div>
 
-              <div className="space-y-5">
+              <div className="space-y-6">
                 <motion.h1 
                   variants={itemVariants} 
-                  className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter text-white leading-[0.95] drop-shadow-2xl"
+                  className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tighter text-white leading-[0.9] drop-shadow-2xl"
                 >
                   Stop Guessing. <br />
-                  <span className="text-purple-400 italic font-serif">Get Hired.</span>
+                  <span className="text-white/30 italic font-serif">Get Hired.</span>
                 </motion.h1>
 
                 <motion.p 
                   variants={itemVariants} 
-                  className="text-white/40 text-lg md:text-xl leading-relaxed max-w-xl font-medium"
+                  className="text-white/40 text-xl md:text-2xl leading-relaxed max-w-xl font-medium"
                 >
-                  AI-powered resume analysis that works at scale, identifies gaps in real-time, and gives you the edge recruiters actually look for.
+                  Enterprise-grade resume intelligence that works at scale, identifies gaps in real-time, and gives you the edge recruiters actually look for.
                 </motion.p>
               </div>
 
@@ -219,35 +216,28 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-24"
           >
-            <div className="flex justify-center mb-6">
-              <span className="voxr-pill !border-purple-500/30 !bg-purple-500/10 !text-purple-300">Main features</span>
+            <div className="flex justify-center mb-8">
+              <span className="voxr-glass-label">The Platform</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black mb-6 text-white drop-shadow-lg">
-              Power Up Your <span className="text-purple-400 italic">Resume</span>
+            <h2 className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tighter">
+              Power Up Your <span className="text-white/30 italic">Resume</span>
             </h2>
-            <p className="text-white/60 text-xl max-w-2xl mx-auto drop-shadow-md">
-              Six AI-driven tools that analyze, optimize, and transform your resume — on autopilot.
+            <p className="text-white/40 text-xl md:text-2xl max-w-3xl mx-auto font-medium">
+              Six production-grade AI tools that analyze, optimize, and transform your career trajectory — on autopilot.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {FEATURES.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="bg-white/5 backdrop-blur-md border border-white/10 shadow-lg rounded-[32px] p-10 flex flex-col items-start relative group hover:bg-white/10 hover:-translate-y-2 hover:shadow-[0_10px_40px_rgba(139,92,246,0.15)] transition-all duration-500"
-              >
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 rotate-0 group-hover:-rotate-6 transition-transform shadow-lg ${feature.iconBg} ring-1 ring-white/20`}>
+              <GlowCard key={i} delay={i * 0.1}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-10 rotate-0 group-hover:-rotate-6 transition-transform shadow-2xl ${feature.iconBg} ring-1 ring-white/10`}>
                   <span className={`material-symbols-outlined text-3xl ${feature.iconColor}`}>{feature.icon}</span>
                 </div>
-                <h3 className="text-2xl font-black text-white mb-3 font-display drop-shadow-sm">{feature.title}</h3>
-                <p className="text-white/60 font-medium leading-relaxed">{feature.desc}</p>
-              </motion.div>
+                <h3 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tighter drop-shadow-sm">{feature.title}</h3>
+                <p className="text-white/40 text-lg font-medium leading-relaxed">{feature.desc}</p>
+              </GlowCard>
             ))}
           </div>
         </div>

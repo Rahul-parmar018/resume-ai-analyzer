@@ -19,11 +19,31 @@ import {
   MousePointer2,
   PieChart,
   Activity,
-  UserCheck
+  UserCheck,
+  Cpu,
+  Monitor,
+  Database,
+  Terminal,
+  Search,
+  Eye,
+  FileSearch,
+  Check,
+  X,
+  ChevronRight,
+  Settings2,
+  LayoutDashboard,
+  Gauge,
+  BarChart3,
+  Lightbulb,
+  FileDown,
+  Fingerprint,
+  AlertTriangle,
+  RefreshCcw
 } from "lucide-react";
 import { analyzeResume, rewriteResume } from "../api/analyze";
 import { getScoreColor } from "../utils/scoring";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Optimizer = () => {
   const [file, setFile] = useState(null);
@@ -31,15 +51,17 @@ const Optimizer = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  
-  // Phase 3 Rewrite States
   const [rewrites, setRewrites] = useState(null);
   const [rewriting, setRewriting] = useState(false);
-  const [activeTab, setActiveTab] = useState("editor"); // editor | insights
+  const fileInputRef = useRef(null);
 
-  // Metrics
+  // Metrics derived from result
   const [wordCount, setWordCount] = useState(0);
   const [atsRiskText, setAtsRiskText] = useState("Detecting...");
+
+  useEffect(() => {
+    document.title = "Resume Optimization Workbench | Candidex";
+  }, []);
 
   const handleAnalyze = async () => {
     if (!file || !jd.trim()) {
@@ -55,7 +77,7 @@ const Optimizer = () => {
       setResult(data);
       if (data.extracted_text) {
           setWordCount(data.extracted_text.split(/\s+/).length);
-          setAtsRiskText(data.score < 60 ? "High ⚠️" : "Low ✅");
+          setAtsRiskText(data.score < 60 ? "High Risk" : "Low Risk");
       }
     } catch (err) {
       setError(err.message || "Optimization failed.");
@@ -78,325 +100,242 @@ const Optimizer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20 selection:bg-indigo-500/10">
-      
-      {/* 🥇 1. HEADER (STUNNING FIRST IMPRESSION) */}
-      <div className="bg-white border-b border-slate-100 pt-16 pb-12 px-8">
-          <div className="max-w-7xl mx-auto space-y-4">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold text-[10px] uppercase tracking-[0.3em]">
-                  <Sparkles className="w-4 h-4" /> Professional AI Workbench
-              </div>
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                  Fix Your Resume Like a <span className="text-indigo-600 italic">Top 1% Candidate</span>
-              </h1>
-              <p className="text-slate-400 font-medium text-lg italic max-w-2xl">
-                  Used by candidates targeting FAANG & global roles. Stop guessing—engineer your identity with clinical precision.
-              </p>
-          </div>
-      </div>
+    <div className="bg-transparent text-white selection:bg-purple-500/30 min-h-screen font-sans relative">
+        {/* ATMOSPHERIC DEPTH SYSTEM */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+            <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-purple-600/10 blur-[160px] rounded-full" />
+            <div className="absolute bottom-[10%] left-[-5%] w-[1000px] h-[1000px] bg-pink-500/5 blur-[180px] rounded-full" />
+        </div>
 
-      {/* 🥈 2. CONTEXT BAR (STAY INFORMED) */}
-      {result && (
-          <div className="sticky top-0 z-50 bg-slate-900 text-white border-y border-white/5 px-8 py-3 flex flex-wrap items-center justify-between gap-6 overflow-hidden">
-              <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                          <Target className="w-4 h-4 text-emerald-400" />
-                      </div>
-                      <div>
-                          <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Match Score</p>
-                          <p className="text-sm font-black italic tracking-tighter text-emerald-400 leading-none">{result.score}% → <span className="text-white opacity-40">Target 85%+</span></p>
-                      </div>
-                  </div>
-                  <div className="h-8 w-px bg-white/10 hidden md:block"></div>
-                  <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                          <Layers className="w-4 h-4 text-indigo-400" />
-                      </div>
-                      <div>
-                          <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Target Role</p>
-                          <p className="text-sm font-black italic tracking-tighter text-white leading-none">Software Engineer Intern</p>
-                      </div>
-                  </div>
-              </div>
-              <div className="flex items-center gap-4">
-                  <div className="text-right hidden sm:block">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-rose-400">3 Critical Issues Detected</p>
-                      <p className="text-[8px] font-bold text-slate-500 italic">Ready to optimize with Neural Engine</p>
-                  </div>
-                  <button onClick={handleImproveAll} className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-600/20">
-                      <Zap className="w-3.5 h-3.5" /> Fix All Now
-                  </button>
-              </div>
-          </div>
-      )}
+        <main className="relative z-10 max-w-[1300px] mx-auto px-6 pt-4 pb-12">
+            
+            {/* 1. COMPACT HERO */}
+            <header className="py-6 text-left border-b border-white/10 mb-6 flex flex-wrap items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 border border-purple-500/20 shadow-lg shadow-purple-500/10">
+                            <Zap className="w-3 h-3" />
+                        </div>
+                        <span className="text-[8px] font-black uppercase tracking-[0.4em] text-white/50">v2.0 Neural Workbench</span>
+                    </div>
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-white italic uppercase leading-none">
+                        Neural <span className="text-purple-500">Workbench</span>
+                    </h1>
+                    <p className="text-white/40 text-[10px] font-medium max-w-lg leading-relaxed italic">
+                        Clinical-grade resume engineering for FAANG-level alignment.
+                    </p>
+                </div>
+            </header>
 
-      <div className="max-w-7xl mx-auto px-8 py-10">
-          {!result && !loading ? (
-              <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
-                  <div className="space-y-10">
-                      <div className="inline-block px-4 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600 text-[10px] font-black uppercase tracking-widest">Neural Workbench v2.0</div>
-                      <h2 className="text-6xl font-black text-slate-900 leading-[0.95] tracking-tighter uppercase italic">
-                          Start your <br /> <span className="text-indigo-600">Re-Engineering.</span>
-                      </h2>
-                      <p className="text-xl text-slate-500 font-medium italic border-l-4 border-slate-100 pl-8">
-                          Upload your raw data. Our AI analyzes the "Experience Gap" between your current profile and the target role in real-time.
-                      </p>
-                      <div className="grid grid-cols-2 gap-6 pb-4">
-                         <div className="space-y-2">
-                             <div className="flex items-center gap-2 text-slate-900 font-black text-sm uppercase italic">
-                                 <CheckCircle2 className="w-4 h-4 text-emerald-500" /> SEO Optimized
-                             </div>
-                             <p className="text-xs text-slate-400 font-medium">Rank #1 in Recruiter Search.</p>
-                         </div>
-                         <div className="space-y-2">
-                             <div className="flex items-center gap-2 text-slate-900 font-black text-sm uppercase italic">
-                                 <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Impact Driven
-                             </div>
-                             <p className="text-xs text-slate-400 font-medium">Quantify your achievements.</p>
-                         </div>
-                      </div>
-                  </div>
+            {!result && !loading ? (
+                /* INITIAL INPUT STATE */
+                <div className="grid lg:grid-cols-2 gap-8 items-start">
+                    <div className="space-y-6 pt-2">
+                        <div className="voxr-glass-label w-fit text-purple-400 border border-purple-500/30 px-2 py-0.5 text-[8px] italic">Ingestion Phase</div>
+                        <h2 className="text-4xl font-black text-white leading-[1] tracking-tighter uppercase italic">
+                            Quantify your <br /> <span className="text-purple-500">Excellence.</span>
+                        </h2>
+                        <p className="text-base text-white/50 font-medium italic border-l-2 border-purple-500/30 pl-5 leading-relaxed max-w-md">
+                            Upload your protocol. We'll simulate the FAANG screening cycle and re-engineer your bullet points for maximum impact.
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            {[
+                                { title: "ATS Optimization", desc: "100% compliant parsing logic.", icon: <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> },
+                                { title: "Neural Rewriting", desc: "AI-driven action-verb injection.", icon: <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> }
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 group">
+                                    <div className="p-1.5 bg-white/5 rounded-lg border border-white/5 group-hover:border-purple-500/30 transition-all">{item.icon}</div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-white uppercase italic">{item.title}</p>
+                                        <p className="text-[9px] text-white/30 font-medium italic">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                  <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl space-y-8">
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">01. Source File</label>
-                        <div className="relative group cursor-pointer">
-                            <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer" />
-                            <div className={`h-48 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center transition-all ${
-                                file ? 'border-emerald-500 bg-emerald-50 scale-[1.02]' : 'border-slate-100 bg-slate-50 group-hover:border-indigo-400'
-                            }`}>
-                                <FileText className={`w-12 h-12 mb-4 ${file ? 'text-emerald-500' : 'text-slate-200 group-hover:text-indigo-400'}`} />
-                                <p className="text-sm font-black text-slate-900 italic tracking-tight">{file ? file.name : "Click to Drop Resume PDF"}</p>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Processed securely & locally</p>
+                    <div className="glass-card-premium p-6 space-y-5">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[8px] font-black uppercase tracking-[0.3em] text-white/40">01. Source File</label>
+                                {file && <span className="text-[7px] font-black text-green-400 uppercase italic">Protocol Loaded</span>}
+                            </div>
+                            <div 
+                                onClick={() => fileInputRef.current?.click()}
+                                className={`h-28 border-2 border-dashed rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer group ${
+                                    file ? 'border-green-500/40 bg-green-500/5' : 'border-white/10 bg-white/[0.02] hover:border-purple-500/30 hover:bg-purple-500/5'
+                                }`}
+                            >
+                                <input type="file" ref={fileInputRef} accept=".pdf" onChange={(e) => setFile(e.target.files[0])} className="hidden" />
+                                <FileText className={`w-6 h-6 mb-1.5 transition-all ${file ? 'text-green-400' : 'text-white/10 group-hover:text-purple-400'}`} />
+                                <p className="text-[8px] font-black text-white uppercase tracking-widest italic">{file ? file.name : "Select PDF Data File"}</p>
                             </div>
                         </div>
-                      </div>
 
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">02. Target Intent (JD)</label>
-                        <textarea
-                          value={jd}
-                          onChange={(e) => setJd(e.target.value)}
-                          placeholder="Paste Job Description here..."
-                          className="w-full h-48 p-6 bg-slate-50 border border-slate-100 rounded-[2rem] text-sm focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none font-medium italic"
-                        />
-                      </div>
+                        <div className="space-y-2">
+                            <label className="text-[8px] font-black uppercase tracking-[0.3em] text-white/40">02. Target Intent (JD)</label>
+                            <textarea
+                                value={jd}
+                                onChange={(e) => setJd(e.target.value)}
+                                placeholder="Paste Job Description for alignment analysis..."
+                                className="w-full h-28 p-4 bg-black/40 border border-white/10 rounded-xl text-[11px] text-white/90 focus:outline-none focus:border-purple-500/40 transition-all resize-none font-medium italic shadow-inner"
+                            />
+                        </div>
 
-                      {error && <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-2xl text-[11px] font-black uppercase tracking-widest text-center italic">{error}</div>}
+                        {error && <div className="p-2.5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-[8px] font-black uppercase tracking-widest text-center italic">{error}</div>}
 
-                      <button 
-                        onClick={handleAnalyze} 
-                        disabled={loading}
-                        className={`w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-2xl transition-all shadow-2xl flex items-center justify-center gap-4 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-800 active:scale-95'}`}
-                      >
-                        {loading ? "Neural Analysis Processing..." : "Initialize Workbench"} <ArrowRight className="w-6 h-6" />
-                      </button>
-                  </div>
-              </div>
-          ) : result && !loading ? (
-              <div className="grid lg:grid-cols-12 gap-10">
-                  
-                  {/* 🥉 3. LEFT PANEL — INPUT & METRICS */}
-                  <div className="lg:col-span-4 space-y-10">
-                      {/* STATS CARD */}
-                      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm">
-                          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 border-b border-slate-50 pb-4">Real-time Metrics</h4>
-                          <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-1">
-                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">Word Count</p>
-                                  <p className="text-3xl font-black italic tracking-tighter text-slate-900 leading-none">{wordCount}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">Readability</p>
-                                  <p className="text-3xl font-black italic tracking-tighter text-slate-900 leading-none">Medium</p>
-                              </div>
-                              <div className="col-span-2 space-y-3 pt-2">
-                                  <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none">ATS Risk Indicator</p>
-                                  <div className="flex items-center gap-2 bg-rose-50 border border-rose-100 p-3 rounded-xl">
-                                      <ShieldAlert className="w-4 h-4 text-rose-500" />
-                                      <span className="text-[11px] font-black uppercase text-rose-600 tracking-widest italic">{atsRiskText}</span>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                        <button 
+                            onClick={handleAnalyze} 
+                            disabled={loading}
+                            className="w-full py-4 bg-white text-black rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-2.5 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
+                        >
+                            {loading ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                            {loading ? "Syncing..." : "Run Analysis →"}
+                        </button>
+                    </div>
+                </div>
+            ) : result && !loading ? (
+                /* DASHBOARD STATE */
+                <div className="grid lg:grid-cols-12 gap-6">
+                    
+                    {/* LEFT PANEL — METRICS */}
+                    <div className="lg:col-span-4 space-y-5">
+                        <div className="glass-card-premium p-5 space-y-5">
+                            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                                <h4 className="text-[8px] font-black uppercase tracking-[0.3em] text-purple-400 italic">Analysis Metrics</h4>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                                    <span className="text-[7px] font-black uppercase text-white/20 tracking-widest italic">Live</span>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3.5 bg-white/[0.01] border border-white/5 rounded-xl text-center">
+                                    <p className="text-[7px] font-black uppercase text-white/20 tracking-widest mb-0.5 italic">Match Score</p>
+                                    <p className="text-2xl font-black italic text-green-400 text-glow-green leading-none">{result.score}%</p>
+                                </div>
+                                <div className="p-3.5 bg-white/[0.01] border border-white/5 rounded-xl text-center">
+                                    <p className="text-[7px] font-black uppercase text-white/20 tracking-widest mb-0.5 italic">Risk Level</p>
+                                    <p className="text-lg font-black italic text-red-500 text-glow-red leading-none uppercase">{atsRiskText}</p>
+                                </div>
+                            </div>
+                        </div>
 
-                      {/* 💥 5. LIVE SUGGESTIONS PANEL */}
-                      <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm">
-                          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 flex items-center justify-between">
-                              Live Suggestions <span>(3)</span>
-                          </h4>
-                          <div className="space-y-4">
-                              {[
-                                  { icon: <Zap className="w-4 h-4 text-amber-500" />, label: "Weak Bullet Detected", desc: "Change passive verbs to action verbs.", action: "Improve Line 8" },
-                                  { icon: <Activity className="w-4 h-4 text-blue-500" />, label: "Missing Metrics", desc: "Add numbers to quantify impact.", action: "Add Numbers" },
-                                  { icon: <Settings className="w-4 h-4 text-purple-500" />, label: "ATS Risk: Complexity", desc: "Break down long sentences.", action: "Simplify" }
-                              ].map((item, idx) => (
-                                  <div key={idx} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl group hover:border-indigo-400 cursor-pointer transition-all">
-                                      <div className="flex items-center gap-3 mb-2">
-                                          {item.icon}
-                                          <p className="text-[10px] font-black uppercase italic text-slate-900">{item.label}</p>
-                                      </div>
-                                      <p className="text-[10px] font-medium text-slate-400 leading-normal mb-3">{item.desc}</p>
-                                      <button className="text-[9px] font-black uppercase tracking-widest text-indigo-600 group-hover:translate-x-1 transition-transform flex items-center gap-1.5">
-                                          {item.action} <ArrowRight className="w-3 h-3" />
-                                      </button>
-                                  </div>
-                              ))}
-                          </div>
-                      </div>
+                        {/* LIVE SUGGESTIONS - ACTION CARDS */}
+                        <div className="glass-card-premium p-5 space-y-5">
+                            <h4 className="text-[8px] font-black uppercase tracking-[0.3em] text-purple-400 italic">Neural Insights</h4>
+                            <div className="space-y-2.5">
+                                {[
+                                    { label: "Verb Impact", desc: "Line 4: 'Worked on' → 'Spearheaded'", color: "text-amber-500" },
+                                    { label: "Missing Metric", desc: "Add % growth to Bullet 2", color: "text-blue-500" }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="p-3.5 bg-white/[0.01] border border-white/5 rounded-xl group hover:border-purple-500/20 transition-all cursor-pointer">
+                                        <p className={`text-[8px] font-black uppercase italic ${item.color} mb-1`}>{item.label}</p>
+                                        <p className="text-[10px] font-medium text-white/40 leading-relaxed italic">{item.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                      {/* 💰 8. PROGRESS + LIMIT */}
-                      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white space-y-6 shadow-2xl shadow-slate-900/20 relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-                          <h4 className="text-[9px] font-black uppercase tracking-[0.4em] text-indigo-400 relative z-10">Account Usage</h4>
-                          <div className="space-y-4 relative z-10">
-                              <div className="flex justify-between items-end">
-                                  <span className="text-3xl font-black italic">8<span className="text-white/20">/20</span></span>
-                                  <span className="text-[10px] font-bold text-slate-500">Optimizations Left</span>
-                              </div>
-                              <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/10 p-0.5">
-                                  <div className="h-full bg-indigo-500 rounded-full w-[40%]"></div>
-                              </div>
-                              <Link to="/pricing" className="block text-center py-4 bg-white/5 hover:bg-white text-white hover:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-                                  Upgrade to Pro
-                              </Link>
-                          </div>
-                      </div>
-                  </div>
+                        {/* USAGE LIMIT */}
+                        <div className="glass-card-premium p-4 bg-purple-500/[0.01] border border-purple-500/10">
+                            <div className="flex justify-between items-end mb-2">
+                                <span className="text-xl font-black italic text-white/80">14<span className="text-white/10">/20</span></span>
+                                <span className="text-[7px] font-bold text-white/20 uppercase tracking-widest italic">Protocol Quota</span>
+                            </div>
+                            <div className="h-1 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                                <div className="h-full bg-purple-500 rounded-full w-[70%] shadow-[0_0_10px_rgba(168,85,247,0.3)]"></div>
+                            </div>
+                        </div>
+                    </div>
 
-                  {/* 🏆 4. RIGHT PANEL — AI WORKBENCH / OUTPUT */}
-                  <div className="lg:col-span-8 space-y-8">
-                      {/* ⚡ 7. CONTROL PANEL (TOP BAR) */}
-                      <div className="bg-white border border-slate-100 rounded-[2rem] p-4 flex items-center justify-between shadow-sm">
-                          <div className="flex items-center gap-2">
-                              <button className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all">Fix Entire Resume</button>
-                              <button className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Fix Selected</button>
-                              <button className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Optimize for Job</button>
-                          </div>
-                          <div className="flex items-center gap-2">
-                              <button className="w-10 h-10 border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-50 transition-all"><RotateCcw className="w-4 h-4" /></button>
-                              <button className="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-indigo-100 transition-all">Export PDF</button>
-                          </div>
-                      </div>
+                    {/* RIGHT PANEL — AI WORKBENCH */}
+                    <div className="lg:col-span-8 space-y-5">
+                        {/* COMPACT CONTROL BAR */}
+                        <div className="glass-card-premium p-2.5 flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-1.5">
+                                <button onClick={handleImproveAll} disabled={rewriting} className="px-4 py-2 bg-white text-black rounded-lg font-black text-[9px] uppercase tracking-widest hover:scale-[1.03] transition-all disabled:opacity-20 flex items-center gap-2">
+                                    {rewriting ? <RefreshCcw className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                                    Neural Refactor
+                                </button>
+                                <button className="px-4 py-2 bg-white/5 text-white/30 border border-white/5 rounded-lg font-black text-[9px] uppercase tracking-widest hover:text-white transition-all italic">Audit Log</button>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <button className="w-8 h-8 border border-white/5 text-white/10 rounded-lg flex items-center justify-center hover:bg-white/5 transition-all"><RotateCcw className="w-3.5 h-3.5" /></button>
+                                <button className="px-5 py-2 bg-purple-500/5 text-purple-400 border border-purple-500/10 rounded-lg font-black text-[9px] uppercase tracking-widest hover:bg-purple-500/10 transition-all flex items-center gap-2">
+                                    <FileDown className="w-3 h-3" /> Export
+                                </button>
+                            </div>
+                        </div>
 
-                      {/* SPLIT EDITOR VIEW */}
-                      <div className="grid lg:grid-cols-2 gap-4 h-[650px]">
-                          {/* INPUT EDITOR */}
-                          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-6 shadow-sm overflow-hidden flex flex-col">
-                              <div className="flex items-center justify-between border-b border-slate-50 pb-4">
-                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Main Resume Text</h4>
-                                  <div className="flex items-center gap-2 text-[9px] font-bold text-slate-300">
-                                      <MousePointer2 className="w-3 h-3" /> Select line to improve
-                                  </div>
-                              </div>
-                              <div className="flex-1 overflow-y-auto pr-4 font-mono text-sm text-slate-600 leading-[1.8] scrollbar-hide select-text selection:bg-indigo-500/20">
-                                  {result.extracted_text || "Paste your resume here..."}
-                              </div>
-                          </div>
+                        {/* SPLIT VIEW */}
+                        <div className="grid lg:grid-cols-2 gap-3.5 h-[600px]">
+                            {/* RAW SOURCE */}
+                            <div className="glass-card-premium p-5 flex flex-col bg-black/20 overflow-hidden">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
+                                    <h4 className="text-[8px] font-black uppercase tracking-[0.1em] text-white/20 italic">Legacy Source</h4>
+                                    <span className="text-[7px] font-bold text-white/5 italic">{wordCount} Words</span>
+                                </div>
+                                <div className="flex-1 overflow-y-auto pr-2 font-mono text-[10px] text-white/40 leading-relaxed scrollbar-hide select-text selection:bg-purple-500/10 whitespace-pre-wrap italic">
+                                    {result.extracted_text || "System stand-by..."}
+                                </div>
+                            </div>
 
-                          {/* OUTPUT / SUGGESTIONS WINDOW */}
-                          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 space-y-8 shadow-sm overflow-hidden flex flex-col relative">
-                              <div className="flex items-center justify-between border-b border-slate-50 pb-4">
-                                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">AI Workbench Output</h4>
-                                  {rewrites && <span className="text-[9px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded uppercase tracking-tighter">Analysis Complete</span>}
-                              </div>
-                              
-                              <div className="flex-1 overflow-y-auto pr-4 scrollbar-hide space-y-6">
-                                  {rewriting ? (
-                                      <div className="space-y-6">
-                                          {[1,2,3,4].map(i => (
-                                              <div key={i} className="h-20 bg-slate-50 rounded-2xl animate-pulse border border-slate-100"></div>
-                                          ))}
-                                      </div>
-                                  ) : rewrites ? (
-                                      rewrites.map((item, idx) => (
-                                          <div key={idx} className="space-y-3 group/fix animate-in slide-in-from-right duration-500">
-                                              {/* 🧠 6. BEFORE vs AFTER CARD */}
-                                              <div className="p-5 bg-slate-800 rounded-2xl space-y-4 border border-white/5 shadow-xl relative overflow-hidden">
-                                                  <div className="flex items-center gap-2">
-                                                      <div className="w-2 h-2 rounded-full bg-rose-500"></div>
-                                                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Source Line</span>
-                                                  </div>
-                                                  <p className="text-xs text-slate-400 italic font-medium leading-relaxed">"{item.original}"</p>
-                                                  
-                                                  <div className="h-px bg-white/5"></div>
-                                                  
-                                                  <div className="flex items-center justify-between">
-                                                      <div className="flex items-center gap-2">
-                                                          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Candidex Recommendation</span>
-                                                      </div>
-                                                      <button className="w-8 h-8 rounded-lg bg-emerald-500 text-slate-900 flex items-center justify-center hover:scale-105 transition-all"><Plus className="w-4 h-4" /></button>
-                                                  </div>
-                                                  <p className="text-xs text-white font-bold leading-relaxed selection:bg-emerald-500/30 italic">"{item.improved}"</p>
-                                                  
-                                                  {/* Tags */}
-                                                  <div className="flex flex-wrap gap-1 mt-1">
-                                                     {item.improvements?.map((imp, i) => (
-                                                        <span key={i} className="text-[8px] font-black bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase tracking-tighter">
-                                                           {imp}
-                                                        </span>
-                                                     ))}
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      ))
-                                  ) : (
-                                      <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-60">
-                                          <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center">
-                                              <Sparkles className="w-10 h-10 text-slate-200" />
-                                          </div>
-                                          <div>
-                                              <p className="text-sm font-black text-slate-900 uppercase italic tracking-tighter">AI Suggestions Ready</p>
-                                              <p className="text-xs text-slate-400 font-medium max-w-[200px] mt-2">Initialized. Select lines or click "Fix All" to begin neural transformation.</p>
-                                          </div>
-                                      </div>
-                                  )}
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  {/* 📊 9. INSIGHTS PANEL (BOTTOM) */}
-                  <div className="lg:col-span-12 grid lg:grid-cols-3 gap-8 pt-10 border-t border-slate-100">
-                      <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-6">
-                          <h5 className="text-[10px] font-black uppercase text-rose-500 tracking-[0.4em] flex items-center gap-2"><Trash2 className="w-3.5 h-3.5" /> Top Skills Missing</h5>
-                          <div className="flex flex-wrap gap-2">
-                             {result.missing_skills?.map(s => <span key={s} className="px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black border border-rose-100">-{s}</span>)}
-                             {result.missing_skills?.length === 0 && <span className="text-[10px] text-slate-400 italic">No critical skills missing. Perfect.</span>}
-                          </div>
-                      </div>
-                      <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-6">
-                          <h5 className="text-[10px] font-black uppercase text-indigo-500 tracking-[0.4em] flex items-center gap-2"><PieChart className="w-3.5 h-3.5" /> Keyword Match</h5>
-                          <div className="flex flex-wrap gap-2">
-                             {result.skills_found?.map(s => <span key={s} className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-black border border-indigo-100">+{s}</span>)}
-                          </div>
-                      </div>
-                      <div className="p-8 bg-slate-900 border border-slate-900 rounded-[2.5rem] shadow-sm space-y-6 text-white text-center flex flex-col items-center justify-center relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent"></div>
-                          <h5 className="text-[10px] font-black uppercase text-slate-500 tracking-[0.4em] relative z-10">Recruiter Visibility</h5>
-                          <p className="text-5xl font-black italic tracking-tighter text-rose-500 relative z-10">LOW</p>
-                          <p className="text-[9px] font-bold text-slate-400 relative z-10 italic">Optimization score must be 80%+ </p>
-                      </div>
-                  </div>
-              </div>
-          ) : loading && (
-              <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-8 animate-fade-in">
-                  <div className="relative">
-                      <div className="w-24 h-24 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                          <RotateCcw className="w-8 h-8 text-indigo-600 animate-pulse" />
-                      </div>
-                  </div>
-                  <div className="text-center space-y-2">
-                      <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Initializing Neural Engine</h2>
-                      <p className="text-slate-400 font-medium text-lg italic animate-pulse">Competing with 1.4M candidate data points... (First run may take 30-60s)</p>
-                  </div>
-              </div>
-          )}
-      </div>
-
+                            {/* REFACTORED OUTPUT */}
+                            <div className="glass-card-premium p-5 flex flex-col bg-black/40 overflow-hidden border-purple-500/10">
+                                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
+                                    <h4 className="text-[8px] font-black uppercase tracking-[0.1em] text-purple-400 italic">Synthesized Output</h4>
+                                    {rewrites && <span className="text-[7px] font-black bg-green-500/20 text-green-400 border border-green-500/10 px-2 py-0.5 rounded-md uppercase italic">Verified</span>}
+                                </div>
+                                
+                                <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide space-y-3">
+                                    {rewriting ? (
+                                        <div className="space-y-3">
+                                            {[1,2,3,4,5,6].map(i => (
+                                                <div key={i} className="h-16 bg-white/[0.01] rounded-xl animate-pulse border border-white/5"></div>
+                                            ))}
+                                        </div>
+                                    ) : rewrites ? (
+                                        rewrites.map((item, idx) => (
+                                            <motion.div 
+                                                initial={{ opacity: 0, x: 10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: idx * 0.04 }}
+                                                key={idx} 
+                                                className="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-2.5 hover:border-purple-500/20 transition-all shadow-lg group"
+                                            >
+                                                <p className="text-[9px] text-white/30 italic font-medium border-l border-red-500/20 pl-3">"{item.original}"</p>
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <p className="text-[10px] text-white font-black italic leading-snug group-hover:text-glow-purple transition-all">"{item.improved}"</p>
+                                                    <button className="w-7 h-7 rounded-lg bg-green-500 text-black flex items-center justify-center shrink-0 hover:scale-110 active:scale-90 transition-all shadow-lg shadow-green-500/20"><Plus className="w-3.5 h-3.5" /></button>
+                                                </div>
+                                            </motion.div>
+                                        ))
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center text-center space-y-3 opacity-10">
+                                            <Sparkles className="w-10 h-10 text-white" />
+                                            <p className="text-[9px] font-black uppercase italic tracking-widest">Protocol Sync Initialized</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : loading && (
+                /* LOADING */
+                <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-6">
+                    <div className="relative">
+                        <div className="w-20 h-20 border border-white/5 border-t-purple-500 rounded-full animate-spin"></div>
+                        <Cpu className="absolute inset-0 m-auto w-6 h-6 text-purple-500 animate-pulse" />
+                    </div>
+                    <div className="text-center space-y-1.5">
+                        <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic text-glow-purple">Syncing Neural Nodes</h2>
+                        <p className="text-white/20 font-medium text-[10px] italic animate-pulse">Competing with 1.4M candidate protocols...</p>
+                    </div>
+                </div>
+            )}
+        </main>
     </div>
   );
 };

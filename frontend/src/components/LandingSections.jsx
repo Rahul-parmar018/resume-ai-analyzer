@@ -5,13 +5,14 @@ import { ArrowRight } from 'lucide-react';
 import LightBeamButton from './LightBeamButton';
 
 export const RecruiterShowcase = () => (
-  <section className="py-20 px-6 bg-black/40 backdrop-blur-md border-b border-white/5">
-    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16">
-      <div className="lg:basis-1/2 space-y-10">
-        <div className="space-y-4">
-          <h2 className="text-sm font-black text-purple-400 uppercase tracking-[0.3em]">For Talent Teams</h2>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[1.05]">
-            For Recruiters & Hiring Teams
+  <section className="py-28 px-6 bg-transparent border-b border-white/5 relative z-10">
+    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-20">
+      <div className="lg:basis-1/2 space-y-12">
+        <div className="space-y-6">
+          <div className="voxr-glass-label w-fit">For Talent Teams</div>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]">
+            Enterprise <br />
+            <span className="text-white/30 italic">Recruiter Tools</span>
           </h1>
           <p className="text-white/50 text-lg font-medium leading-relaxed max-w-xl">
             Streamline your recruitment workflow with AI-powered batch screening, semantic ranking, and detailed candidate insights.
@@ -96,27 +97,24 @@ export const FinalCTA = () => (
         </p>
       </div>
       
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
         <Link to="/register">
-          <LightBeamButton>
+          <button className="btn-primary">
             Start Growth
-            <span className="arrow-circle !bg-white/10 !border-white/10">
-              <ArrowRight className="w-5 h-5 text-white" />
+            <span className="arrow-circle">
+              <ArrowRight className="w-5 h-5 text-black" />
             </span>
-          </LightBeamButton>
+          </button>
         </Link>
         <Link to="/how-it-works">
-          <LightBeamButton 
-            className="bg-transparent border-white/20 hover:bg-white/5"
-            gradientColors={["#ffffff", "#a855f7", "#ffffff"]}
-          >
+          <button className="voxr-glass-label !bg-white/5 !text-white flex items-center gap-2 py-4 px-8">
             Contact us
             <ArrowRight className="w-5 h-5 opacity-50" />
-          </LightBeamButton>
+          </button>
         </Link>
       </div>
       
-      <p className="text-white/20 font-bold text-xs uppercase tracking-[0.4em]">No credit card required • Instant Results</p>
+      <p className="text-white/20 font-black text-[9px] uppercase tracking-[0.5em] pt-8">No credit card required &bull; Instant Results</p>
     </motion.div>
   </section>
 );

@@ -1,24 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════
-   MOTION LIGHT DESIGN SYSTEM — Candidex AI
-   Core Philosophy: Fluidity, Softness, Clarity
+   VOXR-INSPIRED DESIGN SYSTEM — Candidex AI
+   Core Philosophy: Depth, Neon, Precision
    ═══════════════════════════════════════════════ */
-
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
-    --bg-main: #f8fafc;
-    --text-main: #0f172a; /* Zinc 900-ish */
-    --text-muted: #64748b; /* Slate 500 */
-    --primary: #8b5cf6; /* Violet 500 */
-    --accent: #ec4899; /* Pink 500 */
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --card-border: rgba(255, 255, 255, 0.4);
-    --radius-card: 32px;
+    --bg-main: #020202;
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.4);
+    --primary: #a855f7;
+    --accent: #ec4899;
+    --card-bg: rgba(10, 10, 10, 0.8);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --radius-card: 40px;
   }
 
   body {
@@ -27,105 +26,162 @@
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, .font-display {
     font-family: 'Archivo', sans-serif;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
   }
 }
 
 @layer components {
-  /* Motion Light Glassmorphism */
-  .ml-glass {
-    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  /* ──────────────────────────────────────────────────────────
+     VOXR GLASS SYSTEM
+     ────────────────────────────────────────────────────────── */
+  
+  .glass-card {
+    @apply relative overflow-hidden backdrop-blur-3xl border border-white/10 bg-white/[0.06] shadow-[0_10px_40px_rgba(0,0,0,0.6)] transition-all duration-500;
+    isolation: isolate;
   }
 
-  .ml-card {
-    @apply bg-white/70 backdrop-blur-md border border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[32px] transition-all duration-500;
+  .glass-card::before {
+    content: "";
+    @apply absolute inset-0 -z-10 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-500;
   }
 
-  .ml-card:hover {
-    @apply shadow-[0_30px_70px_rgba(0,0,0,0.08)] -translate-y-2;
+  .glass-card:hover::before {
+    @apply opacity-100;
   }
 
-  /* Soft shadows */
-  .shadow-soft {
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  /* Voxr Signature Glass Label */
+  .voxr-glass-label {
+    @apply relative px-5 py-2.5 rounded-full font-black text-[10px] uppercase tracking-[0.3em] transition-all duration-300;
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
   }
 
-  .shadow-primary {
-    box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.3);
+  .voxr-glass-label::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, 
+      rgba(168, 85, 247, 0.6) 0%, 
+      rgba(168, 85, 247, 0) 40%, 
+      rgba(168, 85, 247, 0) 60%, 
+      rgba(168, 85, 247, 0.6) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .voxr-glass-label::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: rgba(168, 85, 247, 0.08);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     BUTTONS
+     ────────────────────────────────────────────────────────── */
+  
+  .btn-primary {
+    @apply relative px-8 py-4 bg-white text-black rounded-full font-black text-sm uppercase tracking-widest flex items-center gap-3 transition-all active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.1)];
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-1 shadow-[0_25px_60px_rgba(255,255,255,0.15)];
+  }
+
+  .arrow-circle {
+    @apply w-8 h-8 rounded-full bg-black/5 flex items-center justify-center transition-transform duration-300;
+  }
+
+  /* Signature Purple Orb for CTA */
+  .cta-orb {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-600/20 blur-[160px] rounded-full pointer-events-none -z-10;
+  }
+
+  .glass-panel {
+    @apply bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl;
+  }
+
+  .glass-card-premium {
+    @apply relative overflow-hidden backdrop-blur-2xl bg-white/[0.06] rounded-[2rem] transition-all duration-500 border border-white/[0.12] shadow-[0_10px_40px_rgba(0,0,0,0.6)];
+    isolation: isolate;
+  }
+
+  .glass-card-premium::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.4), transparent 50%, rgba(168, 85, 247, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .glass-card-premium:hover {
+    @apply bg-white/[0.08] border-white/20;
+    box-shadow: 0 0 60px rgba(168, 85, 247, 0.15);
+  }
+
+  .btn-primary:hover .arrow-circle {
+    @apply translate-x-1;
   }
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  .text-glow-purple {
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
   }
 
-  .animate-float-delayed {
-    animation: float 6s ease-in-out infinite 2s;
+  .text-glow-green {
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
   }
 
-  .animate-blob {
-    animation: blob 7s infinite;
+  .text-glow-red {
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
   }
 
-  .animation-delay-2000 {
-    animation-delay: 2s;
+  .bg-glow-purple {
+    background: radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
   }
 
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-4000 { animation-delay: 4s; }
 }
 
-/* ═══════════════════════════════════════════════
-   KEYFRAMES
-   ═══════════════════════════════════════════════ */
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-/* ═══════════════════════════════════════════════
-   VOXR-LEGACY COMPAT (Will be phased out)
-   ═══════════════════════════════════════════════ */
-
-.voxr-pill {
-  @apply inline-flex items-center gap-2 px-5 py-2 rounded-full font-bold text-xs uppercase tracking-widest bg-violet-50 text-violet-600 border border-violet-100/50 shadow-sm;
-}
-
-.arrow-circle {
-  @apply w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300;
-}
-
-/* ═══════════════════════════════════════════════
+/* ──────────────────────────────────────────────────────────
    SCROLLBAR
-   ═══════════════════════════════════════════════ */
+   ────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #020202;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: #333;
   border-radius: 9999px;
-  border: 3px solid #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
+  background-color: #444;
 }

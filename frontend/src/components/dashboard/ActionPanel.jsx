@@ -61,7 +61,7 @@ const ActionPanel = ({ suggestions, missingSkills, role }) => {
           <div 
             key={i} 
             className="group flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-100 transition-all cursor-pointer"
-            onClick={() => navigate('/app/optimize')}
+            onClick={() => navigate('/optimize')}
           >
             <div className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center transition-transform group-hover:scale-110 ${action.bg}`}>
               {action.icon}
@@ -79,7 +79,7 @@ const ActionPanel = ({ suggestions, missingSkills, role }) => {
       </div>
 
       <button 
-        onClick={() => navigate('/app/optimize')}
+        onClick={() => navigate('/optimize')}
         className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-slate-900/10"
       >
         <span>Fix My Resume Automatically</span>
