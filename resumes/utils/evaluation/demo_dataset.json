@@ -1,0 +1,25 @@
+{
+  "demo_profiles": [
+    {
+      "id": "demo_student",
+      "name": "Alex Rivera (Student Profile)",
+      "resume_text": "Alex Rivera. Student at Tech University. Experience: Class projects in Java. Skills: Java, HTML, Git. Looking for internships.",
+      "target_role": "Backend Engineer",
+      "job_description": "We are seeking a junior/intern backend developer with Python and SQL basics."
+    },
+    {
+      "id": "demo_junior",
+      "name": "Taylor Chen (Junior Developer)",
+      "resume_text": "Taylor Chen. email: taylor@example.com. Junior Full Stack Developer with 2 years experience. Built React frontends and Node.js APIs. Familiar with MongoDB, Express, JavaScript, HTML, CSS, and Git. Improved query performance by 20% on 3 client websites.",
+      "target_role": "Full Stack Developer",
+      "job_description": "Looking for a React and Node.js Full Stack developer to maintain scalable client web interfaces."
+    },
+    {
+      "id": "demo_ai_eng",
+      "name": "Morgan Vance (AI Engineer)",
+      "resume_text": "Morgan Vance. email: morgan@example.com. github.com/morganv. linkedin.com/in/morganv. Senior AI/ML Engineer with 6 years experience in Python, Machine Learning, NLP, Linear Algebra, and Calculus. Built and optimized deep learning architectures using PyTorch and Transformers. Improved inference speed by 45% using TensorRT on production pipelines.",
+      "target_role": "AI/ML Engineer",
+      "job_description": "Seeking an AI specialist to deploy custom LLMs and scale semantic vector search pipelines."
+    }
+  ]
+}

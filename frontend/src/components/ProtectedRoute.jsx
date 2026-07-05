@@ -1,34 +1,43 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../components/AuthProvider";
-import { useMode } from "../context/ModeContext";
-import RoleSelection from "./RoleSelection";
+import FullScreenLoader from "./FullScreenLoader";
+import { getDashboardForRole } from "../utils/routes";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, profile, loading } = useAuth();
+const ProtectedRoute = ({ children, allowedRoles, isOnboarding = false }) => {
+  const { user, profile, initializing, profileLoading } = useAuth();
   const location = useLocation();
-  const { mode } = useMode();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-      </div>
-    );
+  // 1. Wait for Auth Initialization
+  if (initializing || (user && !profile && profileLoading)) {
+    return <FullScreenLoader />;
   }
 
+  // 2. No User -> Redirect to Login
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // 🚨 Mandatory Onboarding: User has never explicitly chosen a role
-  if (profile && !profile.role_onboarding_done) {
-    return <RoleSelection />;
+  // 3. User is authenticated, check profile role assignment
+  const roleOnboarded = profile?.role_onboarding_done && profile?.role;
+
+  // Onboarding route behavior
+  if (isOnboarding) {
+    if (roleOnboarded) {
+      // If already onboarded, send to their default dashboard
+      return <Navigate to={getDashboardForRole(profile.role)} replace />;
+    }
+    return children;
   }
 
-  // 🛡️ Strict RBAC: Check if current mode matches the route requirements
-  if (mode && allowedRoles && !allowedRoles.includes(mode)) {
-    // Redirect to their default dashboard based on their current mode
-    return <Navigate to={mode === 'recruiter' ? '/scanner' : '/optimize'} replace />;
+  // Standard route behavior
+  if (!roleOnboarded) {
+    // If not onboarded, force redirect to onboarding page
+    return <Navigate to="/role-selection" replace />;
+  }
+
+  // 4. Strict RBAC validation (using profile.role from DB, not mode)
+  if (allowedRoles && !allowedRoles.includes(profile.role)) {
+    return <Navigate to={getDashboardForRole(profile.role)} replace />;
   }
 
   return children;

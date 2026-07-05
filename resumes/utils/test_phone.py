@@ -12,6 +12,6 @@ test_texts = [
 for text in test_texts:
     match = PHONE_RE.search(text)
     if match:
-        print(f"✅ Found: '{match.group(0)}' in '{text}'")
+        print(f"[OK] Found: '{match.group(0)}' in '{text}'")
     else:
-        print(f"❌ NOT found in '{text}'")
+        print(f"[FAIL] NOT found in '{text}'")

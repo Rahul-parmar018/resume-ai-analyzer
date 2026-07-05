@@ -11,7 +11,7 @@ import {
   Home
 } from "lucide-react";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = ({ isOpen, toggleSidebar, onClose }) => {
   const { mode } = useMode();
 
   const menu = [
@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
-          onClick={toggleSidebar}
+          onClick={onClose || toggleSidebar}
         />
       )}
 
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
             <span className="text-xl font-black text-white italic tracking-tighter uppercase group-hover:text-purple-400 transition-colors">Candidex AI</span>
           </NavLink>
-          <button onClick={toggleSidebar} className="lg:hidden text-slate-500">
+          <button onClick={onClose || toggleSidebar} className="lg:hidden text-slate-500">
             <ChevronLeft size={20} />
           </button>
         </div>
@@ -57,6 +57,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={onClose}
               className={({ isActive }) => `
                 flex items-center gap-3 px-4 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all group
                 ${isActive 
@@ -76,7 +77,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {/* Back to Workspace CTA */}
         <div className="px-6 py-4">
           <NavLink 
-            to={mode === 'recruiter' ? '/bulk-scanner' : '/resume-optimizer'}
+            to={mode === 'recruiter' ? '/scanner' : '/optimize'}
+            onClick={onClose}
             className="w-full flex items-center gap-3 px-4 py-3 bg-purple-600/10 border border-purple-500/20 rounded-xl text-[10px] font-black text-purple-400 uppercase tracking-widest hover:bg-purple-600/20 transition-all group"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />

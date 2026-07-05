@@ -1,36 +1,43 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Landing  from "./pages/Landing";
-import Login    from "./pages/Login";
-import Register from "./pages/Register";
+import { useEffect, Suspense, lazy } from "react";
 
-import Dashboard from "./pages/Dashboard";
-import Optimizer from "./pages/Optimizer";   // Candidate Mode
-import BulkScanner from "./pages/BulkScanner"; // Recruiter Mode
+// Eager Loading for Critical Auth & Entry Flow
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import RoleSelection from "./components/RoleSelection";
+import FullScreenLoader from "./components/FullScreenLoader";
+
+// Lazy Loading for Non-Critical Pages
+const Landing = lazy(() => import("./pages/Landing"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Optimizer = lazy(() => import("./pages/Optimizer"));
+const BulkScanner = lazy(() => import("./pages/BulkScanner"));
+const RecruiterComingSoon = lazy(() => import("./pages/RecruiterComingSoon"));
+const Settings = lazy(() => import("./pages/Settings"));
+const History = lazy(() => import("./pages/History"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Features = lazy(() => import("./pages/Features"));
+const Customers = lazy(() => import("./pages/Customers"));
+const ResumeScanner = lazy(() => import("./pages/ResumeScanner"));
+const ResumeGap = lazy(() => import("./pages/ResumeGap"));
+const ResumeFixer = lazy(() => import("./pages/ResumeFixer"));
+const BulkScannerPublic = lazy(() => import("./pages/BulkScannerPublic"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const AIResumeScannerLanding = lazy(() => import("./pages/Resources/AIResumeScannerLanding"));
+const ATSResumeCheckerLanding = lazy(() => import("./pages/Resources/ATSResumeCheckerLanding"));
+const ResumeScoreAILanding = lazy(() => import("./pages/Resources/ResumeScoreAILanding"));
+const ResetPasswordConfirm = lazy(() => import("./pages/ResetPasswordConfirm"));
+
 import { useAuth } from "./components/AuthProvider";
-import Finder    from "./pages/Finder";      // Recruiter Mode
-import Settings  from "./pages/Settings";
-import History   from "./pages/History";
-import Pricing   from "./pages/Pricing";
-import Features  from "./pages/Features";
-import Customers from "./pages/Customers";
-import CandidateTools from "./pages/CandidateTools";
-import ResumeScanner from "./pages/ResumeScanner";
-import ResumeGap from "./pages/ResumeGap";
-import ResumeFixer from "./pages/ResumeFixer";
-import RecruiterComingSoon from "./pages/RecruiterComingSoon";
-import BulkScannerPublic from "./pages/BulkScannerPublic";
-import HowItWorks from "./pages/HowItWorks";
-import AIResumeScannerLanding from "./pages/Resources/AIResumeScannerLanding";
-import ATSResumeCheckerLanding from "./pages/Resources/ATSResumeCheckerLanding";
-import ResumeScoreAILanding from "./pages/Resources/ResumeScoreAILanding";
-import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 import ToolLayout from "./components/ToolLayout";
 import Layout    from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthProvider   from "./components/AuthProvider";
-import { useEffect } from "react";
 import { ModeProvider } from "./context/ModeContext";
 import PublicHeader from "./components/PublicHeader";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { Toaster } from "react-hot-toast";
+import BackToTop from "./components/BackToTop";
 import "./App.css";
 
 const RoleBasedRedirect = () => {
@@ -58,11 +65,43 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <AuthProvider>
-        <ModeProvider>
-          <Routes>
-            {/* PUBLIC */}
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <ModeProvider>
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#0B0F1A',
+                  color: '#fff',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  borderRadius: '16px',
+                  fontFamily: 'sans-serif',
+                  fontSize: '14px',
+                  padding: '12px 16px',
+                  boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)',
+                  backdropFilter: 'blur(8px)',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#0B0F1A',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#0B0F1A',
+                  },
+                },
+              }}
+            />
+            <BackToTop />
+            <Suspense fallback={<FullScreenLoader />}>
+              <Routes>
+                {/* PUBLIC */}
             <Route path="/"          element={<Landing />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/ai-resume-scanner" element={<AIResumeScannerLanding />} />
@@ -74,6 +113,14 @@ function App() {
             <Route path="/login"     element={<Login />} />
             <Route path="/register"  element={<Register />} />
             <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordConfirm />} />
+            <Route 
+              path="/role-selection" 
+              element={
+                <ProtectedRoute allowedRoles={['candidate', 'recruiter']} isOnboarding>
+                  <RoleSelection />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* LEGACY TOOLS (Publicly Accessible) */}
             <Route path="/resume-scanner" element={<ResumeScanner />} />
@@ -112,9 +159,11 @@ function App() {
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </ModeProvider>
       </AuthProvider>
     </Router>
+    </ErrorBoundary>
   );
 }
 

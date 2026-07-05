@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import { Menu, X } from "lucide-react";
+import PageLoader from "./PageLoader";
 
 const pageTitles = {
   "/optimize": "AI Optimizer",
@@ -41,7 +42,7 @@ const Layout = () => {
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
         <div className="h-full relative">
-          <Sidebar onClose={() => setIsSidebarOpen(false)} />
+          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
           <button 
             onClick={() => setIsSidebarOpen(false)}
             className="lg:hidden absolute top-6 right-4 text-slate-500 hover:text-white"
@@ -57,7 +58,9 @@ const Layout = () => {
 
         <div className="flex-1 overflow-y-auto p-8 lg:p-8">
           <div className="max-w-[1600px] mx-auto">
-            <Outlet />
+            <Suspense fallback={<PageLoader />}>
+              <Outlet />
+            </Suspense>
           </div>
 
           {/* Footer */}

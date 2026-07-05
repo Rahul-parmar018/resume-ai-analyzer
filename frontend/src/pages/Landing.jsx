@@ -1,27 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthProvider";
 import PublicHeader from "../components/PublicHeader";
-import PublicFooter from "../components/PublicFooter";
-import TrustedEcosystem from "../components/TrustedEcosystem";
-import LiveSimulation from "../components/LiveSimulation";
-import ATSIntelligence from "../components/ATSIntelligence";
-import ReviewSection from "../components/ReviewSection";
-import IntelligenceEngine from "../components/IntelligenceEngine";
-import TrustSupport from "../components/TrustSupport";
-import { RecruiterShowcase, FinalCTA } from "../components/LandingSections";
-import FAQSection from "../components/FAQSection";
 import TubesBackground from "../components/TubesBackground";
 import LightBeamButton from "../components/LightBeamButton";
-import ImpactStats from "../components/ImpactStats";
-import FlowingMenu from "../components/FlowingMenu";
 import PhoneShowcase from "../components/PhoneShowcase";
-import CircularGallery from "../components/CircularGallery";
-import HorizontalScrollShowcase from "../components/HorizontalScrollShowcase";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import LandingSkeleton from "../components/LandingSkeleton";
 import GlowCard from "../components/GlowCard";
+import PageLoader from "../components/PageLoader";
+
+// Lazy Loaded Below-The-Fold Sections
+const PublicFooter = lazy(() => import("../components/PublicFooter"));
+const TrustedEcosystem = lazy(() => import("../components/TrustedEcosystem"));
+const LiveSimulation = lazy(() => import("../components/LiveSimulation"));
+const ATSIntelligence = lazy(() => import("../components/ATSIntelligence"));
+const ReviewSection = lazy(() => import("../components/ReviewSection"));
+const IntelligenceEngine = lazy(() => import("../components/IntelligenceEngine"));
+const TrustSupport = lazy(() => import("../components/TrustSupport"));
+const FAQSection = lazy(() => import("../components/FAQSection"));
+const ImpactStats = lazy(() => import("../components/ImpactStats"));
+const FlowingMenu = lazy(() => import("../components/FlowingMenu"));
+const CircularGallery = lazy(() => import("../components/CircularGallery"));
+const HorizontalScrollShowcase = lazy(() => import("../components/HorizontalScrollShowcase"));
+
+const RecruiterShowcase = lazy(() => 
+  import("../components/LandingSections").then(module => ({ default: module.RecruiterShowcase }))
+);
+const FinalCTA = lazy(() => 
+  import("../components/LandingSections").then(module => ({ default: module.FinalCTA }))
+);
 
 // Advanced Motion Orchestration
 const containerVariants = {
@@ -246,9 +255,10 @@ const Landing = () => {
       {/* ═══════════════════════════════════════════════
           3. LIVE AI SIMULATION — Transparent
           ═══════════════════════════════════════════════ */}
-      <div className="w-full bg-black/20 backdrop-blur-sm relative z-20">
-        <LiveSimulation />
-      </div>
+      <Suspense fallback={<PageLoader />}>
+        <div className="w-full bg-black/20 backdrop-blur-sm relative z-20">
+          <LiveSimulation />
+        </div>
 
       {/* ═══════════════════════════════════════════════
           3.5 IMPACT STATS — Quantified proof
@@ -375,6 +385,7 @@ const Landing = () => {
 
       <PublicFooter />
 
+      </Suspense>
       </div>
     </TubesBackground>
   );
