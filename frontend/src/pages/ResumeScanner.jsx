@@ -35,7 +35,9 @@ import {
   MousePointer2,
   Users,
   ShieldCheck,
-  Copy
+  Copy,
+  Compass,
+  TrendingUp
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import PublicFooter from "../components/PublicFooter";
@@ -504,14 +506,84 @@ const ResumeScanner = () => {
                                             ).slice(0, 5).map((step, idx) => (
                                                 <div key={idx} className="flex gap-3 items-start group bg-white/[0.02] p-3 rounded-xl border border-white/5 hover:border-blue-500/20 transition-all relative">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
-                                                    <p className="text-[15px] font-medium text-white/60 leading-relaxed italic group-hover:text-white transition-colors">{step}</p>
-                                                    <button className="absolute top-2 right-2 p-1.5 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/10" title="Copy suggestion">
+                                                    <p className="text-[15px] font-medium text-white/60 leading-relaxed italic group-hover:text-white transition-colors">
+                                                        {typeof step === 'object' ? `${step.task} [${step.impact}]` : step}
+                                                    </p>
+                                                    <button 
+                                                        onClick={() => navigator.clipboard.writeText(typeof step === 'object' ? step.task : step)}
+                                                        className="absolute top-2 right-2 p-1.5 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/10" 
+                                                        title="Copy suggestion"
+                                                    >
                                                         <RotateCcw className="w-3 h-3 text-white/40 rotate-90" />
                                                     </button>
                                                 </div>
                                             ))}
                                         </div>
                                     </motion.div>
+
+                                    {/* CAREER FIT (TOP MATCHING CAREERS) */}
+                                    {result.career_fit && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={revealStage >= 2 ? { opacity: 1, y: 0 } : {}}
+                                            className="glass-card-premium p-6 space-y-6 border-t-2 border-blue-500/20 col-span-1"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                                                    <Compass className="w-4 h-4" />
+                                                </div>
+                                                <h4 className="text-[18px] font-semibold text-white uppercase tracking-widest">Career Fit Matches</h4>
+                                            </div>
+                                            <div className="space-y-3">
+                                                {result.career_fit.map((match, idx) => (
+                                                    <div key={idx} className="flex justify-between items-center p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                                                        <div>
+                                                            <p className="text-xs font-bold text-white/95">{match.career_title}</p>
+                                                            <p className="text-[9px] text-white/40">Confidence: {match.confidence_score}%</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <span className="text-[10px] font-black text-blue-400">{match.fit_score}% Fit</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+
+                                    {/* MARKET READINESS */}
+                                    {result.market_intelligence && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={revealStage >= 2 ? { opacity: 1, y: 0 } : {}}
+                                            className="glass-card-premium p-6 space-y-6 border-t-2 border-green-500/20 col-span-1"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 border border-green-500/20">
+                                                    <TrendingUp className="w-4 h-4" />
+                                                </div>
+                                                <h4 className="text-[18px] font-semibold text-white uppercase tracking-widest">Market Readiness</h4>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+                                                    <div>
+                                                        <p className="text-[9px] text-white/50">Market Index Score</p>
+                                                        <p className="text-md font-black text-green-400">{result.market_intelligence.market_readiness_score}%</p>
+                                                    </div>
+                                                    <span className="px-2.5 py-0.5 bg-green-500/10 text-green-400 text-[8px] font-bold uppercase rounded-full">
+                                                        {result.market_intelligence.local_market_stats.fit_level || "Aligned"}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-2">Hiring Landscape</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {result.market_intelligence.local_market_stats.hiring_landscape.slice(0, 4).map((company, i) => (
+                                                            <span key={i} className="px-2 py-0.5 bg-white/5 rounded text-[10px] text-white/70 border border-white/5">{company}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
                                 </div>
 
                                 {/* 🔥 WOW MOMENT: AUTO-GENERATED BULLET IMPROVEMENT */}

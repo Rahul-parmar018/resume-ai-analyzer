@@ -1,5 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
+import { Suspense } from "react";
 import Topbar from "./Topbar";
+import PageLoader from "./PageLoader";
 
 const pageTitles = {
   "/optimize": "AI Optimizer",
@@ -19,7 +21,9 @@ const ToolLayout = () => {
       {/* Main content area (Full Width) */}
       <main className="flex-1 overflow-y-auto bg-[#0A0A0B]">
         <div className="max-w-[1800px] mx-auto p-4 lg:p-8">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
 

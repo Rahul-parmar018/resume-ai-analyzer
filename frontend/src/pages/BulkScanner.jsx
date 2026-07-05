@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
     Search, Upload, ChevronRight, Check, X, 
-    Zap, Target, Layers, BarChart3, ShieldCheck, 
+    Zap, Target, Layers, BarChart3, ShieldCheck, ShieldX,
     Plus, Minus, ArrowRight, Sparkles, Maximize2, Minimize2,
-    Mail, Trash2, Award, TrendingUp, Code2, FileJson, AlertCircle, CheckCircle2
+    Mail, Trash2, Award, TrendingUp, Code2, FileJson, AlertCircle, CheckCircle2,
+    Lock
 } from "lucide-react";
 import { 
     Radar, RadarChart, PolarGrid, PolarAngleAxis, 
@@ -13,6 +15,80 @@ import {
 import LightBeamButton from "../components/LightBeamButton";
 import GlowCard from "../components/GlowCard";
 import { auth } from "../firebase";
+import { useAuth } from "../components/AuthProvider";
+import toast from "react-hot-toast";
+
+// ─── File Validation Constants ────────────────────────────────────────
+const ALLOWED_TYPES = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const ALLOWED_EXTENSIONS = ['.pdf', '.docx'];
+const MAX_FILE_SIZE_MB = 10;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const MAX_FILES = 50;
+
+function validateFiles(fileList) {
+    const valid = [];
+    const errors = [];
+    for (const file of fileList) {
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        const typeOk = ALLOWED_TYPES.includes(file.type) || ALLOWED_EXTENSIONS.includes(ext);
+        if (!typeOk) {
+            errors.push(`"${file.name}" — unsupported format. Only PDF and DOCX allowed.`);
+            continue;
+        }
+        if (file.size === 0) {
+            errors.push(`"${file.name}" — file is empty.`);
+            continue;
+        }
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+            errors.push(`"${file.name}" — exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
+            continue;
+        }
+        valid.push(file);
+    }
+    return { valid, errors };
+}
+
+// ─── Recruiter Access Denied Screen ──────────────────────────────────
+function AccessDenied({ navigate }) {
+    return (
+        <div className="min-h-screen bg-[#0B0F1A] text-white font-sans flex items-center justify-center px-6">
+            <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-md w-full text-center space-y-8"
+            >
+                <div className="w-20 h-20 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto">
+                    <Lock className="w-9 h-9 text-rose-400" />
+                </div>
+                <div className="space-y-3">
+                    <h1 className="text-2xl font-black uppercase italic tracking-tight">Recruiter Feature</h1>
+                    <p className="text-sm text-white/40 leading-relaxed">
+                        Bulk Candidate Ranking is exclusively available to <span className="text-purple-400 font-bold">Recruiter</span> accounts.
+                        Your current account is set to <span className="text-rose-400 font-bold">Candidate</span> mode.
+                    </p>
+                </div>
+                <div className="space-y-3">
+                    <button
+                        onClick={() => navigate('/settings')}
+                        className="w-full py-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black uppercase text-[11px] tracking-widest transition-all shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2"
+                    >
+                        <ShieldX className="w-4 h-4" />
+                        Switch Role in Settings
+                    </button>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white/40 font-black uppercase text-[11px] tracking-widest hover:bg-white/10 hover:text-white transition-all"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
 
 /**
  * 🎯 DATA CONTRACT (Source of Truth)
@@ -50,8 +126,11 @@ const CUSTOM_ROLE_EXAMPLE = `{
 }`;
 
 const BulkScanner = () => {
+    const { profile } = useAuth();
+    const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState(ROLES[0]);
     const [files, setFiles] = useState([]);
+    const [fileErrors, setFileErrors] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [candidates, setCandidates] = useState([]);
     const [isCompareOpen, setIsCompareOpen] = useState(false);
@@ -63,6 +142,12 @@ const BulkScanner = () => {
     const [customRoleJson, setCustomRoleJson] = useState(CUSTOM_ROLE_EXAMPLE);
     const [customRoleError, setCustomRoleError] = useState(null);
     const [customRoleValid, setCustomRoleValid] = useState(false);
+    const [rejectTarget, setRejectTarget] = useState(null);
+
+    // ─── Fix 2: Recruiter Role Guard ─────────────────────────────────
+    if (profile && profile.role !== 'recruiter') {
+        return <AccessDenied navigate={navigate} />;
+    }
 
     // Filtered list based on search
     const displayCandidates = candidates.filter(c => 
@@ -84,13 +169,41 @@ const BulkScanner = () => {
 
         console.log("📂 [Frontend] Initiating fresh upload batch:", uploadedFiles.map(f => f.name));
         
-        // 🔄 REALITY CHECK: Reset state BEFORE new upload
+        // ─── Fix 3: File Validation ───────────────────────────────────
+        const { valid, errors } = validateFiles(uploadedFiles);
+
+        // Enforce max file count
+        const capped = valid.slice(0, MAX_FILES);
+        if (valid.length > MAX_FILES) {
+            errors.push(`Only the first ${MAX_FILES} valid files were accepted. ${valid.length - MAX_FILES} were dropped.`);
+        }
+
+        setFileErrors(errors);
+
+        // Show errors via toast
+        if (errors.length > 0) {
+            errors.forEach(msg => toast.error(msg, { duration: 5000 }));
+        }
+
+        if (capped.length === 0) {
+            // Reset input value even on full rejection
+            e.target.value = null;
+            return;
+        }
+
+        // 🔄 Reset state BEFORE new upload
         clearPipeline();
         
-        // 2. Set new files
-        setFiles([...uploadedFiles]);
+        // Set validated files only
+        setFiles(capped);
 
-        // 3. 🚨 Reset input value (Browser fix to allow re-upload of same file)
+        if (capped.length > 0 && errors.length === 0) {
+            toast.success(`${capped.length} file${capped.length > 1 ? 's' : ''} ready for analysis.`);
+        } else if (capped.length > 0) {
+            toast.success(`${capped.length} valid file${capped.length > 1 ? 's' : ''} accepted. ${errors.length} rejected.`);
+        }
+
+        // Reset input value (Browser fix to allow re-upload of same file)
         e.target.value = null; 
     };
 
@@ -148,12 +261,19 @@ const BulkScanner = () => {
 
             if (data.candidates && data.candidates.length > 0) {
                 setCandidates([...data.candidates]);
+                toast.success(`${data.candidates.length} candidate${data.candidates.length > 1 ? 's' : ''} ranked successfully.`);
             } else {
                 throw new Error(data.message || "No candidates returned from backend");
             }
+
+            // Surface per-file backend validation errors
+            if (data.validation_errors && data.validation_errors.length > 0) {
+                data.validation_errors.forEach(msg => toast.error(msg, { duration: 5000 }));
+            }
         } catch (err) {
             console.error("Analysis Error:", err);
-            alert(`Analysis Failed: ${err.message}`);
+            // ─── Fix 4: Replace alert() with toast ───────────────────
+            toast.error(`Analysis Failed: ${err.message}`, { duration: 6000 });
             setCandidates([]); 
         } finally {
             setIsAnalyzing(false);
@@ -167,7 +287,8 @@ const BulkScanner = () => {
                 return prev.filter(c => c.id !== cand.id);
             } else {
                 if (prev.length >= 3) {
-                    alert("Maximum 3 candidates allowed for comparison.");
+                    // ─── Fix 4: Replace alert() with toast ───────────
+                    toast.error("Maximum 3 candidates allowed for comparison.");
                     return prev;
                 }
                 return [...prev, cand];
@@ -204,11 +325,15 @@ const BulkScanner = () => {
         }
     };
 
-    const handleReject = async (candidate) => {
-        if (!confirm(`Are you sure you want to reject ${candidate.name}?`)) return;
-        
+    // ─── Fix 4: Reject confirmation via custom modal ─────────────────
+    const handleReject = (candidate) => {
+        setRejectTarget(candidate);
+    };
+
+    const confirmReject = async () => {
+        const candidate = rejectTarget;
+        setRejectTarget(null);
         try {
-            // 1. Persistent removal
             console.log(`[Backend Log] Rejecting candidate ${candidate.id}`);
             const token = await auth.currentUser?.getIdToken();
             await fetch("/api/recruiter/reject/", { 
@@ -219,19 +344,20 @@ const BulkScanner = () => {
                 },
                 body: JSON.stringify({ id: candidate.id }) 
             });
-            
-            // 2. UI State Update
             setCandidates(prev => prev.filter(c => c.id !== candidate.id));
             setSelectedCandidates(prev => prev.filter(c => c.id !== candidate.id));
             if (inspectingCandidate?.id === candidate.id) setInspectingCandidate(null);
+            toast.success(`${candidate.name} rejected.`);
         } catch (err) {
             console.error("Rejection failed:", err);
+            toast.error("Failed to reject candidate. Please try again.");
         }
     };
 
     const copyEmail = (email) => {
         navigator.clipboard.writeText(email);
-        alert("Email copied to clipboard!");
+        // ─── Fix 4: Replace alert() with toast ───────────────────────
+        toast.success("Email copied to clipboard!");
     };
 
     const openComparePanel = () => {
@@ -373,7 +499,13 @@ const BulkScanner = () => {
                                     </button>
                                 </div>
                                 <label className="group relative block w-full aspect-[4/3] rounded-2xl bg-white/5 border-2 border-dashed border-white/10 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all cursor-pointer overflow-hidden">
-                                    <input type="file" multiple className="hidden" onChange={handleFileUpload} />
+                                    <input
+                                        type="file"
+                                        multiple
+                                        className="hidden"
+                                        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        onChange={handleFileUpload}
+                                    />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-4">
                                         <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-500/20 transition-all shadow-2xl">
                                             <Upload className="w-6 h-6 text-white/40 group-hover:text-purple-400" />
@@ -705,11 +837,12 @@ const BulkScanner = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400/50">Primary Fit Recommendation</p>
-                                                    <h3 className="text-lg font-black uppercase italic">{selectedCandidates.sort((a,b) => b.score - a.score)[0].name}</h3>
+                                                    <h3 className="text-lg font-black uppercase italic"
+                                                    >{[...selectedCandidates].sort((a,b) => b.score - a.score)[0].name}</h3>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-xs font-black text-emerald-400">Score Lead: +{selectedCandidates.length > 1 ? selectedCandidates.sort((a,b) => b.score - a.score)[0].score - selectedCandidates.sort((a,b) => b.score - a.score)[1].score : 0}</p>
+                                                <p className="text-xs font-black text-emerald-400">Score Lead: +{selectedCandidates.length > 1 ? (() => { const s = [...selectedCandidates].sort((a,b) => b.score - a.score); return s[0].score - s[1].score; })() : 0}</p>
                                             </div>
                                         </div>
                                     )}
@@ -816,6 +949,51 @@ const BulkScanner = () => {
                                 </div>
                             </div>
                         </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* ── Fix 4: Reject Confirmation Modal ───────────────────── */}
+                <AnimatePresence>
+                    {rejectTarget && (
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setRejectTarget(null)}
+                                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[80]"
+                            />
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                className="fixed z-[90] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[#0F1420] border border-white/10 rounded-2xl shadow-2xl p-8 space-y-6"
+                            >
+                                <div className="space-y-2">
+                                    <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+                                        <Trash2 className="w-5 h-5 text-rose-400" />
+                                    </div>
+                                    <h3 className="text-lg font-black uppercase italic">Reject Candidate?</h3>
+                                    <p className="text-sm text-white/40">
+                                        This will permanently remove <span className="text-white font-bold">{rejectTarget?.name}</span> from the pipeline.
+                                    </p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={confirmReject}
+                                        className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest transition-all"
+                                    >
+                                        Yes, Reject
+                                    </button>
+                                    <button
+                                        onClick={() => setRejectTarget(null)}
+                                        className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white/40 font-black uppercase text-[10px] tracking-widest hover:bg-white/10 hover:text-white transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </>
                     )}
                 </AnimatePresence>
 

@@ -31,9 +31,22 @@ api.interceptors.request.use(async (config) => {
 // RESPONSE INTERCEPTOR
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            console.warn("[API] 401 Unauthorized — token may be missing or expired.");
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                const currentUser = auth.currentUser;
+                if (currentUser) {
+                    // Force refresh Firebase token
+                    const token = await currentUser.getIdToken(true);
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
+                    // Retry request with fresh token
+                    return api(originalRequest);
+                }
+            } catch (refreshError) {
+                console.error("[API] Token refresh during 401 failed:", refreshError);
+            }
         }
         return Promise.reject(error);
     }

@@ -1,0 +1,5 @@
+
+Rahul Parmar
+Full Stack Developer
+Skills: Python, Django, React, SQL, Git, Docker, AWS.
+Experience: Built a Resume AI Analyzer using Django and React.

@@ -19,8 +19,13 @@ urlpatterns = [
     path('analysis/<int:pk>/', views.analysis_detail_view, name='analysis_detail_api'),
     path('user/profile/', views.get_user_profile_view, name='user_profile_api'),
     path('user/profile/update/', views.update_user_profile_view, name='user_profile_update_api'),
+    path('user/agent/chat/', views.agent_chat_view, name='agent_chat_api'),
+    path('user/agent/metrics/', views.get_agent_metrics_view, name='agent_metrics_api'),
+    path('user/agent/feedback/', views.agent_feedback_view, name='agent_feedback_api'),
     path('user/delete-account/', views.delete_user_account_view, name='delete_account_api'),
     path('recruiter/update-role/', views.update_user_role_view, name='update_role_api'), # Alias for recruiter
+    path('user/update-role/', views.update_user_role_view, name='user_update_role_api'), # ← FIX: Used by RoleSelection.jsx & ModeContext.jsx
+
     path('recruiter/interview/', views.log_interview_view, name='interview_api'),
     path('recruiter/reject/', views.reject_candidate_view, name='reject_api'),
     path('recruiter/validate-role/', views.validate_custom_role_view, name='validate_custom_role_api'),

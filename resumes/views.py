@@ -486,7 +486,27 @@ def rank_candidates_view(request):
 
         # 2. Processing
         results = []
+        validation_errors = []
+        ALLOWED_EXTENSIONS_BACKEND = {'.pdf', '.docx'}
+        ALLOWED_MIMES_BACKEND = {
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        }
+        MAX_FILE_SIZE_BYTES_BACKEND = 10 * 1024 * 1024  # 10 MB
+
         for file in files:
+            # ── Fix 3 (Backend): File type, size, and content validation ──
+            ext = os.path.splitext(file.name or '')[1].lower()
+            mime = file.content_type or ''
+            if ext not in ALLOWED_EXTENSIONS_BACKEND and mime not in ALLOWED_MIMES_BACKEND:
+                validation_errors.append(f'"{file.name}" — unsupported format. Only PDF and DOCX allowed.')
+                continue
+            if file.size == 0:
+                validation_errors.append(f'"{file.name}" — file is empty.')
+                continue
+            if file.size > MAX_FILE_SIZE_BYTES_BACKEND:
+                validation_errors.append(f'"{file.name}" — exceeds 10MB limit.')
+                continue
             try:
                 text, _ = _extract_text(file)
 
@@ -569,7 +589,8 @@ def rank_candidates_view(request):
         return Response({
             "role": role_display_name,
             "total": len(ranked),
-            "candidates": ranked
+            "candidates": ranked,
+            "validation_errors": validation_errors  # Per-file rejection messages
         }, status=200)
 
     except Exception as e:
@@ -1531,4 +1552,54 @@ def reject_candidate_view(request):
         return Response({"error": "Candidate record not found"}, status=404)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def agent_chat_view(request):
+    """Chat endpoint for the AI Career Agent."""
+    user = request.user
+    message = request.data.get('message', '').strip()
+    resume_text = request.data.get('resume_text', '').strip()
+    session_context = request.data.get('session_context', {})
+
+    if not message:
+        return Response({"error": "Message is required."}, status=400)
+
+    # Fallback to last analysis details if resume_text is empty
+    if not resume_text:
+        last_analysis = AnalysisRecord.objects.filter(user=user).order_by('-created_at').first()
+        if last_analysis and hasattr(last_analysis, 'extracted_data'):
+            skills = ", ".join(last_analysis.extracted_data.skills)
+            resume_text = f"Candidate Profile: {user.email}. Skills: {skills}."
+        else:
+            resume_text = "Standard Candidate Resume: Python, JavaScript, Docker developer."
+
+    from .utils.career_agent import CareerAgent
+    agent = CareerAgent()
+    response = agent.run(message, resume_text, session_context)
+    
+    return Response(response)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_agent_metrics_view(request):
+    """Exposes structured observability metrics for dashboard tracking."""
+    from .utils.observability import get_ai_performance_metrics
+    metrics = get_ai_performance_metrics()
+    return Response(metrics)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def agent_feedback_view(request):
+    """Saves user rating feedback (thumbs_up/thumbs_down) for agent replies."""
+    message_id = request.data.get("message_id", "msg_default")
+    rating = request.data.get("rating", "thumbs_up")
+    comment = request.data.get("comment", "")
+    
+    from .utils.observability import AIObservabilityLogger
+    AIObservabilityLogger.log_feedback(message_id, rating, comment)
+    return Response({"success": True})
 

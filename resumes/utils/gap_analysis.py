@@ -341,7 +341,7 @@ def analyze_resume_text(text: str, role_template: Dict) -> Dict:
     Returns a complete analysis dict with score, skills, categories,
     experience, email, and data-driven recommendation.
     """
-    # 1. Extract real email (not static)
+    # 1. Extract real email
     email = extract_real_email(text)
 
     # 2. Extract real experience
@@ -361,32 +361,92 @@ def analyze_resume_text(text: str, role_template: Dict) -> Dict:
     all_missing = missing_core + missing_imp + missing_opt
     all_scores = {**scores_core, **scores_imp, **scores_opt}
 
-    # 5. Weighted score calculation
-    core_score = (len(matched_core) / max(1, len(core_skills)))
-    imp_score = (len(matched_imp) / max(1, len(imp_skills)))
-    opt_score = (len(matched_opt) / max(1, len(opt_skills)))
-
-    base_score = (core_score * 0.60 + imp_score * 0.30 + opt_score * 0.10) * 100
-
-    # Experience bonus
-    exp_bonus = 0
-    if experience is not None:
-        if experience >= 5:
-            exp_bonus = 10
-        elif experience >= 2:
-            exp_bonus = 5
-
-    # Quality signals
-    quality_bonus = 0
+    # ─── 5. CATEGORY-BASED SCORING CALIBRATION ───
     text_lower = text.lower()
-    if re.search(r'\d+%', text):
-        quality_bonus += 5  # Has quantified metrics
-    if any(word in text_lower for word in ['improved', 'reduced', 'increased', 'optimized', 'built', 'led', 'managed']):
-        quality_bonus += 3  # Action-oriented language
-    if len(text) > 1000:
-        quality_bonus += 2  # Substantial resume
+    
+    # Category A: Skill Alignment (50% Weight)
+    core_match_ratio = (len(matched_core) / max(1, len(core_skills)))
+    imp_match_ratio = (len(matched_imp) / max(1, len(imp_skills)))
+    opt_match_ratio = (len(matched_opt) / max(1, len(opt_skills)))
+    skill_score = (core_match_ratio * 0.60 + imp_match_ratio * 0.30 + opt_match_ratio * 0.10) * 100
+    # Soft floor for skill score
+    skill_score = max(30, skill_score)
 
-    final_score = min(100, int(base_score + exp_bonus + quality_bonus))
+    # Category B: Profile & Completeness (20% Weight)
+    completeness_factors = 30 # Base floor
+    if email: completeness_factors += 20
+    if "github.com" in text_lower: completeness_factors += 20
+    if "linkedin.com" in text_lower: completeness_factors += 20
+    if any(p in text_lower for p in ["portfolio", "portfolio.me", "github.io", "website"]):
+        completeness_factors += 10
+    
+    # Soft penalties for missing links
+    completeness_penalties = 0
+    if "github.com" not in text_lower: completeness_penalties += 5
+    if "linkedin.com" not in text_lower: completeness_penalties += 5
+    
+    profile_score = max(30, completeness_factors - completeness_penalties)
+
+    # Category C: Experience & Progression (15% Weight)
+    exp_score = 30 # Base floor
+    if experience is not None:
+        if experience >= 5: exp_score = 85
+        elif experience >= 2: exp_score = 65
+        else: exp_score = 45
+    else:
+        # Check if they have class/work projects
+        if "project" in text_lower or "experience" in text_lower:
+            exp_score = 40
+        
+    # Progression reward
+    progression_reward = 0
+    if any(p in text_lower for p in ["senior", "lead", "head", "manager", "architect", "engineer"]):
+        progression_reward = 15
+    exp_score = min(100, exp_score + progression_reward)
+
+    # Category D: Quantified Impact & Quality (15% Weight)
+    impact_score = 30 # Base floor
+    # Metrics check
+    has_metrics = len(re.findall(r'\b(\d+%|\d+\s*percent|\$\d+k?)\b', text_lower))
+    if has_metrics >= 3: impact_score += 35
+    elif has_metrics >= 1: impact_score += 15
+    
+    # Action verbs check
+    action_verbs = len(re.findall(r'\b(improved|reduced|increased|optimized|built|led|managed|engineered|designed|developed|implemented)\b', text_lower))
+    if action_verbs >= 5: impact_score += 35
+    elif action_verbs >= 2: impact_score += 15
+    
+    # Substantial summary/description depth check
+    if len(text) > 1200: impact_score += 10
+    elif len(text) > 600: impact_score += 5
+    
+    # Penalties for empty sections / keyword stuffing
+    quality_penalties = 0
+    for word in set(text_lower.split()):
+        if len(word) > 4 and text_lower.count(word) > 8:
+            quality_penalties += 10
+            break
+
+    impact_score = max(30, min(100, impact_score - quality_penalties))
+
+    # Composite final score calculation
+    weighted_score = (
+        skill_score * 0.50 +
+        profile_score * 0.20 +
+        exp_score * 0.15 +
+        impact_score * 0.15
+    )
+    
+    # Calibrate overall output score ranges based on final weighted parameters
+    # Map overall outcomes to make low/mid/high range boundaries extremely clear
+    if weighted_score >= 75:
+        final_score = int(90 + (weighted_score - 75) * 0.32) # Map High: 90 - 98
+    elif weighted_score >= 50:
+        final_score = int(60 + (weighted_score - 50) * 0.6) # Map Medium: 60 - 75
+    else:
+        final_score = int(30 + (weighted_score - 30) * 0.75) # Map Low: 30 - 45
+        
+    final_score = max(10, min(98, final_score))
 
     # 6. Category breakdown
     categories = compute_categories(all_matched)
@@ -409,11 +469,10 @@ def analyze_resume_text(text: str, role_template: Dict) -> Dict:
         "recommendation": recommendation,
         "confidence_scores": all_scores,
         "scoring_breakdown": {
-            "core": f"{len(matched_core)}/{len(core_skills)}",
-            "important": f"{len(matched_imp)}/{len(imp_skills)}",
-            "optional": f"{len(matched_opt)}/{len(opt_skills)}",
-            "experience_bonus": exp_bonus,
-            "quality_bonus": quality_bonus,
+            "skill_alignment_score": int(skill_score),
+            "profile_completeness_score": int(profile_score),
+            "experience_progression_score": int(exp_score),
+            "quantified_impact_score": int(impact_score),
         }
     }
 
@@ -456,21 +515,122 @@ def best_fit_role(resume_text: str):
 
 
 def analyze_with_llm(resume_text: str, jd_text: str, role_key: str = None):
-    """Legacy LLM analysis interface."""
+    """Hybrid & ML-Powered AI Resume Analysis combining local rules, semantic matching, and Nemotron reasoning."""
     if not role_key or role_key not in ROLES:
         role_key, _ = best_fit_role(resume_text)
 
     result = analyze_resume_text(resume_text, ROLES[role_key])
+    
+    # ─── 1. LOCAL ENGINE STRUCTURAL METRICS ───
+    text_lower = resume_text.lower()
+    
+    email_found = bool(result.get('email'))
+    has_github = "github.com" in text_lower
+    has_linkedin = "linkedin.com" in text_lower
+    
+    sections = {
+        "education": any(k in text_lower for k in ["education", "degree", "university", "college", "school"]),
+        "experience": any(k in text_lower for k in ["experience", "employment", "history", "work", "positions"]),
+        "projects": any(k in text_lower for k in ["project", "projects", "portfolio"]),
+        "skills": any(k in text_lower for k in ["skills", "technologies", "expertise", "competencies"])
+    }
+    
+    present_count = sum([email_found, has_github, has_linkedin, sections["education"], sections["experience"], sections["projects"], sections["skills"]])
+    completeness = int((present_count / 7.0) * 100)
+    
+    action_verbs = len(re.findall(r'\b(improved|reduced|increased|optimized|built|led|managed|engineered|designed|developed|implemented)\b', text_lower))
+    metric_density = len(re.findall(r'\b(\d+%|\d+\s*percent|\$\d+k?)\b', text_lower))
+    
+    # ─── 2. MACHINE LEARNING SEMANTIC MATCHING & ONTOLOGY ───
+    from .ml_intelligence import analyze_semantic_match, rank_missing_skills
+    semantic_report = analyze_semantic_match(resume_text, jd_text or ROLES[role_key].get('core', [''])[0])
+    
+    all_missing = [s for s in ROLES[role_key].get('core', []) + ROLES[role_key].get('important', []) if s in result['missing']]
+    ranked_gaps = rank_missing_skills(all_missing, jd_text or "")
+    
+    local_results = {
+        "role": role_key,
+        "ats_score": result['score'],
+        "completeness_score": completeness,
+        "contact_validation": {
+            "email_found": email_found,
+            "has_github": has_github,
+            "has_linkedin": has_linkedin
+        },
+        "sections_detected": sections,
+        "character_count": len(resume_text),
+        "word_count": len(resume_text.split()),
+        "action_verb_count": action_verbs,
+        "metric_density_indicators": metric_density,
+        "semantic_analysis": semantic_report,
+        "ranked_skill_gaps": ranked_gaps
+    }
 
+    # ─── 3. LLM ENHANCEMENT LAYER (OLLAMA NEMOTRON) ───
+    import time
+    from .observability import AIObservabilityLogger
+    
+    start_time = time.time()
+    fallback_triggered = False
+    success = True
+    llm_insights = {}
+    
+    try:
+        from .ollama_service import OllamaService
+        service = OllamaService()
+        llm_insights = service.query_nemotron(resume_text, local_results, jd_text)
+        if "offline" in llm_insights.get("personalized_feedback", "").lower():
+            fallback_triggered = True
+    except Exception as e:
+        success = False
+        fallback_triggered = True
+        logger.error(f"[Observability/Analysis] Nemotron invocation failed: {e}")
+
+    duration = (time.time() - start_time) * 1000
+    AIObservabilityLogger.log_request("Resume Intelligence", duration, success, fallback_triggered)
+
+    # ─── 4. CAREER FIT MATCHES ───
+    from .career_intelligence import calculate_career_fit
+    career_matches = calculate_career_fit(resume_text)
+
+    # ─── 5. MARKET INTELLIGENCE ───
+    from .market_intelligence import MarketIntelligenceEngine
+    market_engine = MarketIntelligenceEngine()
+    market_report = market_engine.analyze_resume_vs_market(resume_text, role_key, "Global")
+
+    # ─── 6. JOB COPILOT READINESS ───
+    from .job_copilot import calculate_application_readiness, generate_tailoring_suggestions
+    job_id = "job_stripe_backend"
+    if role_key == "AI/ML Engineer":
+        job_id = "job_openai_ml"
+    job_readiness = calculate_application_readiness(resume_text, job_id)
+    tailoring_rules = generate_tailoring_suggestions(resume_text, job_id)
+
+    # ─── 7. UNIFIED HYBRID RESPONSE SCHEMA ───
     return {
+        # Legacy support fields
         "role": role_key,
         "match_score": result['score'],
         "ats_status": "Good" if result['score'] >= 70 else "Needs Improvement",
         "strengths": result['matched'],
-        "missing_core": [s for s in ROLES[role_key].get('core', []) if s in result['missing']],
-        "missing_important": [s for s in ROLES[role_key].get('important', []) if s in result['missing']],
-        "roadmap": [f"Master {s}" for s in result['missing'][:3]] or ["Optimize summary", "Add metrics"],
-        "recommendations": [result['recommendation']],
-        "summary": result['recommendation'],
-        "meta": result.get('scoring_breakdown', {})
+        "missing_skills": all_missing,
+        "missing_core": ranked_gaps.get("Critical", []) + ranked_gaps.get("High", []),
+        "missing_important": ranked_gaps.get("Medium", []),
+        "roadmap": [f"Master {s}" for s in all_missing[:3]] or ["Optimize summary", "Add metrics"],
+        "recommendations": llm_insights.get("prioritized_action_plan", []),
+        "summary": llm_insights.get("personalized_feedback", ""),
+        "meta": {
+            **result.get('scoring_breakdown', {}),
+            "semantic_match_percentage": semantic_report.get("semantic_match_percentage")
+        },
+        
+        # Unified structural fields
+        "local_metrics": local_results,
+        "llm_insights": llm_insights,
+        "career_fit": career_matches,
+        "market_intelligence": market_report,
+        "job_copilot": {
+            "readiness": job_readiness,
+            "tailoring": tailoring_rules
+        }
     }

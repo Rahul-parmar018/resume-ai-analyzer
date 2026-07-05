@@ -10,46 +10,65 @@ export const useAuth = () => useContext(AuthContext);
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
-  const refreshProfile = async () => {
+  const bootstrapAuth = async (currentUser) => {
+    if (!currentUser) {
+      setUser(null);
+      setProfile(null);
+      setProfileLoading(false);
+      setInitializing(false);
+      return;
+    }
+
+    setUser(currentUser);
+    setProfileLoading(true);
+
     try {
-      const res = await api.get('/user/profile/');
+      // 1. Force retrieval of fresh token
+      const token = await currentUser.getIdToken(true);
+      
+      // 2. Fetch profile with explicit authorization header to prevent race conditions
+      const res = await api.get('/user/profile/', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setProfile(res.data);
     } catch (err) {
-      console.error("Profile refresh failed:", err);
+      console.error("[AuthBootstrap] Profile bootstrap failed:", err);
+      setProfile(null);
+    } finally {
+      setProfileLoading(false);
+      setInitializing(false);
+    }
+  };
+
+  const refreshProfile = async () => {
+    setProfileLoading(true);
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error("No authenticated user");
+      const token = await currentUser.getIdToken(true);
+      const res = await api.get('/user/profile/', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProfile(res.data);
+    } catch (err) {
+      console.error("[AuthProvider] Profile refresh failed:", err);
+    } finally {
+      setProfileLoading(false);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        try {
-          // Explicitly get token from the currentUser object received in onAuthStateChanged.
-          // This avoids the race condition where auth.currentUser is still null
-          // when the axios interceptor fires on the very first request.
-          const token = await currentUser.getIdToken();
-          const res = await api.get('/user/profile/', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setProfile(res.data);
-        } catch (err) {
-          console.error("Initial profile sync failed:", err);
-          setProfile(null);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setProfile(null);
-        setLoading(false);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      bootstrapAuth(currentUser);
     });
     return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, profile, setProfile, refreshProfile, loading }}>
+    <AuthContext.Provider value={{ user, profile, setProfile, refreshProfile, initializing, profileLoading, bootstrapAuth }}>
       {children}
     </AuthContext.Provider>
   );

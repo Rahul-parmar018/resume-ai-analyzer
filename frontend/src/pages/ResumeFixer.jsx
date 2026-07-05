@@ -265,10 +265,12 @@ const ResumeFixer = () => {
                                         {result.recommendations?.length > 0 ? (
                                             result.recommendations.map((rec, idx) => (
                                                 <div key={idx} className="p-4 bg-black/40 border border-white/5 rounded-2xl space-y-3 group transition-all hover:border-purple-500/30">
-                                                    <p className="text-[11px] font-black italic leading-relaxed text-white group-hover:text-glow-purple transition-all select-all">"{rec}"</p>
+                                                    <p className="text-[11px] font-black italic leading-relaxed text-white group-hover:text-glow-purple transition-all select-all">
+                                                        {typeof rec === 'object' ? `"${rec.task}"` : `"${rec}"`}
+                                                    </p>
                                                     <div className="flex justify-between items-center pt-1 border-t border-white/[0.03]">
                                                         <button 
-                                                            onClick={() => copyText(rec, idx)}
+                                                            onClick={() => copyText(typeof rec === 'object' ? rec.task : rec, idx)}
                                                             className={`flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest transition-all ${copiedIdx === idx ? 'text-green-400' : 'text-white/20 hover:text-purple-400'}`}
                                                         >
                                                             {copiedIdx === idx ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}

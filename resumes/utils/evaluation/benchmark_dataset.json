@@ -1,0 +1,26 @@
+{
+  "test_cases": [
+    {
+      "id": "tc_01",
+      "name": "Backend Python Developer Profile",
+      "resume_text": "Experienced Backend Engineer with 5 years in Python, Django, PostgreSQL, Docker, and AWS.",
+      "job_description": "Looking for a Python Backend Developer proficient in Django, SQL database scaling, and containerization.",
+      "expected_skills": ["Python", "Django", "PostgreSQL", "Docker", "AWS"],
+      "expected_career_matches": ["Backend Engineer", "Full Stack Developer", "Cloud Engineer"],
+      "expected_missing_skills": ["Kubernetes", "Redis"],
+      "agent_query": "Can you check my career fit for Backend Engineer?",
+      "expected_intent": "career"
+    },
+    {
+      "id": "tc_02",
+      "name": "DevOps Cloud Engineer Profile",
+      "resume_text": "DevOps Specialist skilled in Kubernetes, Terraform, CI/CD pipelines, Bash, and Linux.",
+      "job_description": "DevOps Engineer required to automate multi-region Kubernetes cloud infrastructure.",
+      "expected_skills": ["Kubernetes", "Terraform", "Linux", "Bash"],
+      "expected_career_matches": ["DevOps Engineer", "Cloud Engineer"],
+      "expected_missing_skills": ["AWS", "Ansible"],
+      "agent_query": "What is the market demand for DevOps in Germany?",
+      "expected_intent": "market"
+    }
+  ]
+}

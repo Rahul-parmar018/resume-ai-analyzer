@@ -1,0 +1,4 @@
+{"timestamp": "2026-07-04T22:36:02.828249", "model": "nemotron-3-super:cloud", "tool": "Test Tool", "execution_time_ms": 120.5, "tokens_used": 0, "success": true, "fallback_triggered": false, "prompt_version": "career_agent_v1"}
+{"timestamp": "2026-07-04T22:36:02.831290", "model": "nemotron-3-super:cloud", "tool": "Test Tool 2", "execution_time_ms": 80.0, "tokens_used": 0, "success": true, "fallback_triggered": true, "prompt_version": "career_agent_v1"}
+{"timestamp": "2026-07-04T22:36:10.828319", "model": "nemotron-3-super:cloud", "tool": "AI Career Agent", "execution_time_ms": 7737.9724979400635, "tokens_used": 0, "success": true, "fallback_triggered": false, "prompt_version": "career_agent_v1"}
+{"timestamp": "2026-07-04T22:37:09.583095", "model": "nemotron-3-super:cloud", "tool": "Resume Intelligence", "execution_time_ms": 30092.193365097046, "tokens_used": 0, "success": true, "fallback_triggered": false, "prompt_version": "career_agent_v1"}

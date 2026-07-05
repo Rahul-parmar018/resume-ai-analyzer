@@ -1,0 +1,70 @@
+[
+  {
+    "experiment_id": "baseline_nemotron",
+    "timestamp": "2026-07-04T21:47:00.089896",
+    "duration_seconds": 665.121239900589,
+    "config": {
+      "llm_model": "nemotron-3-super:cloud",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "temperature": 0.3,
+      "retrieval_strategy": "top_k_similarity"
+    },
+    "results": {
+      "overall_score": 85,
+      "resume_f1": 0.5555555555555556,
+      "rag_precision": 1.0,
+      "intent_accuracy": 1.0
+    }
+  },
+  {
+    "experiment_id": "experimental_gpt",
+    "timestamp": "2026-07-04T21:48:22.372479",
+    "duration_seconds": 82.27702736854553,
+    "config": {
+      "llm_model": "gpt-4o-mini",
+      "embedding_model": "text-embedding-3-small",
+      "temperature": 0.5,
+      "retrieval_strategy": "hybrid_search"
+    },
+    "results": {
+      "overall_score": 85,
+      "resume_f1": 0.5555555555555556,
+      "rag_precision": 1.0,
+      "intent_accuracy": 1.0
+    }
+  },
+  {
+    "experiment_id": "baseline_nemotron",
+    "timestamp": "2026-07-04T22:03:08.795962",
+    "duration_seconds": 89.5309042930603,
+    "config": {
+      "llm_model": "nemotron-3-super:cloud",
+      "embedding_model": "all-MiniLM-L6-v2",
+      "temperature": 0.3,
+      "retrieval_strategy": "top_k_similarity"
+    },
+    "results": {
+      "overall_score": 85,
+      "resume_f1": 0.5555555555555556,
+      "rag_precision": 1.0,
+      "intent_accuracy": 1.0
+    }
+  },
+  {
+    "experiment_id": "experimental_gpt",
+    "timestamp": "2026-07-04T22:04:02.187965",
+    "duration_seconds": 53.38859581947327,
+    "config": {
+      "llm_model": "gpt-4o-mini",
+      "embedding_model": "text-embedding-3-small",
+      "temperature": 0.5,
+      "retrieval_strategy": "hybrid_search"
+    },
+    "results": {
+      "overall_score": 85,
+      "resume_f1": 0.5555555555555556,
+      "rag_precision": 1.0,
+      "intent_accuracy": 1.0
+    }
+  }
+]
